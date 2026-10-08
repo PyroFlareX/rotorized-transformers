@@ -1,0 +1,13 @@
+name: qwen3.5-0.8b-ffn-b025-butterfly-weight   # derived output dir name
+model: qwen3.5-0.8b                             # key in configs/models.yaml
+families: [ffn.gate, ffn.up, ffn.down]
+layers: null                                     # or list of layer indices
+budget: {byte_ratio: 0.25, storage_dtype: bfloat16}
+cascade: {topology: {kind: butterfly, seed: 0}, stages_per_rotor: auto, residual_rank: 0, adapter: pad_truncate}
+fit:
+  objective: weight            # weight | activation
+  seed: 0
+  device: cpu
+  init_angle_std: 0.01
+  schedule: {phases: [{train: [scales], steps: 200}, {train: [angles, scales, residual], steps: 1800}], lrs: {angles: 0.01, scales: 0.01, residual: 0.001}, cosine_decay: true, log_every: 200}
+calibration: {source: random, path: null, seq_len: 256, num_windows: 8, seed: 0, max_rows: 4096}   # source: random | text_file (unused for weight objective)

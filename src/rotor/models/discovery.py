@@ -26,9 +26,7 @@ class TensorInfo:
 
 def _parse_header(raw: bytes, shard: str) -> list[TensorInfo]:
     hdr = json.loads(raw)
-    return [
-        TensorInfo(k, tuple(v["shape"]), v["dtype"], shard) for k, v in hdr.items() if k != "__metadata__"
-    ]
+    return [TensorInfo(k, tuple(v["shape"]), v["dtype"], shard) for k, v in hdr.items() if k != "__metadata__"]
 
 
 def local_tensors(model_dir: Path) -> list[TensorInfo]:

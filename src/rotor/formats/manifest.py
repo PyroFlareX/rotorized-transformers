@@ -60,9 +60,12 @@ def environment_record() -> dict:
     except ImportError:  # pragma: no cover
         tf_version = None
     try:
-        git_rev = subprocess.run(
-            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False, cwd=Path(__file__).parent
-        ).stdout.strip() or None
+        git_rev = (
+            subprocess.run(
+                ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False, cwd=Path(__file__).parent
+            ).stdout.strip()
+            or None
+        )
     except OSError:  # pragma: no cover
         git_rev = None
     return {

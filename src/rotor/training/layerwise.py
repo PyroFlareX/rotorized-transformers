@@ -26,8 +26,12 @@ class FitSchedule:
     @classmethod
     def from_dict(cls, d: dict) -> FitSchedule:
         phases = [(tuple(p["train"]), int(p["steps"])) for p in d.get("phases", [])] or cls().phases
-        return cls(phases=phases, lrs=dict(d.get("lrs", {})), cosine_decay=bool(d.get("cosine_decay", True)),
-                   log_every=int(d.get("log_every", 0)))
+        return cls(
+            phases=phases,
+            lrs=dict(d.get("lrs", {})),
+            cosine_decay=bool(d.get("cosine_decay", True)),
+            log_every=int(d.get("log_every", 0)),
+        )
 
 
 def optimize_cascade(
