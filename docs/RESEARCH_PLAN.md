@@ -5,8 +5,8 @@
 > Pretrained Transformer linear transformations may admit significantly smaller compositional representations using rotors and scalings than their ordinary dense coefficient representations, without substantial degradation in language-model quality.
 
 This is a hypothesis to be tested, not a result. Nothing in this repository claims it holds. Every number in this
-document that comes from a formula is an **estimate**; measured numbers only appear in run records under
-`reports/experiments/`.
+document that comes from a formula is an **estimate**; measured numbers appear in run directories under
+`reports/experiments/<model>__<method>__<target>__<UTCstamp>/`.
 
 ## Representation
 
@@ -79,58 +79,59 @@ embeddings, RoPE, vision, and MTP are untouched. Dense FFN size per layer is `3 
 
 | ID | Question | Method | Primary output |
 |---|---|---|---|
-| E0 | Is the math correct? | Unit/property tests: Givens orthogonality, topology determinism and disjointness, `RotorCascade` forward vs `dense_weight()`, exact SVD→Givens reconstruction, format round-trip, parameter-count formulas vs actual tensors. Tiny random checkpoint (`make_tiny_checkpoint`). | pass/fail test log |
-| E1 | What do the real weights look like? | Header-only inspection of models A/B/C (`remote_tensors`); shapes, dtypes, tied embeddings, layer types. If weights are locally present: singular-spectrum summaries of FFN matrices. | shape table; spectrum stats |
-| E2 | In weight space, at **equal stored bytes**, does a rotor cascade beat truncated SVD? | `equal_budget_baselines`: truncated SVD, SVD→Givens, rotor weight-fit, across topologies (brick/butterfly/seeded), stages per rotor, number of rotors, residual rank; byte ratios swept. **Controls:** spectrum-matched random (same singular values, Haar singular vectors) and iid Gaussian (same Frobenius norm) to separate exploitation of learned structure from mere spectrum. | rel. Frobenius/spectral error vs bytes per matrix and control |
-| E3 | Do activation-aware fits help? | Fit on `‖XW^T − XŴ^T‖` with calibration inputs X from forward hooks (`collect_inputs`); compare to weight-fit and activation-aware SVD at equal bytes. | activation rel. error, row cosine |
-| E4 | LM quality | `convert` + `load_converted`; `evaluate_lm` on **identical token windows** (same `windows_sha256`) for base and each derived model; validation NLL/perplexity; long-context `nll_by_position`. | mean NLL, perplexity Δ vs base and vs equal-byte truncated SVD |
-| E5 | Can recovery close the gap? | KL distillation (`train_recovery`) updating only `RotorLinear` parameters, base frozen as teacher; same budget for the SVD baseline's trainable factors. | loss history, post-recovery NLL |
-| E6 | Does it scale? | Repeat E2–E5 on 2B (B) and 4B (C) with configs fixed from A. | trend vs model size |
-| E7 | Throughput / long context | `linear_microbench`, `time_callable`; Python reference first, C++ runtime later. Memory traffic and latency at batch sizes of interest; long-context behavior. | median/p10/p90 ms |
+| M1 | Is the math correct? | Unit/property tests: Givens orthogonality, topology determinism and disjointness, `RotorCascade` forward vs `dense_weight()`, exact SVD→Givens reconstruction, format round-trip, parameter-count formulas vs actual tensors. Tiny random checkpoint (`make_tiny_checkpoint`). | pass/fail test log |
+| M2 | What do the real weights look like and how do methods compare on 0.8B? | Header-only inspection; conversion of selected FFNs; equal-stored-byte comparisons: dense, truncated SVD, SVD→Givens, magnitude sparse, butterfly, rotor/scaler, rotor/scaler+residual; controls: spectrum-matched random and Gaussian. Evaluate whole-model NLL/perplexity on identical windows. | baseline comparison and model-quality report directories |
+| M3 | Do controlled 2B experiments support the hypothesis? | Matched-byte sweeps, activation-aware error, LM quality, byte accounting, and recovery training on 2B. | reproducible reports and paper-ready figures |
+| M4 | Can structured CUDA kernels be correct and competitive? | Isolated kernels with numerical oracle, compare dense GEMV/GEMM over projection shapes and decode/prefill batch regimes. | correctness and performance evidence on a capable GPU host |
+| M5 | Can an engine directly execute derived checkpoints? | Engine selection/integration; structured projections without dense materialization; semantics, numerical and generation validation. | engine conformance evidence |
+| M6 | How does the approach scale and publish? | 4B experiments, long-context tests, ablations, memory/performance comparisons, full paper draft. | scaling results and paper |
 
 ### Falsification criteria
 
 The hypothesis is unsupported at a given byte budget if any of the following is measured (pre-registered):
 
-1. On real weights, the rotor fit never beats truncated SVD at equal stored bytes (in weight error **and** in E4 NLL),
-   across all tested topologies, stage counts and residual ranks, **and** it also does not beat truncated SVD on the
-   control matrices. (Then rotors give no advantage either from structure in real weights or from the spectrum.)
-2. Rotor fit error on real weights is not lower than on spectrum-matched random controls — no evidence that the
-   structure present in trained weights is being exploited. A rotor advantage that appears equally on controls is a
-   spectrum/capacity effect, not evidence about pretrained weights.
-3. At the byte budget where perplexity degradation is "not substantial" (threshold fixed before running, e.g. a
-   stated relative ΔNLL on E4 windows), the rotor representation requires at least as many bytes as truncated SVD
-   with the same recovery training.
-4. Gains vanish after E5 recovery is applied equally to both methods, or do not persist at 2B/4B (E6).
+1. On real weights, the rotor fit never beats truncated SVD at equal stored bytes (in weight error and M2 whole-model NLL),
+   across tested topologies, stage counts and residual ranks, and it also does not beat truncated SVD on control matrices.
+   (Then rotors show no advantage either from structure in real weights or from the spectrum.)
+2. Rotor fit error on real weights is not lower than on spectrum-matched random controls — no evidence that trained-weight
+   structure is being exploited. An equal advantage on controls indicates a spectrum/capacity effect, not pretrained structure.
+3. At the byte budget where perplexity degradation is "not substantial" (threshold fixed before M2, e.g. a stated relative
+   ΔNLL on M2 windows), the rotor representation requires at least as many bytes as truncated SVD with the same recovery training.
+4. Gains vanish after M3 recovery is applied equally to both methods, or do not persist at 2B/4B (M3/M6).
 
 Partial outcomes (e.g. only at some byte ratios, only some families) MUST be reported as such.
 
 ## Metrics and reporting rules
 
-- **Equal stored bytes** is the only budget axis for quality comparisons: `structured_bytes(spec, storage_dtype)` vs
-  the dense checkpoint bytes (BF16 = 2 B/param) and vs truncated-SVD bytes (same storage dtype, includes both
-  factors). Report the byte ratio explicitly. Any difference between BF16 and float32 master parameters is stated.
+- **Equal stored bytes** is the only budget axis for quality comparisons: actual serialized layer tensor bytes vs dense checkpoint bytes
+  (BF16 = 2 B/param) and vs truncated-SVD bytes (same storage dtype, includes both factors). Report ratio and checkpoint-level
+  file/header/index/padding/quantization-metadata overhead explicitly. Named target presets are `b075`, `b050`, `b035`,
+  `b025`, and `b015` (fractions of original stored bytes). Any difference between BF16 and float32 master parameters is stated.
 - **Compute is reported separately** (`flops_per_token`, measured latency); never traded against bytes in one number.
 - Weight metrics: relative Frobenius, relative spectral, max abs. Activation metrics: relative Frobenius, mean row
-  cosine. LM metrics: mean NLL, perplexity, token count, `windows_sha256`.
-- Every run record (`write_run_record`) carries environment, versions, hardware, UTC timestamp, seeds (fit seed,
-  topology seed, window seed), config, and the base `hf_id`/`revision`/shard sha256.
+  cosine. Implemented evaluation modules also provide mean NLL, perplexity, token count, `windows_sha256`, greedy generation
+  output/token ids and time-to-first-token, prefill/decode tokens/s, multiple-choice accuracy, and synthetic passkey retrieval accuracy.
+- The brief's full execution list also includes memory traffic, kernel latency, and GPU utilization. These are not yet
+  implemented as evaluation metrics and require a GPU-capable host; the current host's available GPU/runtime capabilities
+  must be detected rather than assumed.
+- Each `ExperimentRun` directory carries environment, versions, hardware, UTC timestamp, seeds, config, and base provenance
+  (`hf_id`/revision/shard sha256), alongside measured metrics and separately labeled estimates.
 - Evaluate base and all variants on identical windows; fingerprint the windows.
 - Multiple seeds for stochastic parts (init, `seeded` topology, random controls, window sampling); report spread, not
   just best.
 - **Negative results are recorded** in `reports/experiments/` with the same detail as positive ones. Failed or
-  diverged fits are kept, not dropped.
+  diverged fits are published with status `failed`, not dropped.
 - Formula-derived numbers (parameter counts, FLOPs, byte estimates) are labeled `estimate`; measurements are labeled
-  `measured`. No result is quoted that is not backed by a run record.
+  `measured`. No result is quoted that is not backed by a run directory.
 - SVD-rank-truncation gains are never attributed to rotors.
 
 ## Dataset policy
 
 No dataset is downloaded without explicit permission, and no model weights are downloaded by code in this repo
-(header-only remote reads are allowed). Until permission is given, E0 uses random token windows
+(header-only remote reads are allowed). Until permission is given, M1 uses random token windows
 (`random_windows`) and the tiny checkpoint; calibration may use `source: random`. Candidate evaluation corpora are
 **proposals only**, to be confirmed with the user before any fetch: WikiText-103 validation split, a held-out slice of
-FineWeb-Edu, a held-out code slice (e.g. The Stack subset), and a long-document set for long-context E7. Any
+FineWeb-Edu, a held-out code slice (e.g. The Stack subset), and a long-document set for long-context M6. Any
 user-provided text file is consumed through `tokenize_text_file`.
 
 ## Open questions

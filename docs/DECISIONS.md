@@ -127,13 +127,13 @@ ADR-style log. All entries dated 2026-10-08.
 
 **Date:** 2026-10-08
 
-**Context:** The research pipeline is Python. The eventual inference runtime is C++ (M7). Coupling the converter to runtime internals would block either side from changing independently.
+**Context:** The research pipeline is Python. The eventual inference runtime is C++ (M5). Coupling the converter to runtime internals would block either side from changing independently.
 
 **Decision:** The Python converter is independent of the C++ runtime. The only shared contract is the format spec at `src/rotor/formats/spec.py`, mirrored in `runtime/interfaces` headers. Any spec change updates both mirrors in the same change.
 
 **Consequences:**
 - The runtime can be developed and tested without Python present.
-- Spec drift is possible; parity tests in M7 are the guard.
+- Spec drift is possible; `tests/test_cxx_parity.py` checks parity now, with engine conformance validation in M5.
 - Format versioning is explicit in the spec file.
 
 **Status:** Accepted.
@@ -144,16 +144,16 @@ ADR-style log. All entries dated 2026-10-08.
 
 **Date:** 2026-10-08
 
-**Context:** The development host has no working NVIDIA driver: `nvidia-smi` fails, so CUDA is unavailable. M0 and M1 do not need a GPU.
+**Context:** The current host has no NVIDIA GPU on the PCI bus. It has an AMD Radeon RX 7900 XT/XTX (Navi 31, 24 GiB VRAM) and AMD Raphael iGPU, both through `amdgpu`. There is no ROCm or `hipcc`; the Python environment uses torch 2.14.1+cpu. `nvcc` 12.0 is present for compile-only checks. Vulkan loader and Mesa radeon ICD are installed; `vulkaninfo` is absent.
 
-**Decision:** The `.venv` on this host uses a CPU-only PyTorch wheel. GPU work (M4) is deferred until a host with a working driver is available.
+**Decision:** Treat this host as CPU-only for torch execution and GPU benchmarking. CUDA kernels may be compiled here with `nvcc`, but CUDA runtime correctness and performance benchmarking require another host with an NVIDIA GPU. AMD GPU runtime work is unavailable until a ROCm-capable environment is provisioned.
 
 **Consequences:**
-- Local tests and inventory work run on CPU.
-- Throughput numbers from this host are not valid for GPU claims.
-- Switching to a CUDA wheel is a host change, recorded here when it happens.
+- Local tests and inventory work run on CPU; measurements here are not GPU performance claims.
+- `nvcc` compilation alone does not satisfy the M4 runtime correctness/performance gate.
+- Vulkan loader/ICD presence does not establish application-level Vulkan availability; `vulkaninfo` is not installed.
 
-**Status:** Accepted for M0–M3. Revisit when a GPU host is available for M4.
+**Status:** Accepted for the current host; revisit when GPU runtime capability changes.
 
 ---
 
@@ -169,5 +169,88 @@ ADR-style log. All entries dated 2026-10-08.
 - Clones do not contain weights; users must restore from NAS or re-download with permission.
 - Accidentally added weight files are caught by ignore rules, but ignore rules alone do not stop force-adds; reviewers must check.
 - Small test fixtures must stay well under the size that would make them weights-like.
+
+**Status:** Accepted.
+---
+
+## D11 — Run-directory experiment reporting
+
+**Date:** 2026-10-08
+
+**Context:** Flat JSON run records do not provide a durable, self-contained home for configuration, environment, figures, logs, interpretation, or failure evidence.
+
+**Decision:** Every experiment is published under `reports/experiments/<model>__<method>__<target>__<UTC>/` with `report.md`, `metrics.json`, `config.yaml`, `environment.json`, `figures/`, and `logs/`. Failed runs are published with status `failed`; this replaces flat JSON run records.
+
+**Consequences:**
+- Each run is auditable and independently tied to its configuration and environment.
+- Failure information remains reportable rather than disappearing with the failed process.
+- Consumers must use run directories rather than the retired flat-record convention.
+
+**Status:** Accepted.
+
+---
+
+## D12 — Record environment in manifests and runs
+
+**Date:** 2026-10-08
+
+**Context:** Hardware, software, storage, and compiler capabilities vary by host and affect reproducibility and benchmark interpretation.
+
+**Decision:** Detect and record the actual environment in every model manifest and experiment run via `rotor.environment`.
+
+**Consequences:**
+- Benchmark records can distinguish CPU, GPU, CUDA, Vulkan, storage, and compiler capabilities instead of assuming them.
+- GPU claims must remain separate from CPU fallback or compile-only observations.
+- Environment capture becomes part of routine manifest and run production.
+
+**Status:** Accepted.
+
+---
+
+## D13 — Named compression targets and serialized-byte accounting
+
+**Date:** 2026-10-08
+
+**Context:** Angle/parameter counts are not equivalent to actual checkpoint size, and inconsistent budget labels make experiment comparisons difficult.
+
+**Decision:** Use named compression-target presets `b075`, `b050`, `b035`, `b025`, and `b015` for fractions of original stored bytes. Report checkpoint file/header/padding/index/quantization-metadata bytes separately from per-layer tensor bytes.
+
+**Consequences:**
+- Budget comparisons use serialized layer tensor bytes, while checkpoint-level overhead remains visible separately.
+- Reports can distinguish deterministic-topology/index and float-storage/quantization-metadata overhead rather than hiding zero-valued categories.
+- Preset names are stable, human-readable identifiers for experiment configs and reports.
+
+**Status:** Accepted.
+
+---
+
+## D14 — Equal-byte baseline set and controls
+
+**Date:** 2026-10-08
+
+**Context:** A rotor result is not meaningful without relevant alternatives at equal storage and controls that separate structural gains from spectrum effects.
+
+**Decision:** Compare dense, truncated SVD, SVD→Givens, magnitude sparse, butterfly, rotor/scaler, and rotor/scaler+residual at equal stored-byte budgets; include spectrum-matched random and Gaussian controls. Report compute separately from storage and do not attribute SVD-truncation gains to rotors.
+
+**Consequences:**
+- Baseline and control rows are part of the experiment contract, not optional context for headline results.
+- Dense is the reference; residual and SVD contributions remain identifiable.
+- More expensive sweeps are required, but prevent unsupported structural-compression claims.
+
+**Status:** Accepted.
+
+---
+
+## D15 — Paper toolchain uses pdflatex, bibtex, and natbib
+
+**Date:** 2026-10-08
+
+**Context:** The current host provides `pdflatex` and `bibtex`; `biblatex`, `biber`, and `latexmk` are not installed.
+
+**Decision:** Author papers for the available `pdflatex` + `bibtex` + `natbib` toolchain; do not require `biblatex`/`biber`.
+
+**Consequences:**
+- Paper builds use explicit pdflatex/bibtex passes rather than latexmk or biber.
+- A future host with a different toolchain does not silently change project dependencies.
 
 **Status:** Accepted.
