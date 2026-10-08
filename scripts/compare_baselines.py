@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-"""Per-matrix equal-stored-byte comparison: truncated SVD vs SVD->Givens vs rotor fits, plus random controls."""
+"""Per-matrix equal-stored-byte comparison: dense reference, truncated SVD, SVD->Givens, magnitude-sparse, butterfly,
+rotor (weight / +residual / activation), plus random controls. Publishes a reports/experiments/ run directory."""
 
 from __future__ import annotations
 
@@ -10,9 +11,16 @@ from pathlib import Path
 
 import torch
 
-from rotor.evaluation.baselines import equal_budget_baselines
-from rotor.evaluation.records import write_run_record
+from rotor.converters.budget import COMPRESSION_TARGETS, parse_target, target_name
+from rotor.evaluation.baselines import (
+    TABLE_COLUMNS,
+    equal_budget_baselines,
+    interpretation_note,
+    lowest_rel_fro,
+    result_rows,
+)
 from rotor.formats import bytes_per_param
+from rotor.reporting import ExperimentRun, markdown_table
 from rotor.storage import load_models, load_storage, model_entry
 from rotor.training.layerwise import FitSchedule
 
@@ -31,7 +39,15 @@ def build_parser() -> argparse.ArgumentParser:
     src.add_argument("--synthetic", metavar="IN,OUT", help="seeded Gaussian matrix with decaying spectrum (smoke)")
     p.add_argument("--tensors", default=r"layers\.0\.mlp\.(gate|up|down)_proj\.weight$", help="regex on tensor names")
     p.add_argument("--max-tensors", type=int, default=3)
-    p.add_argument("--byte-ratio", type=float, default=0.25)
+    tgt = p.add_mutually_exclusive_group()
+    tgt.add_argument(
+        "--byte-ratio",
+        type=float,
+        help="fraction of dense BF16 bytes (default 0.25; 0.5 for --synthetic so one butterfly product fits)",
+    )
+    tgt.add_argument(
+        "--target", help=f"preset {sorted(COMPRESSION_TARGETS)} or float string; alternative to --byte-ratio"
+    )
     p.add_argument("--storage-dtype", default="bfloat16", choices=["float32", "bfloat16", "float16"])
     p.add_argument("--topology", default="butterfly", choices=["brick", "butterfly", "seeded"])
     p.add_argument("--topology-seed", type=int, default=0)
@@ -71,7 +87,9 @@ def _fmt(x, spec=".4f"):
 
 def print_table(title: str, result: dict) -> None:
     print(f"\n== {title} (byte budget {result.get('budget')})")
-    print(f"{'method':<34}{'params':>10}{'bytes':>10}{'rel_fro':>10}{'act_rel_fro':>13}{'est_flops':>12}")
+    print(
+        f"{'method':<34}{'params':>10}{'bytes':>10}{'idx_bytes':>10}{'rel_fro':>10}{'act_rel_fro':>13}{'est_flops':>12}"
+    )
     for section in ("methods", "controls"):
         if section == "controls":
             print("-- controls (random matrices with same spectrum / norm; NOT approximations of W) --")
@@ -82,6 +100,7 @@ def print_table(title: str, result: dict) -> None:
             flops = r.get("estimated_flops_per_token")
             print(
                 f"{label:<34}{r.get('params', '-'):>10}{r.get('stored_bytes', '-'):>10}"
+                f"{r.get('index_bytes', '-'):>10}"
                 f"{_fmt(_get(r.get('weight_errors'), 'rel_fro')):>10}"
                 f"{_fmt(_get(r.get('activation_errors'), 'rel_fro')):>13}"
                 f"{('-' if flops is None else flops):>12}"
@@ -135,8 +154,7 @@ def main(argv: list[str] | None = None) -> int:
     base: Path | None = None
     if args.synthetic:
         items = [(f"synthetic[{args.synthetic}]", None, _synthetic(args.synthetic, args.seed))]
-        if args.with_activations:
-            print("note: --with-activations ignored for --synthetic (no model); using Gaussian inputs")
+        print("note: synthetic matrix has no model; calibration inputs X are seeded Gaussian (rotor_activation row)")
     else:
         base, items = _load_base_matrices(args, storage)
 
@@ -173,33 +191,59 @@ def main(argv: list[str] | None = None) -> int:
         "residual_rank": args.residual_rank,
     }
     dense_bpp = bytes_per_param("bfloat16")  # dense bytes are counted in the checkpoint dtype (BF16)
-    results = {}
-    for name, tensor, W in items:
-        X = None
-        if args.with_activations:
+    default_ratio = 0.5 if args.synthetic else 0.25
+    if args.target:
+        ratio = parse_target(args.target)
+    else:
+        ratio = args.byte_ratio if args.byte_ratio is not None else default_ratio
+    target = args.target if args.target in COMPRESSION_TARGETS else target_name(ratio)
+    model_label = args.name or args.model or ("synthetic" if args.synthetic else Path(base).name)
+    config = {
+        "args": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
+        "byte_ratio": ratio,
+        "target": target,
+        "schedule": {"phases": [[list(k), n] for k, n in schedule.phases], "lrs": schedule.lrs},
+    }
+    method = "equal-budget-baselines"
+    with ExperimentRun("baselines", model=model_label, method=method, target=target, config=config) as run:
+        results: dict[str, dict] = {}
+        table_rows: list[dict] = []
+        findings = []
+        for name, tensor, W in items:
+            X = None
             if tensor is not None:
-                X = inputs[_module_path(tensor)]
-            else:
+                X = inputs[_module_path(tensor)] if args.with_activations else None
+            else:  # synthetic: no model, so calibration inputs are seeded Gaussian
                 g = torch.Generator().manual_seed(args.seed + 1)
                 X = torch.randn(512, W.shape[1], generator=g)
-        # equal-byte budget: fraction of the dense matrix stored in the chosen storage dtype
-        budget = int(args.byte_ratio * W.numel() * dense_bpp)
-        res = equal_budget_baselines(W, budget, args.storage_dtype, spec_kwargs, schedule, X=X, seed=args.seed)
-        results[name] = res
-        print_table(f"{name} shape={tuple(W.shape)} byte_ratio={args.byte_ratio}", res)
-    print("\n" + REMINDER)
+            # equal-byte budget: fraction of the dense matrix stored in BF16
+            budget = int(ratio * W.numel() * dense_bpp)
+            run.log(f"{name} shape={tuple(W.shape)} byte_ratio={ratio} budget={budget} bytes")
+            res = equal_budget_baselines(W, budget, args.storage_dtype, spec_kwargs, schedule, X=X, seed=args.seed)
+            results[name] = res
+            print_table(f"{name} shape={tuple(W.shape)} byte_ratio={ratio}", res)
+            table_rows += result_rows(res, name)
+            findings.append((name, target, lowest_rel_fro(res)))
+        print("\n" + REMINDER)
 
-    rec = write_run_record(
-        "baselines",
-        args.name or (args.model or ("synthetic" if args.synthetic else Path(base).name)),
-        {
-            "config": {k: (str(v) if isinstance(v, Path) else v) for k, v in vars(args).items()},
-            "schedule": {"phases": schedule.phases, "lrs": schedule.lrs},
-            "results": json.loads(json.dumps(results, default=str)),
-            "notes": [REMINDER],
-        },
-    )
-    print(f"run record {rec}")
+        run.metrics["byte_ratio"] = ratio
+        run.metrics["results"] = json.loads(json.dumps(results, default=str))
+        run.estimates["estimated_flops_per_token"] = {
+            f"{r['matrix']}/{r['section']}/{r['method']}": r["estimated_flops_per_token"]
+            for r in table_rows
+            if r.get("estimated_flops_per_token") is not None
+        }
+        run.summary = (
+            f"Equal-stored-byte comparison at {target} (byte ratio {ratio} of dense BF16 bytes) on {len(items)} "
+            "matrix/matrices; methods: dense (reference), svd, svd_givens, magnitude_sparse, butterfly, rotor_weight, "
+            "rotor_residual, rotor_activation (only with calibration inputs); controls: spectrum_matched_random, "
+            f"gaussian_random. Schedule: {args.steps} steps."
+        )
+        run.add_section("Baseline comparison", markdown_table(table_rows, TABLE_COLUMNS))
+        notes = next(iter(results.values()))["notes"] + [REMINDER]
+        run.add_section("Notes", "\n".join(f"- {n}" for n in notes))
+        run.interpretation = interpretation_note(findings)
+    print(f"run directory {run.path}")
     return 0
 
 

@@ -1,0 +1,8 @@
+\section{Introduction}
+Transformer feed-forward projections account for substantial parameter storage. This work investigates whether a projection can be represented by a sequence of learned scalings and structured orthogonal transformations while preserving accuracy. The operator of interest is
+\[
+W \approx D_0 R_1 D_1 \cdots R_k D_k,
+\]
+where each $R_i$ is a product of deterministic stages of pairwise-disjoint two-dimensional Givens rotations. The rectangular adapter is specified in Section~\ref{sec:method}.
+
+The key methodological constraint is to distinguish structural gains from ordinary low-rank compression: comparisons must use equal stored bytes, include truncated-SVD baselines, and report computation separately. The project targets FFN gate, up, and down projections, leaving attention, DeltaNet, normalization, embeddings, and positional encoding unchanged. The literature review discusses relevant structured transforms and compression methods; none establishes empirical performance for this particular cascade.

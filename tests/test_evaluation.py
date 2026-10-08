@@ -150,7 +150,7 @@ def test_baselines_every_method_fits_the_byte_budget(result):
     assert {"svd", "svd_givens", "rotor_weight", "rotor_activation"} <= set(result["methods"])
     ran = 0
     for name, row in result["methods"].items():
-        if "skipped" in row:
+        if "skipped" in row or row.get("reference"):
             continue
         ran += 1
         assert 0 < row["stored_bytes"] <= BYTE_BUDGET, (name, row["stored_bytes"])

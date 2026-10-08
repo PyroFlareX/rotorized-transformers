@@ -1,0 +1,5 @@
+\section{Background}
+\label{sec:background}
+Structured linear layers trade unconstrained dense coefficients for factorized or otherwise restricted parameterizations. Butterfly transforms use sparse staged mixing, while Monarch uses products of block-diagonal factors; rotation-based networks and unitary recurrent layers provide further precedents \citep{dao2019butterfly,dao2022monarch,choromanski2019kama,jing2017eunn}.
+
+These constructions differ in allowed factors, parameter count, and indexing/structure metadata. Orthogonal or unitary constraints alone do not imply a lower stored-byte count or faster execution. Low-rank compression (including SVD-based LLM approaches) instead reduces rank, and pruning removes coefficients; those are essential equal-byte comparators rather than evidence for a rotation-specific benefit. See the accompanying literature review for topic-by-topic scope and unresolved bibliographic items.

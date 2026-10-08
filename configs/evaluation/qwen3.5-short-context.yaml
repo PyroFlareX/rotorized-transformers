@@ -1,0 +1,25 @@
+# Short-context correctness evaluation for Qwen3.5 base vs converted checkpoints.
+# Usage: python scripts/evaluate_model.py --config configs/evaluation/qwen3.5-short-context.yaml \
+#          --model qwen3.5-0.8b [--ckpt <derived dir> --compare-base]
+#
+# text_file MUST be set to a corpus the user has approved; none is bundled or downloaded by this repository.
+# Until then the run is refused (exactly one of text_file / random_tokens is required).
+text_file: null
+seq_len: 512
+num_windows: 32
+seed: 0
+device: cpu
+dtype: float32
+batch_size: 1
+# Greedy generation: 128-token prompt (start of window 0) + 64 new tokens, KV cache.
+generation_prompt_tokens: 128
+max_new_tokens: 64
+# Multiple-choice accuracy: set to a user-approved JSONL (context/choices/answer) when available.
+mc_jsonl: null
+# Synthetic passkey retrieval stays disabled (0) until the short-context path has matched its reference
+# (the project plan allows longer-context work only after that). To enable, set passkey/passkey_context
+# and pass --short-context-verified on the command line.
+passkey: 0
+passkey_context: 0
+short_context_verified: false
+max_context: 2048

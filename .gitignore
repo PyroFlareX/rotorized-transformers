@@ -53,6 +53,7 @@ runtime/**/*.a
 *.cubin
 *.ptx
 *.fatbin
+reports/papers/build/
 
 # Editors / OS
 .vscode/

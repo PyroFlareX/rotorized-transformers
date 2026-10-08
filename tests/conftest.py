@@ -14,6 +14,14 @@ os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
 os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 
+@pytest.fixture(autouse=True)
+def _isolated_reports_dir(tmp_path_factory: pytest.TempPathFactory, monkeypatch: pytest.MonkeyPatch) -> Path:
+    """Every ``ExperimentRun`` without an explicit ``out_root`` publishes into a tmp dir, never the repo."""
+    root = tmp_path_factory.mktemp("reports")
+    monkeypatch.setenv("ROTOR_REPORTS_DIR", str(root))
+    return root
+
+
 @pytest.fixture(scope="session")
 def tiny_ckpt(tmp_path_factory: pytest.TempPathFactory) -> Path:
     """A deterministic random tiny Qwen3.5 checkpoint in the real on-disk layout (shared, read-only)."""

@@ -1,28 +1,17 @@
-# Experiment records
+# Experiment runs
 
-JSON run records written by scripts and by `rotor.evaluation.records.write_run_record`.
+Each experiment is published as a uniquely named directory:
 
-## File naming
+`reports/experiments/<model>__<method>__<target>__<UTCstamp>/`
 
-`<UTC>-<kind>-<name>.json`, for example `20261008T213754Z-convert-qwen3.5-0.8b-ffn-b025-butterfly-weight.json`.
+The UTC timestamp uses `YYYYMMDDTHHMMSSZ`. A run contains `report.md`, `metrics.json`, `config.yaml`, `environment.json`, `figures/`, and `logs/run.log`; figures are present when produced. `metrics.json` keeps measured metrics and formula-derived estimates in separate fields, and the report labels them separately.
 
-- `<UTC>`: UTC timestamp of the run start.
-- `<kind>`: run type (`convert`, `eval`, `baseline`, `bench`, `recovery`, ...).
-- `<name>`: experiment name from the config.
-
-## Contents
-
-Each record includes:
-
-- the config used, or its hash;
-- the environment: Python, torch, transformers and package versions, device, and host details;
-- base checkpoint provenance (HF id, revision, shard SHA-256);
-- metrics and loss histories as measured;
-- byte accounting (dense vs structured bytes).
-
-Records are written atomically. Do not edit them by hand.
+`rotor.reporting.ExperimentRun` creates these directories atomically and renders the report from `reports/templates/experiment_report.md`. Failed runs are published with `status: failed`, including failure details, before the exception is re-raised.
 
 ## Rules
 
-- Records are never invented or back-filled. Failed and negative runs are kept.
-- Any value computed from a formula rather than measured is labeled `estimate`.
+- Never edit metrics or other published run contents after publication; create a new run instead.
+- Never delete failed runs. Failed and negative results are part of the experiment record.
+- Never invent or back-fill results. Any value computed from a formula rather than measured must be labeled `estimate`.
+- Compare compression methods at equal stored bytes and report compute separately.
+- Interpretation must not claim rotor gains from SVD truncation; distinguish the rotor representation's contribution from ordinary low-rank truncation.

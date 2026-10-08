@@ -2,9 +2,10 @@
 
 Research outputs for the Rotor Transformer project. Subdirectories:
 
-- `experiments/`: JSON run records written by scripts. See `experiments/README.md`.
+- `templates/`: reusable Markdown report templates and their usage. See `templates/README.md`.
+- `experiments/`: uniquely named experiment run directories. See `experiments/README.md`.
 - `figures/`: generated plots and the scripts that produce them. See `figures/README.md`.
-- `papers/`: drafts of write-ups. See `papers/README.md`.
+- `papers/`: LaTeX research drafts. See `papers/README.md`.
 - `literature/`: reading notes and topic lists. See `literature/README.md`.
 
 ## Ground rules

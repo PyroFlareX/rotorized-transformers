@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shutil
+import struct
 from pathlib import Path
 
 import torch
@@ -46,16 +47,67 @@ def module_tensors(name: str, layer: RotorLinear, storage_dtype: str) -> dict[st
     return out
 
 
+def tensor_nbytes(tensors: dict[str, torch.Tensor]) -> int:
+    """Exact serialized payload bytes of ``tensors`` (numel x element size)."""
+    return sum(t.numel() * t.element_size() for t in tensors.values())
+
+
+def layer_accounting(name: str, layer: RotorLinear, storage_dtype: str) -> tuple[int, dict[str, int]]:
+    """``(serialized tensor bytes, learned scalar counts by kind)`` of what ``write_structured`` stores for a layer."""
+    tensors = module_tensors(name, layer, storage_dtype)
+    scalars = {"angles": 0, "scales": 0, "residual": 0, "bias": 0}
+    for key, t in tensors.items():
+        suffix = key[len(name) + 1 :]
+        if suffix == "angles":
+            scalars["angles"] += t.numel()
+        elif suffix in ("d_in", "d_mid", "d_out"):
+            scalars["scales"] += t.numel()
+        elif suffix.startswith("residual."):
+            scalars["residual"] += t.numel()
+        elif suffix == "bias":
+            scalars["bias"] += t.numel()
+    return tensor_nbytes(tensors), scalars
+
+
+def _safetensors_header_bytes(path: Path) -> int:
+    with open(path, "rb") as f:
+        return struct.unpack("<Q", f.read(8))[0]
+
+
 def write_structured(out_dir: Path, manifest: Manifest, layers: dict[str, RotorLinear], base_dir: Path | None) -> None:
-    """Write manifest + tensors into ``out_dir`` (callers pass a temp dir from ``storage.atomic_dir``)."""
+    """Write manifest + tensors into ``out_dir`` (callers pass a temp dir from ``storage.atomic_dir``).
+
+    After the weights file is saved its on-disk size, safetensors header length and padding are measured and stored in
+    ``manifest.serialized`` (mutating ``manifest``). ``manifest_bytes`` is the exact size of the written manifest file
+    including that field (solved as a fixed point).
+    """
     by_module = {e.module: e for e in manifest.layers}
     if set(by_module) != set(layers):
         raise ValueError("manifest layers and provided modules differ")
     tensors: dict[str, torch.Tensor] = {}
     for name, layer in layers.items():
         tensors.update(module_tensors(name, layer, by_module[name].storage_dtype))
-    save_file(tensors, str(out_dir / WEIGHTS_FILENAME), metadata={"format": manifest.format})
-    (out_dir / MANIFEST_FILENAME).write_text(manifest.to_json())
+    weights_path = out_dir / WEIGHTS_FILENAME
+    save_file(tensors, str(weights_path), metadata={"format": manifest.format})
+    file_bytes = weights_path.stat().st_size
+    header_bytes = _safetensors_header_bytes(weights_path)
+    payload = tensor_nbytes(tensors)
+    manifest.serialized = {
+        "file_bytes": file_bytes,
+        "header_bytes": header_bytes,
+        "tensor_bytes": payload,
+        "padding_bytes": file_bytes - 8 - header_bytes - payload,
+        "num_tensors": len(tensors),
+        "manifest_bytes": 0,
+    }
+    for _ in range(8):  # fixed point: manifest_bytes == len(serialized manifest that contains manifest_bytes)
+        size = len(manifest.to_json().encode("utf-8"))
+        if manifest.serialized["manifest_bytes"] == size:
+            break
+        manifest.serialized["manifest_bytes"] = size
+    else:
+        raise RuntimeError("manifest_bytes did not converge")
+    (out_dir / MANIFEST_FILENAME).write_bytes(manifest.to_json().encode("utf-8"))
     if base_dir is not None:
         meta = out_dir / BASE_METADATA_DIRNAME
         meta.mkdir()

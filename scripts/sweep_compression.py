@@ -1,4 +1,4 @@
-"""Weight-space equal-stored-bytes sweep (SVD vs rotor vs random controls) on selected FFN tensors.
+"""Weight-space equal-stored-bytes sweep (all baseline methods + random controls) on selected FFN tensors.
 
 Reads individual tensors via safetensors from the base dir; never loads the full model or writes checkpoints.
 """
@@ -14,11 +14,18 @@ import torch
 import yaml
 from safetensors import safe_open
 
-from rotor.evaluation.baselines import equal_budget_baselines
-from rotor.evaluation.records import write_run_record
+from rotor.converters.budget import COMPRESSION_TARGETS, parse_target, target_name
+from rotor.evaluation.baselines import (
+    TABLE_COLUMNS,
+    equal_budget_baselines,
+    interpretation_note,
+    lowest_rel_fro,
+    result_rows,
+)
 from rotor.math import Topology
 from rotor.models.discovery import local_tensors
 from rotor.models.qwen3_5 import discover_projections, select_projections
+from rotor.reporting import ExperimentRun, markdown_table
 from rotor.storage import load_models, load_storage, model_entry
 from rotor.training.layerwise import FitSchedule
 
@@ -41,18 +48,31 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--config", type=Path, required=True, help="base experiment YAML")
     ap.add_argument("--base-dir", type=Path)
-    ap.add_argument("--byte-ratios", default="0.1,0.25,0.5")
+    tgt = ap.add_mutually_exclusive_group()
+    tgt.add_argument("--byte-ratios", help="comma-separated byte fractions of dense bytes (default 0.1,0.25,0.5)")
+    tgt.add_argument(
+        "--targets",
+        help=f"comma-separated presets {sorted(COMPRESSION_TARGETS)} (or float strings); alternative to --byte-ratios",
+    )
+    tgt.add_argument("--target", help="single preset (or float string); alternative to --byte-ratios")
     ap.add_argument("--topologies", default="butterfly,brick,seeded")
-    ap.add_argument("--residual-ranks", default="0")
+    ap.add_argument("--residual-ranks", default="0", help="rotor_residual ranks to sweep (0 = ~25%% of budget)")
     ap.add_argument("--layers", help="comma-separated layer indices (default: config's layers)")
     ap.add_argument("--max-tensors", type=int, help="limit number of selected tensors")
     ap.add_argument("--steps-scale", type=float, default=1.0)
     ap.add_argument("--dry-run", action="store_true", help="print the planned combos; fit nothing")
-    ap.add_argument("--name", help="run record name (default: config name + '-sweep')")
+    ap.add_argument("--name", help="run report model label (default: config model key)")
     args = ap.parse_args(argv)
 
     cfg = yaml.safe_load(args.config.read_text())
-    ratios = [float(x) for x in args.byte_ratios.split(",")]
+    if args.targets or args.target:
+        raw = [x.strip() for x in (args.targets or args.target).split(",")]
+        ratios = [parse_target(x) for x in raw]
+        target_names = [x if x in COMPRESSION_TARGETS else target_name(r) for x, r in zip(raw, ratios, strict=True)]
+    else:
+        ratios = [float(x) for x in (args.byte_ratios or "0.1,0.25,0.5").split(",")]
+        target_names = [target_name(r) for r in ratios]
+    target_of = dict(zip(ratios, target_names, strict=True))
     topos = [x.strip() for x in args.topologies.split(",")]
     ranks = [int(x) for x in args.residual_ranks.split(",")]
     layers = [int(x) for x in args.layers.split(",")] if args.layers else cfg.get("layers")
@@ -95,49 +115,77 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps(plan, indent=2))
         return 0
 
-    rows: list[dict] = []
-    cache: dict[str, torch.Tensor] = {}
-    for p, ratio, topo, rank in combos:
-        if p.tensor not in cache:
-            cache.clear()
-            with safe_open(str(base / shard_of[p.tensor]), framework="pt") as f:
-                cache[p.tensor] = f.get_tensor(p.tensor).to(torch.float32)
-        W = cache[p.tensor]
-        budget = int(ratio * p.out_features * p.in_features * DTYPE_BYTES.get(p.dtype, 2))
-        spec_kwargs = {
-            "topology": Topology(topo, topo_seed),
-            "stages_per_rotor": cascade.get("stages_per_rotor", "auto"),
-            "residual_rank": rank,
-            "adapter": cascade.get("adapter", "pad_truncate"),
-        }
-        res = equal_budget_baselines(W, budget, storage_dtype, spec_kwargs, schedule, X=None, seed=seed)
-        rows.append(
-            {
-                "tensor": p.tensor,
-                "layer": p.layer,
-                "family": p.family,
-                "shape": [p.out_features, p.in_features],
-                "byte_ratio": ratio,
-                "byte_budget": budget,
-                "topology": topo,
-                "residual_rank": rank,
-                "result": _clean(res),
-            }
-        )
-        print(
-            f"{p.tensor.split('layers.')[-1]:<28} r={ratio:<5} {topo:<10} k={rank}  "
-            f"{json.dumps(_clean(res), default=str)[:160]}"
-        )
-
-    payload = {
+    run_config = {
         "config": cfg,
         "args": {k: _clean(v) for k, v in vars(args).items()},
+        "targets": target_names,
+        "byte_ratios": ratios,
         "storage_dtype": storage_dtype,
-        "objective": "weight-space only (no activations, no LM eval)",
-        "rows": rows,
+        "schedule": {"phases": [[list(k), n] for k, n in schedule.phases], "lrs": schedule.lrs},
     }
-    name = args.name or f"{cfg.get('name', args.config.stem)}-sweep"
-    print(f"wrote run record {write_run_record('sweep', name, payload)}")
+    model_label = args.name or str(cfg.get("model", args.config.stem))
+    with ExperimentRun(
+        "sweep", model=model_label, method="compression-sweep", target="-".join(target_names), config=run_config
+    ) as run:
+        rows: list[dict] = []
+        table_rows: list[dict] = []
+        findings = []
+        flops: dict[str, int] = {}
+        cache: dict[str, torch.Tensor] = {}
+        for p, ratio, topo, rank in combos:
+            if p.tensor not in cache:
+                cache.clear()
+                with safe_open(str(base / shard_of[p.tensor]), framework="pt") as f:
+                    cache[p.tensor] = f.get_tensor(p.tensor).to(torch.float32)
+            W = cache[p.tensor]
+            tname = target_of[ratio]
+            budget = int(ratio * p.out_features * p.in_features * DTYPE_BYTES.get(p.dtype, 2))
+            spec_kwargs = {
+                "topology": Topology(topo, topo_seed),
+                "stages_per_rotor": cascade.get("stages_per_rotor", "auto"),
+                "residual_rank": rank,
+                "adapter": cascade.get("adapter", "pad_truncate"),
+            }
+            run.log(f"{p.tensor} target={tname} budget={budget} topology={topo} residual_rank={rank}")
+            res = equal_budget_baselines(W, budget, storage_dtype, spec_kwargs, schedule, X=None, seed=seed)
+            rows.append(
+                {
+                    "tensor": p.tensor,
+                    "layer": p.layer,
+                    "family": p.family,
+                    "shape": [p.out_features, p.in_features],
+                    "target": tname,
+                    "byte_ratio": ratio,
+                    "byte_budget": budget,
+                    "topology": topo,
+                    "residual_rank": rank,
+                    "result": _clean(res),
+                }
+            )
+            label = f"{p.tensor} [topology={topo}, residual_rank={rank}]"
+            for r in result_rows(res, label):
+                r["target"] = tname
+                table_rows.append(r)
+                if r.get("estimated_flops_per_token") is not None:
+                    flops[f"{label}/{tname}/{r['section']}/{r['method']}"] = r["estimated_flops_per_token"]
+            findings.append((label, tname, lowest_rel_fro(res)))
+
+        run.metrics["objective"] = "weight-space only (no activations, no LM eval)"
+        run.metrics["rows"] = rows
+        run.estimates["estimated_flops_per_token"] = flops
+        run.summary = (
+            f"Weight-space equal-stored-byte sweep: {len(projs)} tensor(s) x targets {target_names} x topologies "
+            f"{topos} x rotor_residual ranks {ranks} = {len(combos)} combos. Methods: dense (reference), svd, "
+            "svd_givens, magnitude_sparse, butterfly, rotor_weight, rotor_residual; controls: "
+            "spectrum_matched_random, gaussian_random. No activations, no LM evaluation."
+        )
+        cols = ["target"] + TABLE_COLUMNS
+        run.add_section("Baseline comparison (all methods and controls)", markdown_table(table_rows, cols))
+        if rows:
+            notes = rows[0]["result"]["notes"]
+            run.add_section("Notes", "\n".join(f"- {n}" for n in notes))
+        run.interpretation = interpretation_note(findings)
+    print(f"run directory {run.path}")
     return 0
 
 

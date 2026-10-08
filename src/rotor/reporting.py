@@ -19,6 +19,7 @@ never silently dropped), then the exception propagates. ``run_id`` = ``<model>__
 from __future__ import annotations
 
 import json
+import os
 import re
 import string
 import traceback
@@ -116,7 +117,7 @@ class ExperimentRun:
         self.title = title or f"{kind}: {model} / {method} / {target}"
         self.created = datetime.now(UTC)
         self.run_id = make_run_id(model, method, target, self.created)
-        self.out_root = Path(out_root or EXPERIMENTS_DIR)
+        self.out_root = Path(out_root or os.environ.get("ROTOR_REPORTS_DIR") or EXPERIMENTS_DIR)
         self.environment = environment if environment is not None else detect_environment()
         self.metrics: dict = {}
         self.estimates: dict = {}

@@ -1,125 +1,120 @@
 # Inference engine plan
 
-Status: **plan only**. No engine is integrated, no kernel exists, and **every speed or memory benefit mentioned
-here is unmeasured**. Statements about third-party engines describe what must be *checked*, not what is known.
+Status: **research and sequencing plan only**. No inference engine is integrated, no structured rotation kernel exists, and no performance measurements exist yet. Every formula-derived operation or byte count is an estimate. Lower theoretical FLOPs do **not** imply faster execution: stage dependencies, data movement, launch overhead, angle evaluation, layout, and hardware utilization can dominate. All claims below distinguish observed upstream source/status from project performance, which remains unmeasured.
 
-## 1. Goal
+External-project support and license survey checked **2026-10-08**. Upstream branches change frequently; any implementation decision must pin a commit and repeat architecture, extension-point, and license checks against that exact commit. A PR, docs page, or model class proves code exists, not that our chosen model revision, backend, dtype, cache configuration, or deployment path is correct.
 
-Run `rotor-scaler` v1 checkpoints (`src/rotor/formats/spec.py`) in a native engine for the hybrid Qwen3.5 family
-(Gated DeltaNet linear-attention layers interleaved with gated full-attention layers; initial scope replaces only
-FFN `gate/up/down` projections). The question to answer is whether a structured layer with the same stored bytes as
-a dense or truncated-SVD layer is competitive in latency and throughput, and at what quality. Quality comparisons
-follow the equal-stored-bytes rule from the project contract; this document concerns only the runtime.
+## Scope and hard constraint
 
-## 2. Candidate engines
+The target is the hybrid Qwen3.5 text model: interleaved Gated DeltaNet linear-attention and full-attention layers. The first modification scope is **only FFN projections** (dense gate/up/down where the selected model architecture has those projections). Attention, DeltaNet state and kernels, normalization, embeddings, RoPE, tokenizer, and sampling remain owned by the existing engine. Therefore an engine must already execute the intended Qwen3.5 hybrid layers correctly before rotor integration. Multimodal, MoE, and MTP paths are not implied by text/dense FFN support.
 
-Support for the hybrid Qwen3.5 architecture (Gated DeltaNet recurrent state + gated attention, possibly multimodal
-and MTP tensors in the checkpoint) **must be verified against the exact upstream commit and model revision before
-selection**; it is not assumed for any row below.
+The converter↔runtime file, tensor, topology, and semantic contract is normative in [`runtime/interfaces/README.md`](../runtime/interfaces/README.md). The engine consumes rotor-scaler v1 and the untouched base checkpoint; it must not require Python or Transformers at runtime.
 
-| Engine | Potential advantages | Potential drawbacks / risks | To verify |
-|---|---|---|---|
-| llama.cpp / ggml | Small C/C++ code base; CPU and many GPU backends; simple graph-building code makes adding a custom op in one FFN site tractable; easy to run on modest hardware | GGUF is its native weight container, so a loader for `rotor_weights.safetensors` or a GGUF conversion step is needed; the recurrent-state (Gated DeltaNet) architecture needs a model implementation and kernels per backend; custom ops must be written for each backend separately | Does the target commit load Qwen3.5 text weights and match reference logits? Which backends implement the DeltaNet op? |
-| vLLM | Mature CUDA serving stack, paged KV, batching, Python-side model registry; custom CUDA ops are straightforward to register; torch interop eases golden comparison | Python/torch dependency conflicts with the "independent of Python" goal for the runtime (acceptable only for a benchmarking harness); heavy build; hybrid linear-attention support and state management depend on version | Is Qwen3.5 hybrid supported in the pinned release, including cache layout for DeltaNet state? |
-| SGLang | Fast serving runtime, flexible scheduling, extensible model code | Same Python/torch coupling as vLLM; hybrid-model support and kernel provenance depend on version; smaller maintenance surface | Same as vLLM; also check whether its DeltaNet kernels come from an external library that must be pinned |
-| Custom minimal engine | Full control of format, layout and fusion; no upstream churn; smallest harness for isolating rotor-vs-dense layer cost | Must implement Qwen3.5 end to end (DeltaNet, gated attention, tokenizer, sampling) correctly, a large correctness burden; no ecosystem | Cost of reproducing reference logits for the full model vs. benchmarking FFN layers in isolation |
+## 1. Forking llama.cpp / ggml
 
-Recommended order (a proposal, not a finding): (1) microbenchmark the FFN layer alone with a standalone kernel
-harness under `runtime/kernels/` against dense and truncated-SVD baselines; (2) only if that shows a plausible
-win, pick the engine that is verified to run Qwen3.5 correctly and cheapest to extend; (3) integrate through the
-format, never through ad hoc exports.
+### Architecture and graph integration
 
-## 3. Integration via the versioned format
+llama.cpp is an attractive native C/C++ graph runtime with CPU and multiple accelerator backends. Upstream has Qwen3.5 implementation activity: Qwen3.5 model-support PR [#19468](https://github.com/ggml-org/llama.cpp/pull/19468), the Gated Delta Net operation PR [#19504](https://github.com/ggml-org/llama.cpp/pull/19504), and a Vulkan GATED_DELTA_NET backend PR [#20334](https://github.com/ggml-org/llama.cpp/pull/20334); a current model source is [src/models/qwen35.cpp](https://github.com/ggml-org/llama.cpp/blob/7cadbfce/src/models/qwen35.cpp). These sources establish active implementation, but not a guarantee that a given released or pinned commit fully supports our required text model, recurrent-state cache, and target backend. Verify end-to-end logits and cache behavior at a pinned commit before adoption.
 
-- The engine reads `rotor_manifest.json` (format name/version checked against `ROTOR_FORMAT_NAME` /
-  `ROTOR_FORMAT_VERSION`) and `rotor_weights.safetensors`, plus the untouched dense tensors from the base
-  checkpoint recorded in the manifest (path, revision, sha256).
-- Per layer it builds a `rotor_cascade_spec` and regenerates stage pairs from `(kind, width, stage, seed)` via
-  `interfaces/rotor_topology.hpp`; no coordinate indices are stored. Pair tables may be cached per
-  `(kind, width, stage, seed)` since they are layer-independent.
-- An unknown `FORMAT_VERSION`, topology kind, adapter kind or storage dtype is a hard load error.
-- Any format change bumps the version in Python and C simultaneously and updates `tests/test_cxx_parity.py`.
-- Engine-specific repackaging (e.g. GGUF) is a derived artifact of the versioned format, produced by a converter that
-  records its source manifest hash; it is never the source of truth.
+GGML represents work as tensor operations in a computation graph; a rotor FFN would need graph nodes/operators and backend implementations/scheduling, not just a weight-loader substitution. Potential integration approaches are: (a) express each pairwise stage and diagonal as existing graph primitives (easy to prototype but can create many nodes/launches and intermediate tensors); (b) define a ggml custom op and provide CPU/CUDA/Vulkan backend compute support; or (c) fuse the cascade into one or more backend kernels and expose those as an op. The backend interface and model-architecture guide are upstream references: [ggml backend interface](https://github.com/ggml-org/llama.cpp/blob/master/ggml/src/ggml-backend-impl.h), [adding a model architecture](https://github.com/ggml-org/llama.cpp/blob/master/docs/development/HOWTO-add-model.md). This is a source-level extension surface, not a stable plugin ABI; expect implementation and rebase work across backends.
 
-## 4. Kernel design notes (hypotheses, none measured)
+### Format and license
 
-A cascade of `k` rotors with `m` stages each applies `k*m` passes over an `n`-vector, each pass touching `n` values
-and `n/2` angles with about 6 flops per pair (4 mul + 2 add) plus one multiply per diagonal. Arithmetic intensity per
-pass is low, so the layer is expected to be **memory-/latency-bound**, not compute-bound; the dense GEMM it competes
-with is compute-bound at large token batches and weight-bandwidth-bound at batch 1. Which regime wins is an empirical
-question.
+llama.cpp's primary model ecosystem uses GGUF; this project stores base checkpoints as Hugging Face safetensors and derived weights in `rotor_weights.safetensors` with `rotor_manifest.json`. GGUF has no native rotor-scaler v1 semantics. We must either add a direct reader for the paired rotor files and base safetensors, or design a documented engine-specific package/converter that preserves manifest provenance and structured tensors. Densifying rotor weights during conversion defeats the goal. Upstream GGUF reference: [GGUF format specification](https://github.com/ggml-org/ggml/blob/master/docs/gguf.md).
 
-- **Stage fusion.** Executing stages one kernel launch at a time forces a full round trip of the activation
-  through global memory per stage. Fuse all stages of a rotor (and the following diagonal) in one kernel that keeps
-  the activation tile in registers/shared memory. Butterfly strides above the warp size need shared-memory exchange;
-  strides below can use warp shuffles. Brick pairs are local (neighbouring lanes). Seeded pairs are arbitrary
-  permutations and are the hardest to fuse (bank conflicts, gathers); expect them to be slowest.
-- **Angles in shared memory.** One rotor row is `m*~n/2` angles; for hidden sizes in the thousands this fits in
-  shared memory for a tile of tokens, amortizing the global read across the token batch. Verify capacity per target
-  GPU; if a rotor row does not fit, tile over stages.
-- **sincos: precompute vs on-the-fly.** Options: (a) store angles and compute `sincos` on the fly (stored bytes
-  minimal, extra SFU/ALU work, precision of fast intrinsics must be gated); (b) precompute `cos/sin` at load time
-  (2x working memory, no stored-byte change since the checkpoint still holds angles; extra bandwidth at run time).
-  Whether (a) or (b) is better depends on the measured balance of SFU throughput vs. memory bandwidth and must be
-  decided per GPU.
-- **Batching across tokens.** Amortize angle/pair loads over many tokens by processing a block of tokens per CTA with
-  token as the contiguous or outer dimension; compare layouts. At batch 1 (decode) the layer is latency-bound by
-  the serial dependency of stages, so launch overhead and fusion across rotors, or across gate/up projections that
-  share an input, matter most. Consider CUDA graphs to remove launch cost.
-- **Residual.** `U(Vx)` is two small GEMMs; fuse into the epilogue or run concurrently.
-- **Precision.** Master angles are float32; the stored dtype may be bf16/fp16. Accumulate in fp32; decide through
-  correctness gates (section 5) whether bf16 angle storage is acceptable, since angle rounding error compounds
-  through `k*m` stages.
-- **Pad/truncate.** The adapter is index-free; avoid materializing padding: a pair touching only padded zeros can be
-  skipped for stages where both coordinates are provably zero (optimization, verify bit-equivalence first).
-- **Backward/training kernels** are out of scope; Python autograd handles fitting.
+Upstream [`LICENSE`](https://raw.githubusercontent.com/ggml-org/llama.cpp/master/LICENSE), checked 2026-10-08, is MIT. The permissive license is compatible with a fork subject to its terms. Maintenance cost: medium-to-high—C/C++ graph/model/loader changes, upstream churn, and every desired backend require implementation and conformance, while architecture support reduces the amount of unrelated Transformer work.
 
-## 5. Correctness gates
+**Assessment:** strongest native/fork candidate if pinned upstream Qwen3.5 hybrid support and graph/operator surfaces validate; not approved for a fork yet. Qwen3.5/Gated DeltaNet support is evolving, so do not conflate merged/current source, PRs, or a particular build's backend support.
 
-Each gate must pass before the next stage proceeds and results are recorded with the commit hashes of both repos.
+## 2. Other runtimes with Qwen3.5 support
 
-1. **Topology parity**: C++ `stage_pairs` equals Python exactly for all kinds, including odd and
-   non-power-of-two widths (`tests/test_cxx_parity.py`).
-2. **Reference-cascade parity**: C++ double reference matches `RotorCascade` float64 within 1e-10.
-3. **Golden outputs**: Python generates, from a fixed seed, a golden set per layer shape of interest
-   (inputs, parameters, expected outputs in float64 and the engine's dtype). Each kernel is compared with an
-   explicit tolerance derived from dtype (record the observed max abs / relative error, do not hand-wave).
-4. **Layer-level end-to-end**: converted tiny checkpoint (`rotor.models.tiny`) executed in the engine reproduces
-   Python logits within a stated tolerance, and argmax tokens agree on a fixed prompt set.
-5. **Model-level**: for the real model, engine perplexity on a fixed token set matches the Python evaluation of the
-   same checkpoint within a stated tolerance, and the dense baseline in the engine matches the Python dense baseline,
-   which proves the engine itself is correct before any rotor claim is made.
+Status below reflects upstream evidence found on 2026-10-08, not certification for this project. “Supported” means an upstream implementation or official deployment page was found; it does not prove our chosen model revision, layer subset, data types, or target-device behavior.
 
-## 6. Performance methodology
+| Runtime | Qwen3.5 hybrid architecture evidence | Custom linear-op path | Upstream license (LICENSE checked) | Integration / maintenance cost for this project |
+|---|---|---|---|---|
+| **vLLM** | The upstream [`qwen3_5.py`](https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/models/qwen3_5.py) defines hybrid linear-attention through `QwenGatedDeltaNetAttention` and full attention, and constructs dense/MoE MLP paths. Thus architecture code exists; pin a supported release and validate recurrent state/cache and text logits. | Python model/layer integration plus registered/custom `torch.ops`/C++/CUDA ops; upstream custom-op documentation: [CustomOp design](https://docs.vllm.ai/en/latest/design/custom_op/). Direct fit is good for prototyping, but serving stack remains Python-based. | Apache-2.0: [`LICENSE`](https://raw.githubusercontent.com/vllm-project/vllm/main/LICENSE). | Medium. Strong model and CUDA ecosystem, but add/maintain Python model patch or plugin plus native op packaging; violates runtime independence if shipped as our native engine. Useful as a correctness/serving host, not the intended Python-free runtime. |
+| **SGLang** | Official [Qwen3.5 deployment docs](https://docs.sglang.io/cookbook/autoregressive/Qwen/Qwen3.5) list dense and MoE Qwen3.5 variants and platform/quantization deployment options; source model implementation is [`qwen3_5.py`](https://github.com/sgl-project/sglang/blob/a10a24e9/python/sglang/srt/models/qwen3_5.py). Confirm exact version/backend/cache behavior before selecting. | Python model layer and registered custom ops; native CUDA/Triton or external-kernel integration. The upstream source is version-sensitive and has no format-specific rotor ABI. | Apache-2.0: [`LICENSE`](https://raw.githubusercontent.com/sgl-project/sglang/main/LICENSE). | Medium-to-high. Good serving flexibility and direct Qwen3.5 evidence, but Python runtime, scheduler, and external kernels increase coupled surface; custom operator integration must survive compilation and batching paths. |
+| **TensorRT-LLM** | Upstream Qwen3.5 support was added for dense and MoE, including hybrid GatedDeltaNet/full-attention and cache manager in [PR #12203](https://github.com/NVIDIA/TensorRT-LLM/pull/12203); the discussion says current main PyTorch and AutoDeploy backends support Qwen3.5. Verify exact backend and pinned release. | PyTorch backend custom ops / C++ extensions and TensorRT plugin APIs are available; references: [custom-op source](https://github.com/NVIDIA/TensorRT-LLM/blob/7a8bd87f/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py), [plugin API](https://github.com/NVIDIA/TensorRT-LLM/blob/main/tensorrt_llm/plugin/plugin.py). CUDA/NVIDIA-specific integration is a substantial constraint. | Apache-2.0 for project: [`LICENSE`](https://raw.githubusercontent.com/NVIDIA/TensorRT-LLM/main/LICENSE), which also lists third-party components under their own licenses. | High. Mature NVIDIA production tooling, but CUDA/NVIDIA dependency, build/plugin complexity, version churn, and no suitable NVIDIA GPU on the development host. Not the portable native target. |
+| **MLC / TVM** | Found a Qwen3.5 [model request](https://github.com/mlc-ai/mlc-llm/issues/3448), [hybrid model upgrade PR](https://github.com/mlc-ai/mlc-llm/pull/3480), and vision-support PR [#3471](https://github.com/mlc-ai/mlc-llm/pull/3471). These are evidence of active work, not proof of complete upstream release support for all hybrid models/backends; treat support as **not yet verified** absent pinned merged implementation and tests. | Define/compile model operators through TVM Relax/TensorIR and MLC model code, or add backend/runtime operators; this is compiler integration rather than a drop-in linear-layer plugin. References: [define MLC models](https://llm.mlc.ai/docs/compilation/define_new_models.html), [TensorIR creation](https://mlc.ai/docs/deep_dive/tensor_ir/tutorials/creation.html). | Apache-2.0: [`LICENSE`](https://raw.githubusercontent.com/mlc-ai/mlc-llm/main/LICENSE). | High. Attractive Vulkan/device portability and compilation, but model/frontend/IR integration and compilation maintenance are significant; format integration still custom. Revisit only after verified support and a measurable portable kernel target. |
+| **ExecuTorch** | Upstream commit [`9d413ac`](https://github.com/pytorch/executorch/commit/9d413ac8b270ecb925d92ffa77cee411d4e90ad8) adds Qwen3.5 export support for 0.8B/2B/4B. This is export coverage, not evidence here of a full native desktop serving runtime or every hybrid/state/cache backend; pin and test target delegates. | Custom operators can be registered in portable/backend libraries and exported/delegated; see [portable custom-op guide](https://github.com/pytorch/executorch/blob/main/examples/portable/custom_ops/README.md). | BSD-style license: [`LICENSE`](https://raw.githubusercontent.com/pytorch/executorch/main/LICENSE). | High for this goal. Designed for edge deployment and delegated backends; operator registration is possible but packaging/delegation and hybrid cache support make it a less direct general-purpose host. |
 
-- **Measured vs. estimated** are always labeled separately. FLOP counts and byte counts from formulas
-  (`CascadeSpec.flops_per_token`, `param_breakdown`) are `estimate`; wall-clock timings are `measured` and carry
-  hardware, driver, engine commit, dtype, batch size, sequence length, warmup and iteration counts, and
-  median/p10/p90.
-- **Equal stored bytes.** Compare a rotor layer only with a dense layer, and with a truncated-SVD layer, whose stored
-  bytes are the same (same storage dtype). A rotor layer that wins only against an *uncompressed* dense layer says
-  nothing about structure. Report the SVD rank used and the byte budget for each arm.
-- **Report compute separately** from storage: FLOPs (estimate), achieved bandwidth and FLOP/s (measured where counters
-  are available), and latency. A byte-matched layer that uses more compute than the baseline is reported as such.
-- **Regimes.** Decode (batch 1..few), prefill (many tokens), and several FFN shapes of the target model. Include
-  layer-only microbenchmarks and end-to-end tokens/s, but do not infer one from the other.
-- **Quality alongside speed.** Every performance row names its quality row (perplexity / NLL delta and the baseline
-  it is compared with); a fast layer with unacceptable quality is not a result.
-- **Controls.** Include a dense baseline in the same engine and a truncated-SVD baseline at equal bytes. Pin clocks or
-  report variance; run on an otherwise idle device; repeat across process restarts.
-- **Negative results are reported.** If the structured layer is not faster at equal bytes, that is the finding.
+### Comparative conclusion
 
-## 7. Milestones
+For prototype speed, vLLM or SGLang can provide a Qwen3.5 correctness host and an operator insertion point. For a Python-independent runtime, llama.cpp/ggml or a standalone native executor aligns better, provided upstream hybrid architecture support is verified. TensorRT-LLM is a CUDA-specific alternative if another NVIDIA host becomes available. MLC/TVM is a future portability option, while ExecuTorch's export focus is not the simplest path to a general desktop runtime. No fork is selected by this survey alone.
 
-| # | Milestone | Exit criterion |
+## 3. Standalone C++/CUDA reference executor
+
+A minimal standalone executor for individual structured linear layers is the lowest-coupling way to establish native correctness and measure operator costs: implement v1 manifest/tensor loading or deterministic test-parameter inputs, topology regeneration, the reference cascade, and dense/SVD comparison for actual target FFN shapes. Keep the initial oracle small and avoid rebuilding Transformer attention, Gated DeltaNet, tokenization, or serving. A CPU implementation can reuse the C++ reference semantics in `runtime/interfaces/rotor_topology.hpp`; CUDA should be developed against the same input/parameter goldens.
+
+Benefits: isolates kernel/format correctness, enables benchmark shape and batch sweeps before engine choice, and avoids premature fork rebases. Costs: it is not a full-model runtime, so cannot establish end-to-end tokens/s, cache correctness, or quality. Maintenance remains low-to-medium if restricted to a test/microbenchmark harness and the normative interface; it becomes high if allowed to grow into a second Transformer implementation. Do not confuse executor microbenchmarks with model-serving speed.
+
+## 4. Integration through custom linear operators
+
+The integration boundary is a linear operator with structured parameters, not a materialized dense matrix. Given input `x` with final dimension `in_features`, dimensions/spec, rotor angle rows, diagonals, optional residual and bias, and topology identity, compute the v1 semantics in [`runtime/interfaces/README.md`](../runtime/interfaces/README.md). The operator needs the base engine to route only selected FFN projections to this operator and keep original dense weights for all untouched tensors.
+
+The operator's effective ABI consists of: dimensions and cascade metadata (`in_features`, `out_features`, `num_rotors`, `stages_per_rotor`, topology kind/seed, adapter, residual rank, bias flag); contiguous or explicitly-strided parameter tensor views with declared scalar dtype; and input/output tensor shape, strides, dtype, and device. Host-side loaders must validate v1 compatibility and shapes before kernel dispatch. The weight layout and angle order are normative in the interface spec. The operator must regenerate coordinate pairs deterministically from `(kind, n, stage, seed)`, not consume hidden engine-specific indices. No public engine/plugin ABI is promised until an engine is selected.
+
+## 5. Model format and ABI compatibility
+
+The source representation remains the rotor-scaler v1 paired files (`rotor_manifest.json`, `rotor_weights.safetensors`) plus the manifest-identified untouched base safetensors checkpoint. v1 accepts float32, bfloat16, and float16 stored structured tensors; all layer tensor names, shapes, equation, pad/truncate adapter, topology definitions, and version refusal rules are specified in [`runtime/interfaces/README.md`](../runtime/interfaces/README.md). A runtime MUST reject unknown/newer format versions rather than silently reinterpret them. Any semantic change requires a `FORMAT_VERSION` bump in Python/C, reader update, and C++/Python conformance/golden-test update. Engine-specific package conversions must retain a source manifest hash and may not densify structured layers.
+
+## 6. Attention and Gated DeltaNet compatibility
+
+Initial conversion replaces FFN `gate/up/down` projections only. Qwen3.5 alternates hybrid linear-attention (Gated DeltaNet) and full-attention layers; successful FFN replacement does not implement either attention path. The selected engine must already load and correctly execute the target Qwen3.5 text checkpoint—including recurrent state updates/cache across decode steps—and its dense baseline must match reference logits before rotor speed or quality is evaluated. Keep vision, MTP, MoE-specific execution, and any unconverted projections on engine-native paths unless separately qualified. A benchmark harness that only evaluates a standalone FFN is not evidence of hybrid model support.
+
+## 7. Structured-rotation kernel research (CUDA first)
+
+No CUDA or GPU performance numbers exist yet. All counts from formulas are estimates, never measurements. The project host facts recorded 2026-10-08 are AMD Ryzen 5 7600X, 62 GiB RAM, AMD Radeon RX 7900 XT/XTX (Navi 31, amdgpu, 24 GiB), Mesa radeon Vulkan ICD, no ROCm/hipcc and no NVIDIA GPU on PCI. `nvcc` is installed but there is no NVIDIA device/driver to execute CUDA. Therefore CUDA work needs another host with a real supported NVIDIA GPU; do not treat successful compilation as a performance result. The current AMD GPU/Vulkan path can inform later portability, but does not validate CUDA.
+
+### Mapping and data movement
+
+A Givens stage applies disjoint 2D rotations to coordinate pairs. The kernel must implement deterministic coordinate mappings identical to the reference schedule and canonical angle indexing. For butterfly schedules, strides smaller than a warp (32 lanes) can exchange values via warp shuffles when lane mapping and active masks prove correctness. Larger strides require cross-warp communication, typically shared-memory exchange and synchronization. Brick pairs are local; seeded topology may need permutation/gather traffic and should be measured separately rather than assumed equally efficient.
+
+Fuse diagonal scaling with adjacent rotation work where operation order is preserved. Avoid writing and rereading the full activation vector to global memory between every stage: evaluate fusing multiple stages, or all stages of a rotor, while retaining working tiles in registers/shared memory. Then evaluate fusion across rotor boundaries, diagonal scales, and possibly gate/up projections sharing the same input. Fusion can raise register pressure, shared-memory use, occupancy loss, or code size; test shape-specific alternatives. Do not fuse by changing the mathematically normative order.
+
+### Angle representation and transcendental cost
+
+v1 stores angles (not cosine/sine pairs). At load or execution, either compute `sin/cos` from stored angles or precompute cosine/sine tables. FP16/BF16 angle storage reduces bytes but adds quantization error compounded across stages; FP32 master values versus stored dtype must be tested against golden outputs and chosen tolerance. Precomputed `cos/sin` uses roughly twice the scalar table storage relative to one angle and incurs conversion/load overhead but removes repeated transcendental evaluation; whether this wins depends on cache reuse, SFU throughput, and memory bandwidth. The table is derived runtime state, not a change to stored checkpoint bytes. Measure on target hardware; do not assume fast intrinsics preserve required accuracy.
+
+### Decode versus prefill and dense comparison
+
+Decode at batch 1 (and a few tokens) is likely to be latency/weight-traffic sensitive, with serial stage dependencies and kernel-launch cost prominent. Prefill with many token rows may expose greater parallelism and become compute-/throughput-bound. These are regimes to test, not measured conclusions for this method or host. Compare structured execution against cuBLAS dense GEMV/GEMM for the same projection shapes, input/output dtype, batch/sequence regimes, and accuracy; also compare an equal-stored-bytes truncated-SVD baseline. Include launch overhead and memory movement, not just arithmetic counts. Lower theoretical FLOPs do not imply faster execution: the structured cascade may lose due to sequential passes, synchronization, transcendental work, or poor hardware utilization. Report latency/throughput, memory traffic/bandwidth where measurable, FLOPs as estimates, and numerical error separately.
+
+## 8. Future Vulkan portability
+
+The current development GPU is AMD RX 7900 XT/XTX with amdgpu and Mesa's radeon Vulkan ICD; ROCm is unavailable on this host and no NVIDIA GPU exists here. CUDA kernels cannot be benchmarked locally and require another host. A future Vulkan path could use the same topology/layout contract and a separate compute implementation; the engine candidate needs a Vulkan backend capable of representing Gated DeltaNet and the custom FFN op. Vulkan compute introduces its own subgroup-size and shared-memory constraints, so warp-size-32 assumptions must not be copied unchanged: query subgroup properties and implement a portable mapping or fall back to shared-memory exchange. Validate parity and benchmark the Vulkan path independently; do not imply CUDA/Vulkan performance equivalence.
+
+## 9. Decision criteria
+
+| Criterion | Required evidence before choice | Weight / consequence |
 |---|---|---|
-| M0 | Interfaces: `rotor_format.h`, `rotor_topology.hpp`, parity test | Gates 1-2 pass (this repo, present) |
-| M1 | Standalone CPU kernel in `runtime/kernels/` (vectorized, multi-token) | Gate 3 on CPU; first *measured* CPU layer microbench vs dense and equal-bytes SVD |
-| M2 | Standalone CUDA fused-stage kernel (butterfly/brick first, seeded after) | Gate 3 on GPU; measured layer microbench across decode and prefill batches, sincos variants compared (needs a GPU host; none is available currently) |
-| M3 | Engine selection record: verify hybrid Qwen3.5 support at a pinned commit for each candidate; write the choice into `docs/DECISIONS.md` | Dense Qwen3.5 text logits in the candidate match the Python reference (gate 5 dense arm) |
-| M4 | Fork/submodule under `runtime/fork/` with a loader for the versioned format and a rotor FFN op | Gate 4 on the tiny checkpoint |
-| M5 | Real-model run: converted FFN layers, quality and speed at equal stored bytes | Gate 5 plus a measured performance table with every row labeled; negative outcome acceptable |
+| Qwen3.5 hybrid correctness | Pinned commit/release supports intended text model, Gated DeltaNet state/cache and full attention; dense logits match Python | Hard gate; no FFN integration before pass |
+| Rotor op extension surface | Documented or source-verified custom op/graph path receives tensor views and can fuse on chosen backend | Hard gate for structured execution; prefer simpler stable path |
+| Format fit | Reads base safetensors plus rotor-scaler v1 directly, or has lossless package conversion with source-manifest provenance | Hard gate; dense reconstruction disqualifies |
+| Runtime independence | Serving execution does not require Python/Transformers | Hard requirement for target runtime; Python host can be temporary correctness harness only |
+| Hardware/backend fit | Supports available validation hardware or named CUDA host, and required target backend | Hard gate per backend; current host cannot run CUDA |
+| License | Upstream `LICENSE` and relevant dependencies audited at pinned revision | Hard gate before fork/distribution |
+| Maintenance cost | Rebase burden, custom kernels per backend, build and test matrix, upstream churn assessed | Prefer smaller isolated change over long-lived deep fork |
+| Measured value | Correct standalone benchmarks vs cuBLAS dense and equal-byte SVD over decode/prefill shapes; later end-to-end results | No adoption/performance claim without positive measured evidence; negative results are valid |
 
-M2 onward requires hardware that is not available on the current host (no GPU driver); schedule it only when such
-hardware exists, and until then claim nothing about GPU performance.
+## 10. Recommended sequencing and gates
+
+1. **Standalone microbenchmarks first.** Build/maintain the small CPU/CUDA reference and benchmark harness for actual Qwen FFN projection shapes and decode/prefill batch regimes. Validate golden outputs before timings; compare against cuBLAS dense and equal-byte SVD. CUDA execution must be on another host with an NVIDIA GPU; record hardware/software with each result.
+2. **Keep an existing Qwen3.5 engine as a correctness host.** Pin candidate releases, verify hybrid layer/cache behavior and dense logits, and test feasibility of mapping selected FFN sites to a structured op without committing to a fork. An existing Python runtime can serve experiments but does not become the native runtime contract.
+3. **M4 gate before any fork.** The project milestone M4 is the isolated CUDA prototype: correctness oracle plus measured decode/prefill layer microbenchmarks over representative projection shapes. Do not start an extensive llama.cpp or other engine fork before M4 passes and the data justifies it. Compilation alone, theoretical FLOPs, or a single favorable shape does not pass this gate.
+4. **Select and record an engine only after criteria pass.** Pin upstream commits and audited dependencies/licenses, document the decision in `docs/DECISIONS.md`, load rotor-scaler v1 directly or through a provenance-preserving lossless conversion, and integrate the custom FFN operator.
+5. **Prove correctness end-to-end before speed claims.** Run interface conformance and goldens, converted tiny-checkpoint logits/argmax, then dense Qwen3.5 reference parity and fixed-token-set quality checks. Only then report performance and quality together, with measured and estimated fields kept separate.
+
+At present, no performance numbers exist. No runtime is selected, and no speedup is claimed.
+
+## Upstream references
+
+All web sources below were accessed **2026-10-08**; dynamic branches/PRs require rechecking at the pinned revision.
+
+- llama.cpp model PR [#19468](https://github.com/ggml-org/llama.cpp/pull/19468), Gated Delta Net PR [#19504](https://github.com/ggml-org/llama.cpp/pull/19504), Vulkan op PR [#20334](https://github.com/ggml-org/llama.cpp/pull/20334), model source [qwen35.cpp](https://github.com/ggml-org/llama.cpp/blob/7cadbfce/src/models/qwen35.cpp), [backend interface](https://github.com/ggml-org/llama.cpp/blob/master/ggml/src/ggml-backend-impl.h), [model addition guide](https://github.com/ggml-org/llama.cpp/blob/master/docs/development/HOWTO-add-model.md), [MIT license](https://raw.githubusercontent.com/ggml-org/llama.cpp/master/LICENSE).
+- vLLM [Qwen3.5 model](https://github.com/vllm-project/vllm/blob/main/vllm/model_executor/models/qwen3_5.py), [custom-op design](https://docs.vllm.ai/en/latest/design/custom_op/), [Apache-2.0 license](https://raw.githubusercontent.com/vllm-project/vllm/main/LICENSE).
+- SGLang [Qwen3.5 deployment docs](https://docs.sglang.io/cookbook/autoregressive/Qwen/Qwen3.5), [model implementation](https://github.com/sgl-project/sglang/blob/a10a24e9/python/sglang/srt/models/qwen3_5.py), [Apache-2.0 license](https://raw.githubusercontent.com/sgl-project/sglang/main/LICENSE).
+- TensorRT-LLM [Qwen3.5 support PR #12203](https://github.com/NVIDIA/TensorRT-LLM/pull/12203), [custom-op source](https://github.com/NVIDIA/TensorRT-LLM/blob/7a8bd87f/tensorrt_llm/_torch/custom_ops/torch_custom_ops.py), [plugin API](https://github.com/NVIDIA/TensorRT-LLM/blob/main/tensorrt_llm/plugin/plugin.py), [license file](https://raw.githubusercontent.com/NVIDIA/TensorRT-LLM/main/LICENSE).
+- MLC/TVM [Qwen3.5 request #3448](https://github.com/mlc-ai/mlc-llm/issues/3448), [hybrid upgrade PR #3480](https://github.com/mlc-ai/mlc-llm/pull/3480), [vision PR #3471](https://github.com/mlc-ai/mlc-llm/pull/3471), [model definition guide](https://llm.mlc.ai/docs/compilation/define_new_models.html), [TensorIR tutorial](https://mlc.ai/docs/deep_dive/tensor_ir/tutorials/creation.html), [Apache-2.0 license](https://raw.githubusercontent.com/mlc-ai/mlc-llm/main/LICENSE).
+- ExecuTorch [Qwen3.5 export commit](https://github.com/pytorch/executorch/commit/9d413ac8b270ecb925d92ffa77cee411d4e90ad8), [custom operator guide](https://github.com/pytorch/executorch/blob/main/examples/portable/custom_ops/README.md), [BSD-style license](https://raw.githubusercontent.com/pytorch/executorch/main/LICENSE).
+- [GGUF format reference](https://github.com/ggml-org/llama.cpp/wiki/GGUF-file-format) (verify canonical path when selecting a conversion workflow).

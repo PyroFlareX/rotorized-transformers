@@ -8,9 +8,9 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from rotor.evaluation.records import write_run_record
 from rotor.models.discovery import local_tensors, remote_json, remote_tensors
 from rotor.models.qwen3_5 import classify_tensor, discover_projections, layer_types
+from rotor.reporting import ExperimentRun, markdown_table
 from rotor.storage import load_storage, model_entry, sha256_file
 
 DTYPE_BYTES = {"F64": 8, "F32": 4, "BF16": 2, "F16": 2, "I64": 8, "I32": 4, "I16": 2, "I8": 1, "U8": 1, "BOOL": 1}
@@ -148,7 +148,28 @@ def main(argv: list[str] | None = None) -> int:
         args.json_out.write_text(json.dumps(rep, indent=2))
         print(f"wrote {args.json_out}")
     if args.record:
-        print(f"wrote run record {write_run_record('inspect', str(key).replace('/', '_'), rep)}")
+        config = {k: str(v) if isinstance(v, Path) else v for k, v in vars(args).items()}
+        with ExperimentRun("inspect", model=str(key), method="inspect", target="na", config=config) as run:
+            run.log(f"inspecting {rep['source']}")
+            run.metrics.update({k: v for k, v in rep.items() if k not in ("projections", "groups")})
+            run.metrics["groups"] = rep["groups"]
+            run.metrics["projections"] = rep["projections"]
+            run.add_section(
+                "Tensor groups (header-derived, exact)",
+                markdown_table([{"group": g, **v} for g, v in sorted(rep["groups"].items())]),
+            )
+            run.add_section(
+                "FFN/attention projections (header-derived, exact)",
+                markdown_table(
+                    [{**e, "shape": "x".join(str(s) for s in e["shape"])} for e in rep["projections"]],
+                    ["family", "shape", "dtype", "count", "bytes"],
+                ),
+            )
+            run.summary = (
+                f"{rep['total_params']:,} parameters / {rep['total_bytes']:,} bytes across {rep['num_layers']} layers; "
+                f"source {rep['source']}."
+            )
+        print(f"wrote run record {run.path}")
     return 0
 
 

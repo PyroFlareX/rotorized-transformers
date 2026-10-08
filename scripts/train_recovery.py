@@ -10,10 +10,11 @@ from pathlib import Path
 import torch
 
 from rotor.data import random_windows, tokenize_text_file, windows_fingerprint, windows_from_ids
-from rotor.evaluation.records import write_run_record
+from rotor.environment import ResourceMonitor
 from rotor.formats import read_manifest
 from rotor.models.loading import load_base, load_converted
 from rotor.models.qwen3_5 import load_tokenizer
+from rotor.reporting import ExperimentRun, markdown_table
 from rotor.storage import load_storage
 from rotor.training.recovery import export_recovered, train_recovery
 
@@ -54,21 +55,13 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: output {out_dir} already exists; recovery never overwrites", file=sys.stderr)
         return 2
 
-    dev = torch.device(args.device)
-    teacher = load_base(base_dir, dtype=torch.float32, device=dev)
-    student, _ = load_converted(ckpt, dtype=torch.float32, device=dev)
-    vocab = teacher.config.vocab_size
-    if args.random_tokens:
-        print("WARNING: --random-tokens is a smoke test only; results say nothing about language quality.")
-        windows = random_windows(vocab, args.seq_len, args.num_windows, args.seed)
-        data_src = "random-tokens"
+    budget = manifest.conversion_config.get("budget", {})
+    if budget.get("target"):
+        target = str(budget["target"])
+    elif budget.get("byte_ratio") is not None:
+        target = f"b{round(float(budget['byte_ratio']) * 100):03d}"
     else:
-        tok = load_tokenizer(base_dir)
-        ids = tokenize_text_file(tok, args.text_file)
-        windows = windows_from_ids(ids, args.seq_len, args.num_windows, args.seed)
-        data_src = str(args.text_file)
-    print(f"windows: {tuple(windows.shape)} sha256={windows_fingerprint(windows)[:16]}")
-
+        target = "na"
     config = {
         "steps": args.steps,
         "batch_size": args.batch_size,
@@ -79,30 +72,67 @@ def main(argv: list[str] | None = None) -> int:
         "seed": args.seed,
         "lrs": {"angles": args.lr_angles, "scales": args.lr_scales, "residual": args.lr_residual},
     }
-    result = train_recovery(student, teacher, windows, config)
-    export_recovered(student, ckpt, out_dir, storage)
-    rec = write_run_record(
-        "recovery",
-        out_dir.name,
-        {
-            "config": {
-                **config,
-                "ckpt": str(ckpt),
-                "data": data_src,
-                "seq_len": args.seq_len,
-                "num_windows": args.num_windows,
-                "device": args.device,
-            },
-            "windows_sha256": windows_fingerprint(windows),
-            "result": result,
-            "output": str(out_dir),
-        },
-    )
-    h = result["history"]
+    run_config = {
+        **config,
+        "ckpt": str(ckpt),
+        "data": "random-tokens" if args.random_tokens else str(args.text_file),
+        "seq_len": args.seq_len,
+        "num_windows": args.num_windows,
+        "device": args.device,
+        "output": str(out_dir),
+        "source_conversion_config": manifest.conversion_config,
+    }
+
+    with ExperimentRun(
+        "recovery", model=manifest.base.hf_id, method="recovery-kd", target=target, config=run_config
+    ) as run:
+        dev = torch.device(args.device)
+        teacher = load_base(base_dir, dtype=torch.float32, device=dev)
+        student, _ = load_converted(ckpt, dtype=torch.float32, device=dev)
+        vocab = teacher.config.vocab_size
+        if args.random_tokens:
+            run.log("WARNING: --random-tokens is a smoke test only; results say nothing about language quality.")
+            windows = random_windows(vocab, args.seq_len, args.num_windows, args.seed)
+        else:
+            tok = load_tokenizer(base_dir)
+            ids = tokenize_text_file(tok, args.text_file)
+            windows = windows_from_ids(ids, args.seq_len, args.num_windows, args.seed)
+        fingerprint = windows_fingerprint(windows)
+        run.log(f"windows: {tuple(windows.shape)} sha256={fingerprint[:16]}")
+
+        with ResourceMonitor() as mon:
+            result = train_recovery(student, teacher, windows, config, log=run.log)
+            export_recovered(student, ckpt, out_dir, storage)
+        h = result["history"]
+        run.metrics["training"] = {
+            "steps": result["steps"],
+            "trainable_params": result["trainable_params"],
+            "kl_first": h[0]["kl"],
+            "kl_last": h[-1]["kl"],
+            "ce_first": h[0]["ce"],
+            "ce_last": h[-1]["ce"],
+            "loss_last": h[-1]["loss"],
+            "history": h,
+        }
+        run.metrics["windows"] = {"shape": list(windows.shape), "sha256": fingerprint}
+        run.metrics["resources"] = mon.as_dict()
+        run.metrics["output"] = str(out_dir)
+        stride = max(1, len(h) // 20)
+        run.add_section(
+            "Distillation loss history (measured; every ~1/20 of the steps plus the last)",
+            markdown_table([r for i, r in enumerate(h) if i % stride == 0 or i == len(h) - 1]),
+        )
+        run.summary = (
+            f"KL distillation from the dense base into {ckpt.name}: kl {h[0]['kl']:.5f} -> {h[-1]['kl']:.5f} "
+            f"over {result['steps']} steps (measured on the training windows themselves, not a held-out set); "
+            f"only RotorLinear parameters ({result['trainable_params']:,}) were trained."
+        )
+        run.add_log_reference(f"recovered checkpoint: `{out_dir}`")
+
     print(
         f"kl: first={h[0]['kl']:.5f} last={h[-1]['kl']:.5f} (measured); trainable params={result['trainable_params']}"
     )
-    print(f"wrote {out_dir}\nrun record {rec}")
+    print(f"wrote {out_dir}\nrun record {run.path}")
     return 0
 
 

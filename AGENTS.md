@@ -38,12 +38,11 @@
 - Never invent benchmark results. Every number comes from a recorded run or is labeled `estimate`.
 - Clearly distinguish actual measurements from theoretical estimates (formula-derived values such as `flops_per_token()` are estimates).
 - Compare models using identical token sequences and evaluation settings; prove it with `rotor.data.windows_fingerprint` / the `windows_sha256` that `evaluate_lm` returns.
-- Record configuration, dataset, seed, library versions, hardware, and timestamps: use `rotor.evaluation.records.write_run_record` (JSON under `reports/experiments/`).
-- Compare representations at **equal stored-byte budgets**; report compute separately.
-- Always include ordinary low-rank (truncated SVD) baselines, plus the random controls in `rotor.evaluation.baselines`.
-- A lower matrix error does not automatically imply lower language-model loss; measure LM loss.
-- Do not call a result a rotor-specific compression gain if it comes from SVD rank truncation.
-- Report negative findings and failed runs; do not delete them.
+- Record configuration, dataset, seed, library versions, hardware, and timestamps with `rotor.reporting.ExperimentRun`: every run publishes a directory `reports/experiments/<model>__<method>__<target>__<UTC>/` containing `report.md`, `metrics.json`, `config.yaml`, `environment.json`, `figures/`, `logs/`. Put measured values in `.metrics` and formula-derived values in `.estimates`.
+- Failed runs are published too (status `failed`, with traceback); never delete them.
+- Compare representations at **equal stored-byte budgets**; report compute separately. Compression targets are presets (fraction of original stored bytes): `b075`=0.75, `b050`=0.50, `b035`=0.35, `b025`=0.25, `b015`=0.15 (`rotor.converters.budget.COMPRESSION_TARGETS`, `parse_target`). Byte accounting is serialized bytes (actual tensor bytes in `rotor_weights.safetensors`; checkpoint totals also report file/manifest/header/index/padding/quantization-metadata bytes).
+- Always include the required baselines (`rotor.evaluation.baselines.equal_budget_baselines`): `dense`, truncated SVD (`svd`), SVD→Givens (`svd_givens`), `magnitude_sparse`, `butterfly`, rotor/scaler (`rotor_weight`), rotor/scaler + residual (`rotor_residual`), plus the random controls.
+- Long-context evaluation only after short-context behavior matches the reference (`scripts/evaluate_model.py --short-context-verified` asserts it; otherwise refused).
 
 ## Development behavior
 
@@ -52,6 +51,15 @@
 - Do not rewrite the entire inference engine during conversion development.
 - Keep Python research components independent of C++ runtime components (the only shared contract is the format spec).
 - Run the relevant tests before declaring a milestone complete.
+- Explain material architectural changes in `docs/DECISIONS.md`.
+- Do not silently relax correctness tolerances.
+
+## Hardware
+
+- Detect the actual CPU, RAM, GPU, CUDA, Vulkan, available storage, and compiler capabilities with `scripts/audit_environment.py` / `rotor.environment.detect_environment()`. Do not assume all listed GPUs are available to every host.
+- Record the actual hardware for each benchmark: `ExperimentRun` writes `environment.json` automatically.
+- Avoid swap-heavy or accidental CPU-fallback measurements when reporting GPU kernel performance: `scripts/benchmark.py --device cuda` refuses CPU fallback, and `--refuse-swap` fails the run if swap usage grows.
+- Current dev host (measured 2026-10-08 by `detect_environment()`): AMD Ryzen 5 7600X (6C/12T; AVX2, AVX-512F, AVX-512 BF16, VNNI), 62 GiB RAM, 8 GiB swap. No NVIDIA GPU on the PCI bus (`nvidia-smi` fails); AMD Radeon RX 7900 XT/XTX (amdgpu, 24 GiB) plus Raphael iGPU; no ROCm; Vulkan loader + radeon ICD only. torch is CPU-only (2.14.1+cpu). `nvcc` 12.0 can compile but not run CUDA here. Compilers: g++ 13.3, clang++ 18.1, cmake 3.28 (no ninja). LaTeX: pdflatex, lualatex, bibtex (no latexmk, biber, xelatex; use natbib/bibtex, not biblatex). Repo on `/mnt/Projects`; NAS via CIFS.
 
 ---
 
@@ -63,7 +71,7 @@ Research code testing whether pretrained Transformer linear weights `W (out x in
 
 (`R_i` = products of disjoint 2D Givens rotation stages on a deterministic topology `brick | butterfly | seeded`; `D_i` = learned diagonals; rectangular layers via pad/truncate; optional low-rank residual `U V`) than dense coefficients, without large language-model quality loss. This is a hypothesis, not a result: no benchmark results exist in this repo yet.
 
-**Stage:** milestone M0 done (scaffold, storage, math, format v1, converter/eval/training code, C++ reference headers, tiny-model tests). M1+ (real-model inspection, sweeps, scaling) are open; see `docs/ROADMAP.md`. **Scope:** text-only, FFN projections only (`ffn.gate`, `ffn.up`, `ffn.down`); attention, DeltaNet, norms, embeddings, RoPE, MTP, and vision are untouched (`docs/DECISIONS.md` D6).
+**Stage:** milestone M0 done (scaffold, storage, math, format v1, converter/eval/training code, C++ reference headers, tiny-model tests). M1–M6 (mathematical prototype, 0.8B conversion, 2B experiments, CUDA kernel prototype, engine integration, scaling/publication) are open; see `docs/ROADMAP.md`. **Scope:** text-only, FFN projections only (`ffn.gate`, `ffn.up`, `ffn.down`); attention, DeltaNet, norms, embeddings, RoPE, MTP, and vision are untouched (`docs/DECISIONS.md` D6).
 
 ## Architecture & data flow
 
@@ -78,7 +86,7 @@ flowchart LR
   X --> L[models.loading.load_converted]
   B --> L
   L --> E[evaluation.lm / longcontext / performance]
-  E --> R[reports/experiments/*.json]
+  E --> R[reports/experiments/run dir<br/>report.md, metrics.json, config.yaml, environment.json]
 ```
 
 Derived checkpoints (`rotor-scaler` format: `rotor_manifest.json`, `rotor_weights.safetensors`, `base_metadata/`) store only replaced projections; the base checkpoint stays authoritative for everything else. See `docs/ARCHITECTURE.md`.
@@ -91,19 +99,20 @@ Derived checkpoints (`rotor-scaler` format: `rotor_manifest.json`, `rotor_weight
 | `src/rotor/formats/` | `rotor-scaler` spec constants, `Manifest`, checkpoint write/read |
 | `src/rotor/models/` | Header-only discovery, Qwen3.5 adapter, module replacement, loading, tiny test checkpoints |
 | `src/rotor/converters/` | Byte-budget allocation, weight/activation fitting, calibration capture, conversion pipeline |
-| `src/rotor/evaluation/` | Reconstruction errors, LM NLL/perplexity, long-context buckets, timing, equal-budget baselines, run records |
+| `src/rotor/evaluation/` | Reconstruction errors, LM NLL/perplexity, long-context buckets, timing, equal-budget baselines |
 | `src/rotor/training/` | Optimizer groups, layer-wise fit schedules, recovery distillation |
 | `src/rotor/storage.py`, `data.py` | Path resolution and write guards; deterministic token windows and fingerprints |
+| `src/rotor/environment.py`, `reporting.py` | Host/hardware detection and resource monitor; `ExperimentRun` run-directory publisher |
 | `scripts/` | CLI entry points (thin wrappers over the library) |
-| `configs/` | `storage.yaml`, `models.yaml`, `experiments/*.yaml` (schema in `configs/experiments/README.md`) |
+| `configs/` | `storage.yaml`, `models.yaml`, `experiments/*.yaml` (schema in `configs/experiments/README.md`), `evaluation/*.yaml` (schema in `configs/evaluation/README.md`) |
 | `runtime/` | C++ side: `interfaces/` headers (present); `kernels/`, `fork/` (empty) |
 | `tests/` | pytest suite, CPU-only |
 | `docs/` | `ARCHITECTURE`, `RESEARCH_PLAN`, `DECISIONS`, `ROADMAP`, `INFERENCE_ENGINE_PLAN` |
-| `reports/` | `experiments/` run records, `figures/`, `papers/`, `literature/` |
+| `reports/` | `experiments/<model>__<method>__<target>__<UTC>/` run directories, `templates/`, `figures/`, `papers/` (LaTeX, natbib/bibtex), `literature/` |
 
 ## Development commands
 
-Run everything with `.venv/bin/python`. The host has no NVIDIA driver; everything runs on CPU.
+Run everything with `.venv/bin/python`. The current dev host has no NVIDIA GPU; everything runs on CPU (see **Hardware**).
 
 | Task | Command |
 |---|---|
@@ -112,16 +121,18 @@ Run everything with `.venv/bin/python`. The host has no NVIDIA driver; everythin
 | Network tests (Hub metadata only) | `.venv/bin/python -m pytest -m network` |
 | C++ parity tests (needs a C++17 compiler) | `.venv/bin/python -m pytest -m cxx` |
 | Lint | `.venv/bin/ruff check src scripts tests` |
+| Audit host + NAS layout (read-only) | `.venv/bin/python scripts/audit_environment.py [--json out.json] [--report]` (`--report` publishes a run directory, kind `audit`) |
 | Remote header inspection (no download) | `.venv/bin/python scripts/inspect_model.py --remote --model qwen3.5-0.8b` |
-| Per-matrix equal-byte comparison (SVD vs SVD→Givens vs rotor vs controls) | `.venv/bin/python scripts/compare_baselines.py --synthetic 48,32 --steps 50` |
+| Per-matrix equal-byte comparison (dense, SVD, SVD→Givens, magnitude sparse, butterfly, rotor, rotor+residual, controls) | `.venv/bin/python scripts/compare_baselines.py --synthetic 48,32 --steps 50 --target b025` |
 | Conversion plan (fits nothing, writes nothing) | `.venv/bin/python scripts/convert_model.py --config configs/experiments/qwen3.5-0.8b-ffn-weight.yaml --dry-run` |
 | Convert (needs the base checkpoint on disk; refuses otherwise) | `.venv/bin/python scripts/convert_model.py --config configs/experiments/qwen3.5-0.8b-ffn-weight.yaml` |
-| Weight-space sweep plan | `.venv/bin/python scripts/sweep_compression.py --config configs/experiments/qwen3.5-0.8b-ffn-weight.yaml --byte-ratios 0.25,0.5 --dry-run` |
+| Weight-space sweep plan | `.venv/bin/python scripts/sweep_compression.py --config configs/experiments/qwen3.5-0.8b-ffn-weight.yaml --targets b050,b025 --dry-run` |
 | Evaluate base vs converted on identical windows | `.venv/bin/python scripts/evaluate_model.py --ckpt <derived dir> --compare-base --text-file <approved text> --seq-len 512 --num-windows 16` (`--random-tokens` is smoke only) |
+| Evaluate from a config | `.venv/bin/python scripts/evaluate_model.py --config configs/evaluation/qwen3.5-short-context.yaml --ckpt <derived dir>` (CLI flags override YAML) |
+| Long-context / passkey evaluation | add `--short-context-verified` (refused otherwise; only after short-context matches the reference) |
 | Recovery fine-tuning (KL distillation) | `.venv/bin/python scripts/train_recovery.py --ckpt <derived dir> --text-file <approved text> --steps 200 --out <name>` |
-| Linear-layer microbenchmark | `.venv/bin/python scripts/benchmark.py --in 1024 --out 3584 --byte-ratio 0.25 --batch-sizes 1,8` |
-
-Pytest config lives in `pyproject.toml` (`addopts = "-m 'not network and not nas'"`; markers `slow`, `network`, `nas`, `cxx`). Check any script's flags with `.venv/bin/python scripts/<name>.py --help`.
+| Linear-layer microbenchmark | `.venv/bin/python scripts/benchmark.py --in 1024 --out 3584 --byte-ratio 0.25 --batch-sizes 1,8` (GPU: `--device cuda`, refuses CPU fallback; `--refuse-swap`) |
+| Build the paper PDF (pdflatex + bibtex) | `make -C reports/papers pdf` |
 
 ## Code conventions
 
@@ -136,7 +147,7 @@ Pytest config lives in `pyproject.toml` (`addopts = "-m 'not network and not nas
 
 - `.gitignore` anchors `/models/`, `/checkpoints/`, `/outputs/`, `/runs/`, `/hf_cache/` to the repo root so `src/rotor/models/` stays tracked; keep those entries anchored. It also ignores `*.safetensors`, `*.bin`, `*.pt`, etc. (tiny generated test fixtures are written to tmp dirs, not committed).
 - Tiny checkpoints (`rotor.models.tiny.make_tiny_checkpoint`) have no `mtp.*` tensors: `save_pretrained` does not emit them.
-- The host has no NVIDIA driver (`nvidia-smi` fails); `device` arguments default to CPU. Do not assume CUDA.
+- The development host has no NVIDIA GPU and no ROCm (`nvidia-smi` fails); `device` arguments default to CPU. Do not assume CUDA.
 - Random-token calibration/evaluation (`calibration.source: random`, `--random-tokens`) is a smoke test only; it says nothing about language-model quality.
 - Without `flash-linear-attention` / `causal-conv1d`, `transformers` falls back to slow torch Gated DeltaNet kernels; this affects speed of full-model runs, not correctness. Do not report those timings as performance results.
 - `rotor.converters.pipeline.convert` refuses when the base checkpoint is missing and reports the HF id/revision/target path; nothing in the repo fetches weights. Do not "fix" this by adding a downloader.
@@ -160,7 +171,10 @@ Pytest config lives in `pyproject.toml` (`addopts = "-m 'not network and not nas
 | `src/rotor/formats/spec.py` | Normative `rotor-scaler` format (`FORMAT_VERSION`) |
 | `src/rotor/math/cascade.py` | `CascadeSpec` (param/FLOP accounting), `RotorCascade`, `RotorLinear` |
 | `src/rotor/converters/pipeline.py` | `convert(...)`: end-to-end conversion with dry-run |
-| `src/rotor/evaluation/baselines.py` | Equal-byte SVD baselines and random controls |
-| `src/rotor/evaluation/records.py` | `write_run_record` |
+| `src/rotor/evaluation/baselines.py` | Equal-byte baselines (dense, SVD, SVD→Givens, magnitude sparse, butterfly, rotor, rotor+residual) and random controls |
+| `src/rotor/reporting.py` | `ExperimentRun` run-directory publisher, `markdown_table`, `make_run_id`, `flatten` |
+| `src/rotor/environment.py` | `detect_environment`, `capability_summary`, `ResourceMonitor` |
+| `reports/templates/experiment_report.md` | Template rendered into every run's `report.md` |
+| `configs/evaluation/*.yaml` | Evaluation definitions for `scripts/evaluate_model.py --config` (schema: `configs/evaluation/README.md`) |
 | `runtime/README.md` | C++ runtime status and rules |
-| `docs/RESEARCH_PLAN.md`, `docs/DECISIONS.md`, `docs/ROADMAP.md` | Hypothesis and falsification criteria; ADRs D1–D10; milestones M0–M7 |
+| `docs/RESEARCH_PLAN.md`, `docs/DECISIONS.md`, `docs/ROADMAP.md` | Hypothesis and falsification criteria; ADRs D1–D10; milestones M0–M6 |

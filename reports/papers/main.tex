@@ -1,0 +1,21 @@
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb,booktabs,graphicx,hyperref,siunitx,natbib}
+\bibliographystyle{plainnat}
+\title{Structured Rotor--Scaler Cascades for Transformer Weight Compression}
+\author{Rotor Transformer Project}
+\date{\today}
+\begin{document}
+\maketitle
+\begin{abstract}
+This paper studies whether learned compositions of deterministic Givens rotations and diagonal scalings can represent Transformer feed-forward projection weights compactly. The central comparison is at equal stored bytes against ordinary low-rank and structured baselines; computational cost is reported separately. No experimental results are available yet.
+\end{abstract}
+\input{sections/introduction}
+\input{sections/background}
+\input{sections/method}
+\input{sections/experiments}
+\input{sections/results}
+\input{sections/discussion}
+\appendix
+\input{sections/appendix}
+\bibliography{references}
+\end{document}

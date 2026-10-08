@@ -19,8 +19,23 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
-_TOOLS = ("g++", "clang++", "cmake", "ninja", "nvcc", "hipcc", "vulkaninfo", "glslc", "pdflatex", "lualatex",
-          "xelatex", "latexmk", "bibtex", "biber", "git")
+_TOOLS = (
+    "g++",
+    "clang++",
+    "cmake",
+    "ninja",
+    "nvcc",
+    "hipcc",
+    "vulkaninfo",
+    "glslc",
+    "pdflatex",
+    "lualatex",
+    "xelatex",
+    "latexmk",
+    "bibtex",
+    "biber",
+    "git",
+)
 _ISA_FLAGS = ("avx2", "fma", "avx512f", "avx512_bf16", "avx512_vnni", "avx512_fp16", "amx_bf16")
 
 

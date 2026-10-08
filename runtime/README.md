@@ -10,6 +10,10 @@ a versioned directory (`rotor_manifest.json` + `rotor_weights.safetensors`, form
 applies `y = D_0 P(R_1 D_1 ... R_k E(D_k x)) + U(Vx) + bias` per layer. Whether this is ever faster than a
 dense GEMM is an open, **unmeasured** question; see `docs/INFERENCE_ENGINE_PLAN.md`.
 
+## Normative conversion/runtime contract
+
+[`interfaces/README.md`](interfaces/README.md) is the normative specification for the converter↔runtime boundary: checkpoint files, tensor names/shapes/dtypes, execution semantics, deterministic topology regeneration, version compatibility, required conformance tests, and the prohibition on Python/Transformers runtime dependencies. Read it alongside the Python authority in `src/rotor/formats/spec.py`, `interfaces/rotor_format.h`, and `interfaces/rotor_topology.hpp` before implementing a loader or operator.
+
 ## Independence from Python
 
 - Nothing under `runtime/` imports or links Python, torch, or numpy.
@@ -21,6 +25,9 @@ dense GEMM is an open, **unmeasured** question; see `docs/INFERENCE_ENGINE_PLAN.
   reference of the cascade semantics. `tests/test_cxx_parity.py` (marker `cxx`) compiles the header with the
   system C++ compiler and checks pairs for exact equality and cascade outputs against `RotorCascade`
   (float64, atol 1e-10).
+
+The engine decision, upstream support/license survey, CUDA/Vulkan kernel research plan, and sequencing gates are in
+[`docs/INFERENCE_ENGINE_PLAN.md`](../docs/INFERENCE_ENGINE_PLAN.md).
 
 ## Layout
 

@@ -21,6 +21,46 @@ _DENSE_DTYPE_BYTES = {
     "float32": 4,
 }
 
+# Named compression targets: fraction of the original dense stored bytes.
+COMPRESSION_TARGETS: dict[str, float] = {"b075": 0.75, "b050": 0.50, "b035": 0.35, "b025": 0.25, "b015": 0.15}
+
+
+def parse_target(s: str) -> float:
+    """Preset name (``b025``) or a float string in (0, 1] -> byte ratio."""
+    text = str(s).strip()
+    if text in COMPRESSION_TARGETS:
+        return COMPRESSION_TARGETS[text]
+    try:
+        value = float(text)
+    except ValueError:
+        raise ValueError(
+            f"unknown compression target {s!r}; expected one of {sorted(COMPRESSION_TARGETS)} or a float"
+        ) from None
+    if not 0.0 < value <= 1.0:
+        raise ValueError(f"compression target must be in (0, 1], got {value}")
+    return value
+
+
+def target_name(ratio: float) -> str:
+    """Preset name for ``ratio`` if it equals one, else ``bNNN`` (percent, zero padded)."""
+    for name, value in COMPRESSION_TARGETS.items():
+        if abs(value - ratio) < 1e-12:
+            return name
+    return f"b{round(ratio * 100):03d}"
+
+
+def resolve_byte_ratio(policy: dict) -> float:
+    """Byte ratio from a policy holding exactly one of ``target`` (preset/float string) or ``byte_ratio``."""
+    has_target, has_ratio = policy.get("target") is not None, policy.get("byte_ratio") is not None
+    if has_target == has_ratio:
+        raise ValueError("policy needs exactly one of 'target' and 'byte_ratio'")
+    if has_target:
+        return parse_target(policy["target"])
+    ratio = float(policy["byte_ratio"])
+    if ratio <= 0:
+        raise ValueError(f"byte_ratio must be > 0, got {ratio}")
+    return ratio
+
 
 def auto_stages(kind: str, width: int) -> int:
     """Stages per rotor for ``stages_per_rotor: auto``: ``max(1, ceil(log2(width)))`` for every topology kind."""
@@ -96,11 +136,10 @@ def allocate(projections: list[Projection], policy: dict) -> dict[str, CascadeSp
     """Per-projection cascade specs keyed by module path.
 
     ``byte_budget = floor(byte_ratio * dense_bytes)`` (dense bytes in the checkpoint dtype) and
-    ``param_budget = byte_budget // bytes_per_param(storage_dtype)``.
+    ``param_budget = byte_budget // bytes_per_param(storage_dtype)``. The ratio comes from policy key ``target``
+    (preset name or float string) or ``byte_ratio`` — exactly one of them.
     """
-    byte_ratio = float(policy["byte_ratio"])
-    if byte_ratio <= 0:
-        raise ValueError(f"byte_ratio must be > 0, got {byte_ratio}")
+    byte_ratio = resolve_byte_ratio(policy)
     storage_dtype = policy.get("storage_dtype", "bfloat16")
     bpp = bytes_per_param(storage_dtype)
     topo = policy.get("topology", {"kind": "butterfly", "seed": 0})

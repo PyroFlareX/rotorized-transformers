@@ -33,6 +33,11 @@ class LayerEntry:
     dense_bytes: int
     structured_bytes: int
     metrics: dict = field(default_factory=dict)  # measured fit metrics (rel. weight error, activation error, ...)
+    # learned scalar counts of this layer by kind: angles / scales (all diagonals) / residual / bias.
+    # Empty on manifests written before this field existed (``Manifest.totals`` then derives it from ``spec``).
+    learned_scalars: dict = field(default_factory=dict)
+    # checkpoint dtype string of the original dense weight (e.g. "BF16"); empty on older manifests.
+    dense_dtype: str = ""
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -46,7 +51,6 @@ class LayerEntry:
         return cls(**d)
 
 
-
 @dataclass
 class Manifest:
     base: BaseProvenance
@@ -57,15 +61,42 @@ class Manifest:
     format_version: int = FORMAT_VERSION
     notes: list[str] = field(default_factory=list)
 
+    # File-level byte accounting measured by ``write_structured`` after the weights file was saved:
+    # file_bytes, header_bytes, manifest_bytes, padding_bytes, tensor_bytes, num_tensors. Empty before writing.
+    serialized: dict = field(default_factory=dict)
+
+    def learned_scalar_count(self) -> dict:
+        counts = {"angles": 0, "scales": 0, "residual": 0, "bias": 0}
+        for entry in self.layers:
+            if entry.learned_scalars:
+                for kind in counts:
+                    counts[kind] += int(entry.learned_scalars.get(kind, 0))
+            else:  # legacy manifest: derive from the cascade spec (bias count is not recorded there)
+                pb = entry.spec.param_breakdown()
+                counts["angles"] += pb["angles"]
+                counts["scales"] += pb["diagonals"]
+                counts["residual"] += pb["residual"]
+        counts["total"] = sum(counts.values())
+        return counts
+
     def totals(self) -> dict:
         dense = sum(entry.dense_bytes for entry in self.layers)
         struct = sum(entry.structured_bytes for entry in self.layers)
-        return {
+        out = {
             "num_layers": len(self.layers),
             "dense_bytes": dense,
             "structured_bytes": struct,
             "byte_ratio": struct / dense if dense else None,
+            "learned_scalar_count": self.learned_scalar_count(),
+            "index_bytes": 0,
+            "index_bytes_note": "0: topologies are deterministic functions of (kind, seed, width); no index is stored",
+            "quantization_metadata_bytes": 0,
+            "quantization_metadata_note": "0: float storage dtypes only; no scales/zero-points/codebooks are stored",
         }
+        for key in ("file_bytes", "header_bytes", "manifest_bytes", "padding_bytes"):
+            if key in self.serialized:
+                out[key] = self.serialized[key]
+        return out
 
     def to_dict(self) -> dict:
         return {
@@ -75,6 +106,7 @@ class Manifest:
             "conversion_config": self.conversion_config,
             "environment": self.environment,
             "totals": self.totals(),
+            "serialized": self.serialized,
             "notes": self.notes,
             "layers": [entry.to_dict() for entry in self.layers],
         }
@@ -96,6 +128,7 @@ class Manifest:
             format=d["format"],
             format_version=int(d["format_version"]),
             notes=list(d.get("notes", [])),
+            serialized=dict(d.get("serialized", {})),
         )
 
     @classmethod

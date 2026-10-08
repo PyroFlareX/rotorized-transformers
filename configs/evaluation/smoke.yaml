@@ -1,0 +1,12 @@
+# Smoke evaluation: synthetic random tokens on a tiny checkpoint. NOT a quality benchmark.
+# Usage: python scripts/evaluate_model.py --config configs/evaluation/smoke.yaml --base-dir <tiny checkpoint dir>
+# (add --ckpt <derived dir> --compare-base for a side-by-side run)
+random_tokens: true
+seq_len: 32
+num_windows: 2
+seed: 0
+device: cpu
+dtype: float32
+batch_size: 1
+generation_prompt_tokens: 8
+max_new_tokens: 4

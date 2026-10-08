@@ -1,0 +1,16 @@
+name: qwen3.5-0.8b-single-ffn-b025-baselines
+model: qwen3.5-0.8b
+families: [ffn.up]
+layers: [0]
+budget: {target: b025, storage_dtype: bfloat16}
+baselines:
+  methods: [dense, svd, svd_givens, magnitude_sparse, butterfly, rotor_weight, rotor_residual]
+  targets: [b075, b050, b035, b025, b015]
+cascade: {topology: {kind: butterfly, seed: 0}, stages_per_rotor: auto, residual_rank: 0, adapter: pad_truncate}
+fit:
+  objective: weight
+  seed: 0
+  device: cpu
+  init_angle_std: 0.01
+  schedule: {phases: [{train: [scales], steps: 200}, {train: [angles, scales, residual], steps: 1800}], lrs: {angles: 0.01, scales: 0.01, residual: 0.001}, cosine_decay: true, log_every: 200}
+calibration: {source: random, path: null, seq_len: 256, num_windows: 8, seed: 0, max_rows: 4096}

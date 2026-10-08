@@ -1,0 +1,26 @@
+\section{Method}
+\label{sec:method}
+\subsection{Operator and topology}
+For a weight matrix $W\in\mathbb{R}^{m\times p}$, the cascade is
+\[
+W \approx D_0 R_1 D_1 R_2 D_2\cdots R_k D_k.
+\]
+Set $n=\max(m,p)$. The input-side diagonal $D_k$ has length $p$; the input is zero-padded to width $n$, then each $R_i$ mixes at width $n$ with intervening diagonals $D_1,\ldots,D_{k-1}$ of length $n$. The result is truncated to its first $m$ coordinates and scaled by $D_0$ of length $m$. This deterministic pad/truncate adapter introduces no learned parameters. The optional rank-$r$ residual $UV$ is reported separately, with $U\in\mathbb{R}^{m\times r}$ and $V\in\mathbb{R}^{r\times p}$.
+
+Each rotation stage is a set of disjoint coordinate pairs $(a,b)$. On each pair it applies the plane rotation $\left(\begin{smallmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{smallmatrix}\right)$; unpaired coordinates pass through. A rotor is the ordered product of its configured stages. The brick topology alternates adjacent odd/even pairings; the butterfly topology pairs by powers-of-two stride; the seeded topology permutes coordinates per stage using the project's deterministic SplitMix64 stream and pairs consecutive permuted coordinates. Only topology kind and seed are needed to reproduce pair indices; no pair indices are serialized.
+
+\subsection{Exact parameter and storage accounting}
+Let $A(n,s)=\sum_{j=0}^{s-1}|P(n,j)|$ be the number of disjoint pairs across $s$ stages under a fixed topology. The exact learned-parameter counts are
+\begin{align*}
+N_{\mathrm{angles}} &= k A(n,s),\\
+N_{\mathrm{diagonals}} &= p+m+(k-1)n,\\
+N_{\mathrm{residual}} &= r(p+m),\\
+N_{\mathrm{structured}} &= k A(n,s)+p+m+(k-1)n+r(p+m),\\
+N_{\mathrm{dense}} &= mp.
+\end{align*}
+For storage dtype with $b$ bytes per scalar, parameter-tensor bytes are $bN_{\mathrm{structured}}$ (plus any separately stored bias); this is an estimate from the formula. Actual serialized file, manifest, and header byte counts are measured and reported separately. Deterministic topologies require no stored indices. The theoretical operation estimate is $6N_{\mathrm{angles}}+N_{\mathrm{diagonals}}+2r(p+m)$ multiply/add operations per input vector under the implementation's accounting convention; it is not a measured latency.
+
+\subsection{Objectives and SVD--Givens baseline}
+Weight fitting minimizes $\|W-\widehat W\|_F^2/\|W\|_F^2$. Given calibration inputs $X$, activation-weighted fitting minimizes $\|XW^T-X\widehat W^T\|_F^2/\|XW^T\|_F^2$. These objectives are distinct and must be labeled accordingly.
+
+The SVD--Givens baseline first truncates to rank $q$, then stores orthonormal factors as Givens angles and signs, with singular values between them. An $m\times q$ Stiefel factor has $qm-q(q+1)/2$ degrees of freedom. Its reduction relative to $mq$ dense factor entries is the Stiefel constraint; the principal compression mechanism is truncating rank, not the Givens representation. Consequently, gains must be compared with equal-byte truncated SVD, not attributed to rotors.

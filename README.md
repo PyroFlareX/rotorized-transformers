@@ -19,10 +19,10 @@ Normative forward semantics and tensor layout: `src/rotor/formats/spec.py`. Deri
 
 ## What is and is not claimed
 
-- **No results yet.** No benchmark, compression ratio, or quality number is claimed anywhere in this repository. Run records (JSON under `reports/experiments/`) are the only source of measured numbers; formula-derived values are labeled `estimate`.
+- **No results yet.** No benchmark, compression ratio, or quality number is claimed anywhere in this repository. Run directories under `reports/experiments/` (`metrics.json`) are the only source of measured numbers; formula-derived values are labeled `estimate`.
 - Initial scope: text-only, FFN projections only (`ffn.gate`, `ffn.up`, `ffn.down`). Attention, DeltaNet, norms, embeddings, RoPE, MTP, and vision tensors are untouched.
 - Whether rotor application is ever faster than a dense GEMM is an open, unmeasured question (`docs/INFERENCE_ENGINE_PLAN.md`).
-- Status: milestone M0 (scaffold, storage, math, format v1, converters, evaluation, tests) is complete; M1 onward is open. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
+- Status: milestone M0 (scaffold, storage, math, format v1, converters, evaluation, tests) is complete; M1–M6 (mathematical prototype, 0.8B conversion, 2B experiments, CUDA kernel prototype, engine integration, scaling/publication) are open. See [`docs/ROADMAP.md`](docs/ROADMAP.md).
 
 ## Target models
 
@@ -42,7 +42,7 @@ All base and derived models live under `/mnt/NAS/MediaHome/Local-Models/` (base:
 
 ## Installation
 
-Python ≥ 3.11. CPU-only PyTorch is sufficient (the development host has no NVIDIA driver):
+Python ≥ 3.11. CPU-only PyTorch is sufficient (the current development host has no NVIDIA GPU; run `.venv/bin/python scripts/audit_environment.py` to see what your host provides):
 
 ```bash
 python3 -m venv .venv && .venv/bin/pip install --index-url https://download.pytorch.org/whl/cpu torch && .venv/bin/pip install -e '.[dev]'
@@ -58,10 +58,10 @@ Verified versions for the Qwen3.5 model classes: `transformers>=5.19` (see `pypr
    .venv/bin/python scripts/inspect_model.py --remote --model qwen3.5-0.8b
    ```
 
-2. **Equal-byte baseline comparison on a synthetic matrix (no model needed).** Truncated SVD vs SVD→Givens vs rotor fits, plus random controls, at the same stored-byte budget:
+2. **Equal-byte baseline comparison on a synthetic matrix (no model needed).** Dense reference, truncated SVD, SVD→Givens, magnitude sparse, butterfly, rotor, rotor+residual, and random controls at the same stored-byte budget. This publishes a run directory under `reports/experiments/`:
 
    ```bash
-   .venv/bin/python scripts/compare_baselines.py --synthetic 48,32 --steps 50
+   .venv/bin/python scripts/compare_baselines.py --synthetic 48,32 --steps 50 --target b025
    ```
 
 3. **End-to-end on a tiny random checkpoint.** `rotor.models.tiny.make_tiny_checkpoint` writes a random Qwen3.5 checkpoint (hidden 64, 4 layers, < 1 MB) in the real on-disk layout. `tests/test_conversion_integration.py` converts one, publishes it atomically into a temporary storage root, reloads it, and checks the safety refusals:
@@ -84,26 +84,35 @@ Verified versions for the Qwen3.5 model classes: `transformers>=5.19` (see `pypr
 
 | Script | Purpose |
 |---|---|
+| `scripts/audit_environment.py` | Read-only audit of CPU, RAM, GPUs, CUDA/Vulkan, torch, compilers, LaTeX, storage (`--json`, `--report`) |
 | `scripts/inspect_model.py` | Tensor groups, layer types, FFN projections (local or `--remote` headers) |
-| `scripts/compare_baselines.py` | Per-matrix equal-byte comparison: SVD, SVD→Givens, rotor, random controls |
-| `scripts/sweep_compression.py` | Weight-space sweep over byte ratios, topologies, residual ranks (`--dry-run` lists the plan) |
+| `scripts/compare_baselines.py` | Per-matrix equal-byte comparison: dense, SVD, SVD→Givens, magnitude sparse, butterfly, rotor, rotor+residual, random controls (`--target b025` or `--byte-ratio`) |
+| `scripts/sweep_compression.py` | Weight-space sweep over compression targets (`--targets b075,b050,...`), topologies, residual ranks (`--dry-run` lists the plan) |
 | `scripts/convert_model.py` | Convert FFN projections from an experiment YAML |
-| `scripts/evaluate_model.py` | Next-token NLL of base/converted model on identical token windows |
+| `scripts/evaluate_model.py` | NLL, generation timing, multiple-choice, passkey on identical inputs; `--config configs/evaluation/*.yaml`; long-context work needs `--short-context-verified` |
 | `scripts/train_recovery.py` | KL-distillation recovery of the replaced layers |
-| `scripts/benchmark.py` | Microbenchmark dense vs rotor vs low-rank linear at equal stored bytes |
+| `scripts/benchmark.py` | Microbenchmark dense vs rotor vs low-rank linear at equal stored bytes (`--device cuda` refuses CPU fallback; `--refuse-swap`) |
 
-Every script supports `--help`.
+Every script supports `--help`. Scripts publish run directories under `reports/experiments/` (see below).
+
+### Baselines and compression targets
+
+Methods compared at equal stored bytes (compute reported separately): `dense` (reference), truncated SVD, SVD→Givens, magnitude sparse, butterfly, rotor/scaler, rotor/scaler + low-rank residual, plus random controls. Compression targets are presets, as a fraction of original stored bytes: `b075`=0.75, `b050`=0.50, `b035`=0.35, `b025`=0.25, `b015`=0.15. Stored bytes are serialized bytes (actual tensor bytes in `rotor_weights.safetensors`; checkpoint totals additionally report file, manifest, header, index, padding, and quantization-metadata bytes). Long-context evaluation is run only after short-context behavior matches the reference.
+
+### Reports and paper
+
+Every run publishes `reports/experiments/<model>__<method>__<target>__<UTC>/` via `rotor.reporting.ExperimentRun`: `report.md`, `metrics.json`, `config.yaml`, `environment.json`, `figures/`, `logs/`. Failed runs are published with status `failed`. The LaTeX paper lives in `reports/papers/`; build with `make -C reports/papers pdf`. It needs `pdflatex` and `bibtex` (TeX Live; on Debian/Ubuntu `texlive-latex-recommended texlive-science texlive-bibtex-extra`); `latexmk`, `biber`, and biblatex are not required (natbib/bibtex is used).
 
 ## Repository layout
 
 ```
 src/rotor/        math, formats, models, converters, evaluation, training, storage, data
 scripts/          CLI entry points
-configs/          storage.yaml, models.yaml, experiments/*.yaml
+configs/          storage.yaml, models.yaml, experiments/*.yaml, evaluation/*.yaml
 runtime/          C++ interface headers (kernels/ and fork/ are empty)
 tests/            pytest suite (CPU-only)
 docs/             architecture, research plan, decisions, roadmap, inference engine plan
-reports/          run records, figures, papers, literature notes
+reports/          experiments/ run directories, templates/, figures/, papers/ (LaTeX), literature notes
 ```
 
 ## Documentation
@@ -112,6 +121,6 @@ reports/          run records, figures, papers, literature notes
 - [`docs/RESEARCH_PLAN.md`](docs/RESEARCH_PLAN.md): hypothesis, representation, experiment matrix, falsification criteria
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md): package layout, dependency rules, data flow, format, safety mechanisms
 - [`docs/DECISIONS.md`](docs/DECISIONS.md): design decisions D1–D10
-- [`docs/ROADMAP.md`](docs/ROADMAP.md): milestones M0–M7
+- [`docs/ROADMAP.md`](docs/ROADMAP.md): milestones M0–M6
 - [`docs/INFERENCE_ENGINE_PLAN.md`](docs/INFERENCE_ENGINE_PLAN.md): engine selection and kernel plan (none measured)
 - [`runtime/README.md`](runtime/README.md): C++ runtime status
