@@ -3,13 +3,9 @@
 from __future__ import annotations
 
 import json
-import platform
-import subprocess
-import sys
 from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime
-from pathlib import Path
 
+from rotor.environment import detect_environment
 from rotor.formats.spec import FORMAT_NAME, FORMAT_VERSION
 from rotor.math.cascade import CascadeSpec
 
@@ -50,44 +46,13 @@ class LayerEntry:
         return cls(**d)
 
 
-def environment_record() -> dict:
-    import torch
-
-    try:
-        import transformers
-
-        tf_version = transformers.__version__
-    except ImportError:  # pragma: no cover
-        tf_version = None
-    try:
-        git_rev = (
-            subprocess.run(
-                ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=False, cwd=Path(__file__).parent
-            ).stdout.strip()
-            or None
-        )
-    except OSError:  # pragma: no cover
-        git_rev = None
-    return {
-        "timestamp_utc": datetime.now(UTC).isoformat(),
-        "python": sys.version.split()[0],
-        "torch": torch.__version__,
-        "transformers": tf_version,
-        "platform": platform.platform(),
-        "cpu": platform.processor() or platform.machine(),
-        "cuda_devices": [torch.cuda.get_device_name(i) for i in range(torch.cuda.device_count())]
-        if torch.cuda.is_available()
-        else [],
-        "git_commit": git_rev,
-    }
-
 
 @dataclass
 class Manifest:
     base: BaseProvenance
     layers: list[LayerEntry]
     conversion_config: dict
-    environment: dict = field(default_factory=environment_record)
+    environment: dict = field(default_factory=lambda: detect_environment(include_storage=False))
     format: str = FORMAT_NAME
     format_version: int = FORMAT_VERSION
     notes: list[str] = field(default_factory=list)
