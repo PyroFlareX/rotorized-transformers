@@ -1,0 +1,19 @@
+# Single source of truth for model-artifact locations.
+# Every script resolves paths through rotor.storage; never hardcode these elsewhere.
+#
+# MANDATORY: all base and derived checkpoints live under this NAS root.
+# Override per machine with configs/storage.local.yaml (gitignored) or ROTOR_STORAGE_CONFIG.
+version: 1
+nas_root: /mnt/NAS/MediaHome/Local-Models/
+base_root: /mnt/NAS/MediaHome/Local-Models/base/
+derived_root: /mnt/NAS/MediaHome/Local-Models/derived/
+rotor_derived_root: /mnt/NAS/MediaHome/Local-Models/derived/rotor-scaler/
+
+# Pre-existing NAS content (observed 2026-10-08). Read-only to this project:
+# never move, overwrite, delete, or duplicate without explicit permission.
+preexisting_read_only:
+  - "/mnt/NAS/MediaHome/Local-Models/Qwen-Image 2.1 Uncensored Q8/"
+  - /mnt/NAS/MediaHome/Local-Models/Qwen3.8-Flash-Next/
+  - /mnt/NAS/MediaHome/Local-Models/gemma-4-e4b-v2-sol-fable/
+  - /mnt/NAS/MediaHome/Local-Models/ternary-bonsai-27b/
+  - /mnt/NAS/MediaHome/Local-Models/temp/

@@ -1,0 +1,60 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Model weights and large artifacts: these live on the NAS, never in Git.
+*.safetensors
+*.bin
+*.pt
+*.pth
+*.ckpt
+*.gguf
+*.onnx
+*.npz
+*.npy
+*.h5
+*.tar
+*.zst
+/checkpoints/
+/models/
+/outputs/
+/runs/
+/wandb/
+.cache/
+/hf_cache/
+*.tmp-*
+
+# Allow tiny generated test fixtures explicitly
+!tests/fixtures/**/*.json
+
+# Local overrides and secrets
+configs/storage.local.yaml
+configs/models.local.yaml
+.env
+.env.*
+*.token
+.huggingface/
+
+# Native runtime builds
+runtime/**/build/
+runtime/**/*.o
+runtime/**/*.so
+runtime/**/*.a
+*.cubin
+*.ptx
+*.fatbin
+
+# Editors / OS
+.vscode/
+.idea/
+.DS_Store

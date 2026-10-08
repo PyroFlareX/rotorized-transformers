@@ -1,0 +1,37 @@
+# Target models. `local_path` is relative to storage.base_root unless absolute,
+# so an existing checkpoint stored elsewhere under the NAS root can be referenced in place.
+# `revision` pins the Hugging Face commit observed via the Hub API on 2026-10-08.
+# Shapes below were read from the published safetensors headers (no weights downloaded).
+version: 1
+default_target_families: [ffn.gate, ffn.up, ffn.down]
+
+models:
+  qwen3.5-0.8b:
+    role: development
+    hf_id: Qwen/Qwen3.5-0.8B-Base
+    revision: dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68
+    local_path: Qwen/Qwen3.5-0.8B-Base
+    adapter: qwen3_5
+    published_total_bytes: 1746882752
+    text: {hidden_size: 1024, intermediate_size: 3584, num_hidden_layers: 24, full_attention_interval: 4}
+    target_families: [ffn.gate, ffn.up, ffn.down]
+
+  qwen3.5-2b:
+    role: main
+    hf_id: Qwen/Qwen3.5-2B-Base
+    revision: b1485b2fa6dfa1287294f269f5fb618e03d52d7c
+    local_path: Qwen/Qwen3.5-2B-Base
+    adapter: qwen3_5
+    published_total_bytes: 4548144832
+    text: {hidden_size: 2048, intermediate_size: 6144, num_hidden_layers: 24, full_attention_interval: 4}
+    target_families: [ffn.gate, ffn.up, ffn.down]
+
+  qwen3.5-4b:
+    role: scaling
+    hf_id: Qwen/Qwen3.5-4B-Base
+    revision: 1001bb4d826a52d1f399e183466143f4da7b741b
+    local_path: Qwen/Qwen3.5-4B-Base
+    adapter: qwen3_5
+    published_total_bytes: 9319737856
+    text: {hidden_size: 2560, intermediate_size: 9216, num_hidden_layers: 32, full_attention_interval: 4}
+    target_families: [ffn.gate, ffn.up, ffn.down]
