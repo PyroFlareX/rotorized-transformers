@@ -1,0 +1,256 @@
+{"id":"science-001","domain":"science","prompt":"A community science teacher begins a lesson by asking why a metal spoon feels colder than a wooden spoon in the same room. The explanation starts with heat moving between materials:"}
+{"id":"science-002","domain":"science","prompt":"A physics student describes a bicycle coasting uphill and wonders where its kinetic energy goes as it slows. A careful account distinguishes:"}
+{"id":"science-003","domain":"science","prompt":"When a glass of ice water is left on a warm table, droplets appear on the outside. The water in those droplets came from:"}
+{"id":"science-004","domain":"science","prompt":"A skywatcher sees the Moon near the horizon and says it looks larger than when it is overhead. The apparent-size illusion is different from:"}
+{"id":"science-005","domain":"science","prompt":"In a simple circuit, replacing one bulb with two bulbs in series changes their brightness. The reason is best understood by considering:"}
+{"id":"science-006","domain":"science","prompt":"A student says that heavier objects always fall faster than lighter ones. A useful explanation separates air resistance from:"}
+{"id":"science-007","domain":"science","prompt":"A sealed jar warms in sunlight even though sunlight passes through its glass. The energy enters mainly as:"}
+{"id":"science-008","domain":"science","prompt":"A radio signal travels from a distant spacecraft to Earth. Even though the signal is an electromagnetic wave, its speed is limited by:"}
+{"id":"science-009","domain":"science","prompt":"Two magnets repel when like poles face each other, but there is no visible material between them. This interaction can be described using:"}
+{"id":"science-010","domain":"science","prompt":"A pressure cooker raises the boiling temperature of water by changing the pressure above the liquid. The underlying relationship is:"}
+{"id":"science-011","domain":"science","prompt":"A glass prism spreads white light into a rainbow of colors because different wavelengths of light:"}
+{"id":"science-012","domain":"science","prompt":"A satellite remains in orbit rather than falling straight to Earth because its sideways motion continually:"}
+{"id":"science-013","domain":"science","prompt":"A tuning fork makes a nearby table vibrate more strongly at one particular pitch. This response is an example of:"}
+{"id":"science-014","domain":"science","prompt":"A chemist compares dissolving sugar in hot and cold water. Temperature often changes the rate because:"}
+{"id":"science-015","domain":"science","prompt":"A sealed bicycle pump becomes warm as its handle is pushed down quickly. The temperature change follows from:"}
+{"id":"science-016","domain":"science","prompt":"An astronomer explains why stars appear to twinkle while planets usually shine more steadily. The key difference is the way Earth's atmosphere affects:"}
+{"id":"biology-001","domain":"biology","prompt":"A seedling bends toward a bright window over several days. Its growth response involves detecting light and redistributing:"}
+{"id":"biology-002","domain":"biology","prompt":"A forest loses many of its large predators, and the number of browsing animals rises. Ecologists would look for a trophic cascade affecting:"}
+{"id":"biology-003","domain":"biology","prompt":"A person receives a vaccine before encountering a pathogen. The immune system's later response is faster because it has formed:"}
+{"id":"biology-004","domain":"biology","prompt":"A coral reef can bleach after prolonged marine heat. The pale appearance reflects the loss of symbiotic algae that normally:"}
+{"id":"biology-005","domain":"biology","prompt":"A bird species develops different beak shapes on islands with different food sources. Over generations, this pattern can arise through:"}
+{"id":"biology-006","domain":"biology","prompt":"A pond's algae grow rapidly after excess fertilizer washes in from nearby fields. The resulting oxygen shortage is a consequence of:"}
+{"id":"biology-007","domain":"biology","prompt":"A mammal maintains a stable internal temperature as the weather changes. This regulation depends on feedback mechanisms that:"}
+{"id":"biology-008","domain":"biology","prompt":"A plant's leaves exchange gases through tiny pores that open and close. These stomata balance carbon dioxide uptake with:"}
+{"id":"biology-009","domain":"biology","prompt":"A researcher finds that two species of desert plant flower at different times of year. This separation can reduce competition for:"}
+{"id":"biology-010","domain":"biology","prompt":"Some bacteria survive antibiotics that kill most of their population. Resistance becomes common when the survivors reproduce and pass on:"}
+{"id":"biology-011","domain":"biology","prompt":"A migratory animal uses several cues to navigate over long distances, including landmarks, seasonal signals, and sometimes:"}
+{"id":"biology-012","domain":"biology","prompt":"A cell uses mitochondria to release usable energy from food molecules. The process transfers energy into:"}
+{"id":"biology-013","domain":"biology","prompt":"A wetland can reduce flood peaks while also providing habitat. Its ability to store water depends on:"}
+{"id":"biology-014","domain":"biology","prompt":"A population with very little genetic diversity may be less able to respond when its environment changes because:"}
+{"id":"biology-015","domain":"biology","prompt":"A bee visits several flowers while collecting nectar and carries pollen between them. This interaction benefits plants by enabling:"}
+{"id":"biology-016","domain":"biology","prompt":"A biologist compares an animal's daily activity with the timing of sunrise and sunset. Such regular behavior is often coordinated by:"}
+{"id":"math-001","domain":"mathematics","prompt":"A city planner compares the average commute time with the median commute time. A few exceptionally long trips can make the mean:"}
+{"id":"math-002","domain":"mathematics","prompt":"A weather forecast says there is a 30 percent chance of rain tomorrow. This probability describes uncertainty across:"}
+{"id":"math-003","domain":"mathematics","prompt":"A shop advertises a discount of 20 percent followed by an additional 10 percent discount. The final reduction is not 30 percent because:"}
+{"id":"math-004","domain":"mathematics","prompt":"A survey estimates support for a proposal using a sample of residents. The estimate becomes more informative when the sample is:"}
+{"id":"math-005","domain":"mathematics","prompt":"A graph can make a small change look dramatic when its vertical axis begins above zero. Readers should inspect:"}
+{"id":"math-006","domain":"mathematics","prompt":"A runner completes equal distances at different speeds. To find the overall average speed, one should divide total distance by:"}
+{"id":"math-007","domain":"mathematics","prompt":"A bakery needs to scale a recipe from 8 servings to 14 servings. Each ingredient amount should be multiplied by:"}
+{"id":"math-008","domain":"mathematics","prompt":"A fair coin is flipped five times and lands heads each time. The chance of heads on the next flip remains:"}
+{"id":"math-009","domain":"mathematics","prompt":"A study reports that two variables are strongly correlated. That finding alone does not establish that one variable:"}
+{"id":"math-010","domain":"mathematics","prompt":"A rectangular garden has a fixed perimeter, and its owner wants the largest possible area. The dimensions that maximize area are:"}
+{"id":"math-011","domain":"mathematics","prompt":"A map uses a scale of one centimeter for five kilometers. A route measuring 7.4 centimeters on the map represents:"}
+{"id":"math-012","domain":"mathematics","prompt":"A data analyst finds one unusually high measurement in an otherwise compact dataset. Before removing it, the analyst should:"}
+{"id":"math-013","domain":"mathematics","prompt":"A delivery service promises arrival between 2 p.m. and 4 p.m. This interval is useful because it communicates:"}
+{"id":"math-014","domain":"mathematics","prompt":"A geometric proof claims two triangles are congruent because two corresponding sides and the included angle match. This criterion is known as:"}
+{"id":"math-015","domain":"mathematics","prompt":"A company predicts next year's sales by fitting a curve to three years of data. The prediction may be unreliable if it:"}
+{"id":"math-016","domain":"mathematics","prompt":"A student checks a complicated calculation by estimating the result before doing exact arithmetic. Estimation helps reveal:"}
+{"id":"computing-001","domain":"computing","prompt":"A text file opens correctly on one computer but shows strange symbols on another. A likely cause is that the two programs interpret:"}
+{"id":"computing-002","domain":"computing","prompt":"A database becomes slow when a report filters millions of rows by the same date field. An index may help by:"}
+{"id":"computing-003","domain":"computing","prompt":"A program repeatedly searches a list from the beginning for each requested item. If the list grows, performance may improve by:"}
+{"id":"computing-004","domain":"computing","prompt":"A web page loads its main text quickly but delays a large image until it is needed. This technique is called:"}
+{"id":"computing-005","domain":"computing","prompt":"A computer stores a color image as a grid of pixels. Increasing the image dimensions can increase memory use because:"}
+{"id":"computing-006","domain":"computing","prompt":"A public website receives a burst of traffic during a major announcement. A load balancer can help by:"}
+{"id":"computing-007","domain":"computing","prompt":"A program saves a file by writing to a temporary file and renaming it only after the write completes. This pattern helps prevent:"}
+{"id":"computing-008","domain":"computing","prompt":"A distributed system may receive the same payment request twice after a network timeout. An idempotent operation makes retries safer by:"}
+{"id":"computing-009","domain":"computing","prompt":"A search engine returns documents that contain the right words but miss the user's intent. Better retrieval can use:"}
+{"id":"computing-010","domain":"computing","prompt":"A small sensor sends readings over a low-bandwidth connection. Compression is most useful when its savings outweigh:"}
+{"id":"computing-011","domain":"computing","prompt":"An application stores a user's password directly in a database. A safer design stores a salted password hash produced by:"}
+{"id":"computing-012","domain":"computing","prompt":"A backup is useful only if the files can be restored. A reliable backup plan regularly tests:"}
+{"id":"computing-013","domain":"computing","prompt":"A computer program needs to handle a list that may contain millions of entries. Choosing an algorithm requires considering:"}
+{"id":"computing-014","domain":"computing","prompt":"A virtual machine and a container both isolate software, but they differ in how they share:"}
+{"id":"computing-015","domain":"computing","prompt":"A developer finds that a bug appears only when two tasks run at once. The investigation should consider shared state and:"}
+{"id":"computing-016","domain":"computing","prompt":"A model's benchmark score rises after a software update, but the evaluation prompts also changed. A fair comparison requires:"}
+{"id":"software-001","domain":"software","prompt":"A team maintains a command-line tool used by several other programs. A stable interface should make clear:"}
+{"id":"software-002","domain":"software","prompt":"A code review finds a helper function used in only one place and adding no useful abstraction. Removing it can improve maintainability by:"}
+{"id":"software-003","domain":"software","prompt":"A test passes on a developer's laptop but fails in continuous integration. The first useful comparison is between:"}
+{"id":"software-004","domain":"software","prompt":"A service depends on an external API that sometimes responds slowly. A bounded timeout prevents one request from:"}
+{"id":"software-005","domain":"software","prompt":"A migration changes the format of a stored record. A safe rollout plans how old and new versions will:"}
+{"id":"software-006","domain":"software","prompt":"A logging statement prints a secret access token while diagnosing an error. The incident response should begin by:"}
+{"id":"software-007","domain":"software","prompt":"A function accepts a user-supplied file path. Safe handling should validate the intended location and avoid:"}
+{"id":"software-008","domain":"software","prompt":"A system's error message says only that an operation failed. A more useful diagnostic also records:"}
+{"id":"software-009","domain":"software","prompt":"A dependency update includes a security fix and a major version change. A cautious upgrade reviews:"}
+{"id":"software-010","domain":"software","prompt":"A cache speeds up repeated reads but can return stale values. Its design needs a clear policy for:"}
+{"id":"software-011","domain":"software","prompt":"A codebase supports two implementations of the same feature, but callers cannot tell which one is active. Better configuration should:"}
+{"id":"software-012","domain":"software","prompt":"A new feature is difficult to test because its logic is entangled with filesystem access. A small design improvement is to:"}
+{"id":"software-013","domain":"software","prompt":"A production incident follows a deployment. A blameless review focuses on the conditions that allowed the failure and:"}
+{"id":"software-014","domain":"software","prompt":"A service reports success before data has reached durable storage. The interface should distinguish an accepted request from:"}
+{"id":"software-015","domain":"software","prompt":"A team proposes adding automatic retries to every failing request. Before doing so, it should examine:"}
+{"id":"software-016","domain":"software","prompt":"A build artifact works on the machine that created it but not on another machine. Reproducibility improves when the build records:"}
+{"id":"engineering-001","domain":"engineering","prompt":"A bridge engineer wants to reduce vibration in a pedestrian span. Before choosing a modification, the team should identify:"}
+{"id":"engineering-002","domain":"engineering","prompt":"A battery pack heats during rapid charging. Engineers manage that heat because excessive temperature can affect:"}
+{"id":"engineering-003","domain":"engineering","prompt":"A wind turbine produces less power when wind speed is low. The output depends on wind conditions and the turbine's:"}
+{"id":"engineering-004","domain":"engineering","prompt":"A building uses thick insulation but still loses heat rapidly around its windows. Those localized paths are examples of:"}
+{"id":"engineering-005","domain":"engineering","prompt":"A water pump is selected for a system with long narrow pipes. The design must account for frictional losses that increase with:"}
+{"id":"engineering-006","domain":"engineering","prompt":"A solar panel produces direct current while a household grid uses alternating current. An inverter performs the conversion between:"}
+{"id":"engineering-007","domain":"engineering","prompt":"A machine part fails after many repeated loads even though no single load exceeded its design limit. This is a form of:"}
+{"id":"engineering-008","domain":"engineering","prompt":"A factory installs a sensor to detect a failing motor before it stops production. The sensor is most valuable when its reading leads to:"}
+{"id":"engineering-009","domain":"engineering","prompt":"A road surface becomes slippery during the first minutes of rain after a dry spell. The risk comes partly from water mixing with:"}
+{"id":"engineering-010","domain":"engineering","prompt":"An engineer chooses between a lightweight material and a durable one for a moving part. The trade-off should be evaluated against:"}
+{"id":"engineering-011","domain":"engineering","prompt":"A heat exchanger transfers energy between two fluid streams without mixing them. Its performance depends on surface area and:"}
+{"id":"engineering-012","domain":"engineering","prompt":"A smart thermostat overshoots the target temperature before turning the furnace off. Adjusting its control system can reduce:"}
+{"id":"engineering-013","domain":"engineering","prompt":"A city plans an electric bus fleet but has limited charging capacity. The schedule must coordinate vehicle routes with:"}
+{"id":"engineering-014","domain":"engineering","prompt":"A pressure vessel is inspected for cracks before returning to service. The inspection matters because small defects can grow under:"}
+{"id":"engineering-015","domain":"engineering","prompt":"A flood barrier protects one neighborhood but may raise water levels downstream. A systems-level assessment traces:"}
+{"id":"engineering-016","domain":"engineering","prompt":"A product team compares repairable components with a sealed disposable design. Repairability can extend product life by making it easier to:"}
+{"id":"economics-001","domain":"economics","prompt":"A city raises the price of downtown parking to reduce traffic. The policy works through changes in drivers' incentives and:"}
+{"id":"economics-002","domain":"economics","prompt":"A household compares buying an appliance now with waiting for a more efficient model. The opportunity cost of waiting includes:"}
+{"id":"economics-003","domain":"economics","prompt":"A bakery can produce more bread by hiring another worker, but each additional worker adds less output than the previous one. This illustrates:"}
+{"id":"economics-004","domain":"economics","prompt":"A central bank raises interest rates to slow inflation. Higher borrowing costs can reduce spending, although the effect may arrive with:"}
+{"id":"economics-005","domain":"economics","prompt":"A company gives customers a free trial and charges only after enrollment. Clear consent matters because consumers need to understand:"}
+{"id":"economics-006","domain":"economics","prompt":"A city considers a congestion charge to account for delays each driver imposes on others. This is an attempt to price:"}
+{"id":"economics-007","domain":"economics","prompt":"A family's grocery bill rises even though it buys the same quantity of food. To compare purchasing power over time, analysts adjust for:"}
+{"id":"economics-008","domain":"economics","prompt":"A small business faces uncertain monthly sales and fixed rent. It can reduce financial risk by maintaining:"}
+{"id":"economics-009","domain":"economics","prompt":"A worker chooses between a higher salary with a long commute and a lower salary nearby. The decision includes nonmonetary costs such as:"}
+{"id":"economics-010","domain":"economics","prompt":"A market has only one local broadband provider. Competition policy may examine barriers to entry and the provider's ability to:"}
+{"id":"economics-011","domain":"economics","prompt":"A government subsidy helps households install insulation. Evaluating the program requires comparing public cost with:"}
+{"id":"economics-012","domain":"economics","prompt":"A company raises prices after learning that customers have few alternatives. Economists distinguish market power from:"}
+{"id":"economics-013","domain":"economics","prompt":"A bond promises fixed payments over many years. Its market price can fall when newly issued bonds offer:"}
+{"id":"economics-014","domain":"economics","prompt":"A farmer plants several crops instead of relying on one. Diversification can reduce income risk when harvest outcomes are:"}
+{"id":"economics-015","domain":"economics","prompt":"A policy reduces unemployment in the short term but increases government borrowing. A full assessment considers:"}
+{"id":"economics-016","domain":"economics","prompt":"A city's housing shortage persists despite rising rents. Researchers should examine restrictions on new construction and:"}
+{"id":"history-001","domain":"history","prompt":"A historian finds two letters written by people on opposite sides of a labor dispute. To use them responsibly, the historian considers:"}
+{"id":"history-002","domain":"history","prompt":"An old map shows a border that differs from today's national boundary. Understanding the change requires tracing:"}
+{"id":"history-003","domain":"history","prompt":"A museum label dates an object to a broad period rather than a precise year. That uncertainty may reflect:"}
+{"id":"history-004","domain":"history","prompt":"A railway connects a rural region to a port, changing how people and goods move. Its effects include both economic change and:"}
+{"id":"history-005","domain":"history","prompt":"A historical photograph appears to show a spontaneous public gathering. The image alone cannot reveal who was excluded or:"}
+{"id":"history-006","domain":"history","prompt":"A government archive opens records decades after an event. Researchers compare those documents with earlier accounts to test:"}
+{"id":"history-007","domain":"history","prompt":"A city preserves buildings from several periods side by side. Their different materials and layouts can show how:"}
+{"id":"history-008","domain":"history","prompt":"A historical leader is praised in one account and criticized in another. A balanced interpretation asks what each source emphasizes and:"}
+{"id":"history-009","domain":"history","prompt":"A new printing technology makes pamphlets cheaper to produce. Its historical influence depends not only on invention but also on:"}
+{"id":"history-010","domain":"history","prompt":"A historian studies a famine using crop records, diaries, and trade data. Combining these sources helps distinguish:"}
+{"id":"history-011","domain":"history","prompt":"An empire expands through military conquest, but later rule depends on local cooperation. The evidence may reveal:"}
+{"id":"history-012","domain":"history","prompt":"A language borrows many words after centuries of trade and migration. Those loanwords can preserve traces of:"}
+{"id":"history-013","domain":"history","prompt":"A monument is removed from a public square after a debate about its meaning. The debate reflects changing views of:"}
+{"id":"history-014","domain":"history","prompt":"A historian compares census categories from different decades. Changing definitions can make long-term comparisons:"}
+{"id":"history-015","domain":"history","prompt":"A community's oral histories differ from the official written record. Rather than treating one source as automatically definitive, a researcher:"}
+{"id":"history-016","domain":"history","prompt":"A treaty ends a war on paper, yet conflict continues in some regions. The gap between agreement and reality can arise from:"}
+{"id":"geography-001","domain":"geography","prompt":"A coastal town experiences milder winters than an inland town at the same latitude. The nearby ocean moderates temperature by:"}
+{"id":"geography-002","domain":"geography","prompt":"A river carries sediment from mountain slopes to a broad delta. This process gradually changes the shape of:"}
+{"id":"geography-003","domain":"geography","prompt":"A city grows around a harbor where ships can shelter from storms. The location offers an advantage in transport and:"}
+{"id":"geography-004","domain":"geography","prompt":"Two neighborhoods are equally close to a hospital in straight-line distance, but one has a much longer trip. Travel time also depends on:"}
+{"id":"geography-005","domain":"geography","prompt":"A mountain range creates wet conditions on one side and dry conditions on the other. Air descending on the sheltered side:"}
+{"id":"geography-006","domain":"geography","prompt":"A map uses the same color for every area above a certain elevation. A reader should check the legend because:"}
+{"id":"geography-007","domain":"geography","prompt":"A city faces hotter summer nights as it expands. Pavement, buildings, and limited vegetation can create an urban heat island by:"}
+{"id":"geography-008","domain":"geography","prompt":"A region's population shifts toward cities while some rural districts lose residents. Planners need to understand:"}
+{"id":"geography-009","domain":"geography","prompt":"A farmer selects crops suited to local rainfall and soil. Those choices depend on environmental conditions and:"}
+{"id":"geography-010","domain":"geography","prompt":"A shipping route shortens when a canal opens, but not every port benefits equally. Trade patterns respond to:"}
+{"id":"geography-011","domain":"geography","prompt":"A neighborhood lies near a river that floods only every few decades. Risk assessment combines hazard with:"}
+{"id":"geography-012","domain":"geography","prompt":"A region experiences water scarcity even though its annual rainfall is moderate. Seasonal timing and storage capacity affect:"}
+{"id":"geography-013","domain":"geography","prompt":"A map of average income hides sharp differences within each district. Adding finer geographic detail may reveal:"}
+{"id":"geography-014","domain":"geography","prompt":"A species moves toward higher elevations as its usual climate warms. Its future range may be limited by:"}
+{"id":"geography-015","domain":"geography","prompt":"A border divides a watershed shared by several communities. Coordinated management can help prevent disputes over:"}
+{"id":"geography-016","domain":"geography","prompt":"A remote island imports most of its fuel and food. Its resilience depends on transport links and:"}
+{"id":"health-001","domain":"health","prompt":"A person comparing two over-the-counter medicines should check the active ingredients, directions, and warnings, especially to avoid:"}
+{"id":"health-002","domain":"health","prompt":"Public health officials track how many people develop a disease over time. Incidence differs from prevalence because it counts:"}
+{"id":"health-003","domain":"health","prompt":"A community clinic offers blood pressure screening at a neighborhood market. Screening is most useful when people with abnormal results can:"}
+{"id":"health-004","domain":"health","prompt":"A person feels better after taking antibiotics for a bacterial infection. They should follow the prescriber's instructions and ask a clinician before:"}
+{"id":"health-005","domain":"health","prompt":"A sleep researcher studies why a regular bedtime helps some people feel rested. Sleep quality depends on duration and:"}
+{"id":"health-006","domain":"health","prompt":"A city adds shade and drinking-water stations along walking routes during hot weather. These changes can reduce heat illness by:"}
+{"id":"health-007","domain":"health","prompt":"A clinical study reports that a treatment reduced risk from 2 cases per thousand to 1 per thousand. The relative reduction is large, but the absolute change is:"}
+{"id":"health-008","domain":"health","prompt":"A person keeps a symptom diary before an appointment. Recording timing, severity, and possible triggers can help a clinician:"}
+{"id":"health-009","domain":"health","prompt":"A hospital wants to reduce medication errors during shift changes. A structured handoff helps by making key information:"}
+{"id":"health-010","domain":"health","prompt":"A nutrition label lists serving size as well as calories and nutrients. Comparing products requires checking whether the servings are:"}
+{"id":"health-011","domain":"health","prompt":"A contact-tracing team informs exposed people while protecting their privacy. Good communication explains risk and:"}
+{"id":"health-012","domain":"health","prompt":"A patient is offered several reasonable treatment options. Shared decision-making combines clinical evidence with the patient's:"}
+{"id":"health-013","domain":"health","prompt":"A vaccine study follows participants over time to look for uncommon side effects. Larger studies and monitoring after approval can:"}
+{"id":"health-014","domain":"health","prompt":"A neighborhood has high rates of asthma near a busy road. Investigators consider air pollution alongside housing, work, and:"}
+{"id":"health-015","domain":"health","prompt":"An older adult wants to remain independent at home after a fall. A safety review may consider lighting, handrails, and:"}
+{"id":"health-016","domain":"health","prompt":"A health article claims that one food prevents a complex disease. Readers should look for the study design, evidence quality, and:"}
+{"id":"education-001","domain":"education","prompt":"A teacher notices that students can repeat a definition but cannot apply it to a new example. The next lesson should provide practice with:"}
+{"id":"education-002","domain":"education","prompt":"A student studies for an exam by rereading the same chapter several times. Retrieval practice can strengthen learning by:"}
+{"id":"education-003","domain":"education","prompt":"A class includes students who already know the topic and others encountering it for the first time. A teacher can support both groups by:"}
+{"id":"education-004","domain":"education","prompt":"A learner makes a mistake while solving an equation. Useful feedback identifies the reasoning step that failed and:"}
+{"id":"education-005","domain":"education","prompt":"A school replaces a long lecture with short explanations and guided exercises. The change helps when students receive timely feedback on:"}
+{"id":"education-006","domain":"education","prompt":"A student feels anxious before giving a presentation. Breaking preparation into smaller rehearsals can make the task:"}
+{"id":"education-007","domain":"education","prompt":"A research team measures whether a tutoring program helps students. A fair evaluation compares outcomes while accounting for:"}
+{"id":"education-008","domain":"education","prompt":"A child learns a second language through conversation and reading. Frequent meaningful input supports vocabulary and:"}
+{"id":"education-009","domain":"education","prompt":"A teacher wants a classroom discussion to include quieter students. Providing time to write before speaking can:"}
+{"id":"education-010","domain":"education","prompt":"A student remembers facts for a quiz but forgets them a week later. Spaced review can improve long-term retention by:"}
+{"id":"education-011","domain":"education","prompt":"A school introduces a new grading policy. To judge whether it is fair, staff should explain expectations and:"}
+{"id":"education-012","domain":"education","prompt":"A student uses an online answer generator to complete an assignment. A useful learning policy distinguishes assistance from:"}
+{"id":"education-013","domain":"education","prompt":"A team project gives every student the same grade despite unequal contributions. Clear roles and peer reflection can make:"}
+{"id":"education-014","domain":"education","prompt":"A museum designs an exhibit for visitors with different levels of background knowledge. Layered explanations let each visitor:"}
+{"id":"education-015","domain":"education","prompt":"A school evaluates a reading intervention using only one end-of-year test. Multiple measures can provide a fuller picture of:"}
+{"id":"education-016","domain":"education","prompt":"A student has trouble concentrating in a noisy study space. Reducing distractions and setting a short goal can help:"}
+{"id":"civics-001","domain":"civics","prompt":"A city council receives public comments on a proposed zoning change. A fair process gives residents access to the proposal and:"}
+{"id":"civics-002","domain":"civics","prompt":"A new law gives an agency authority to set technical standards. Oversight matters because agencies must act within:"}
+{"id":"civics-003","domain":"civics","prompt":"A local election has low turnout in some neighborhoods. Researchers might examine registration access, polling locations, and:"}
+{"id":"civics-004","domain":"civics","prompt":"A public agency publishes a large dataset for residents to inspect. Documentation should explain how the data were collected and:"}
+{"id":"civics-005","domain":"civics","prompt":"A proposed policy benefits one group while imposing costs on another. Deliberation can clarify who benefits, who pays, and:"}
+{"id":"civics-006","domain":"civics","prompt":"A court interprets a law whose wording is unclear. The written decision explains how the court considers text, precedent, and:"}
+{"id":"civics-007","domain":"civics","prompt":"A public meeting is moved to a time when many residents cannot attend. Meaningful participation requires considering:"}
+{"id":"civics-008","domain":"civics","prompt":"A government contracts a private company to operate a public service. The contract should specify performance standards and:"}
+{"id":"civics-009","domain":"civics","prompt":"A news report quotes a poll about a close election. Readers should check the sample, question wording, and:"}
+{"id":"civics-010","domain":"civics","prompt":"A public records request seeks documents about a government decision. Transparency rules balance disclosure with:"}
+{"id":"civics-011","domain":"civics","prompt":"A city distributes emergency supplies after a storm. A transparent allocation plan explains eligibility and:"}
+{"id":"civics-012","domain":"civics","prompt":"A neighborhood group challenges a development permit. The process should provide a clear way to submit evidence and:"}
+{"id":"civics-013","domain":"civics","prompt":"A constitution divides authority among branches of government. This arrangement can limit concentrated power through:"}
+{"id":"civics-014","domain":"civics","prompt":"A public health rule restricts certain activities during an outbreak. Officials should explain the evidence, scope, and:"}
+{"id":"civics-015","domain":"civics","prompt":"A city considers facial-recognition cameras in public spaces. A policy review should address accuracy, retention, and:"}
+{"id":"civics-016","domain":"civics","prompt":"A community disputes how a shared public park should be used. A durable agreement begins by identifying common goals and:"}
+{"id":"language-001","domain":"language","prompt":"A writer revises a paragraph whose sentences all begin with the same phrase. Varying sentence openings can improve:"}
+{"id":"language-002","domain":"language","prompt":"A translator finds that an idiom has no direct equivalent in another language. Preserving its meaning may require translating:"}
+{"id":"language-003","domain":"language","prompt":"A sentence uses the pronoun 'they' after mentioning two groups. The writer can remove ambiguity by:"}
+{"id":"language-004","domain":"language","prompt":"A newspaper headline uses a metaphor to describe a budget negotiation. The metaphor can shape readers' interpretation by:"}
+{"id":"language-005","domain":"language","prompt":"A student quotes a source in an essay but gives no citation. Proper attribution lets readers trace the claim and:"}
+{"id":"language-006","domain":"language","prompt":"A novelist changes from first-person narration to a distant third-person voice. That shift changes what readers can know about:"}
+{"id":"language-007","domain":"language","prompt":"A dictionary records several meanings for a word. The intended sense becomes clear from the surrounding:"}
+{"id":"language-008","domain":"language","prompt":"A poem repeats a consonant sound at the start of nearby words. This alliteration can create rhythm and:"}
+{"id":"language-009","domain":"language","prompt":"A technical document introduces an unfamiliar term. A concise definition should distinguish it from related concepts and:"}
+{"id":"language-010","domain":"language","prompt":"A speaker pauses before an important phrase during a presentation. The pause gives the audience time to:"}
+{"id":"language-011","domain":"language","prompt":"A historical novel includes dialect in dialogue. The author should consider how spelling choices may affect:"}
+{"id":"language-012","domain":"language","prompt":"A paragraph contains several claims but no clear main point. A strong topic sentence can help readers:"}
+{"id":"language-013","domain":"language","prompt":"A researcher paraphrases a source in different words but keeps its central idea. The paraphrase still needs:"}
+{"id":"language-014","domain":"language","prompt":"A joke depends on a word with two meanings. The reader recognizes the humor when both meanings:"}
+{"id":"language-015","domain":"language","prompt":"A public notice must be understood quickly by a broad audience. Plain language favors familiar words and:"}
+{"id":"language-016","domain":"language","prompt":"A writer uses passive voice in a report about a preventable error. Naming the responsible process can make the sentence:"}
+{"id":"arts-001","domain":"arts","prompt":"A painter uses a small area of bright color against muted tones. The contrast draws attention by changing:"}
+{"id":"arts-002","domain":"arts","prompt":"A jazz ensemble leaves space between phrases rather than playing continuously. Silence can contribute to the music's:"}
+{"id":"arts-003","domain":"arts","prompt":"A theater director stages a familiar story from the perspective of a minor character. This choice can reveal:"}
+{"id":"arts-004","domain":"arts","prompt":"A photographer frames a subject near the edge of the image. The composition can create tension by shaping:"}
+{"id":"arts-005","domain":"arts","prompt":"A public mural is painted with help from residents of the neighborhood. The collaboration can influence both the image and:"}
+{"id":"arts-006","domain":"arts","prompt":"A film uses a recurring musical phrase whenever a character faces a difficult choice. The motif helps connect:"}
+{"id":"arts-007","domain":"arts","prompt":"A sculptor uses recycled metal to make a large outdoor work. The material's history can add meaning beyond its shape:"}
+{"id":"arts-008","domain":"arts","prompt":"A dance performance repeats a movement but changes its speed and direction. Repetition with variation can make the audience notice:"}
+{"id":"arts-009","domain":"arts","prompt":"A museum displays an artwork with a short wall label. The label can offer context while leaving room for:"}
+{"id":"arts-010","domain":"arts","prompt":"A composer adapts a folk melody for a modern orchestra. The arrangement can preserve the melody while changing:"}
+{"id":"arts-011","domain":"arts","prompt":"A designer chooses a typeface for a wayfinding sign in a busy station. Legibility depends on letterforms, size, contrast, and:"}
+{"id":"arts-012","domain":"arts","prompt":"A novel's setting changes from a crowded city to a remote coastline. The shift in place can alter the story's:"}
+{"id":"arts-013","domain":"arts","prompt":"A community archive collects posters, recordings, and programs from local performances. Together these materials document:"}
+{"id":"arts-014","domain":"arts","prompt":"A film scene feels suspenseful even before anything dangerous happens. Lighting, pacing, and sound can build:"}
+{"id":"arts-015","domain":"arts","prompt":"A traditional craft is taught to younger makers through demonstration and practice. This transmission preserves technique while allowing:"}
+{"id":"arts-016","domain":"arts","prompt":"A critic compares two paintings made in different centuries. A careful comparison attends to their contexts as well as:"}
+{"id":"food-001","domain":"food","prompt":"A cook sears vegetables in a crowded pan and finds that they steam instead of browning. Leaving room around each piece allows:"}
+{"id":"food-002","domain":"food","prompt":"A bread dough rises slowly in a cool kitchen. Yeast activity changes with temperature, hydration, and:"}
+{"id":"food-003","domain":"food","prompt":"A household wants to reduce food waste without buying special equipment. Planning meals around ingredients already on hand can:"}
+{"id":"food-004","domain":"food","prompt":"A farmer rotates legumes with grain crops. Some legumes host bacteria that convert atmospheric nitrogen into forms plants can:"}
+{"id":"food-005","domain":"food","prompt":"A cook substitutes baking powder for baking soda in a recipe. The result may change because the two ingredients:"}
+{"id":"food-006","domain":"food","prompt":"A garden's soil drains too quickly for the vegetables being grown. Adding mature organic matter can improve:"}
+{"id":"food-007","domain":"food","prompt":"A food label lists a product's ingredients from greatest to least weight. That order helps shoppers see:"}
+{"id":"food-008","domain":"food","prompt":"A neighborhood market wants to keep produce fresh while reducing energy use. The storage plan should account for:"}
+{"id":"food-009","domain":"food","prompt":"A recipe calls for salt at several stages rather than only at the end. Seasoning gradually helps the cook:"}
+{"id":"food-010","domain":"food","prompt":"A small farm sells directly to customers at a weekly market. This channel can improve margins but also requires:"}
+{"id":"food-011","domain":"food","prompt":"A home cook stores raw poultry above ready-to-eat food in the refrigerator. Reordering shelves can reduce the risk of:"}
+{"id":"food-012","domain":"food","prompt":"A region faces a drought during the growing season. Farmers can reduce water demand by adjusting irrigation timing and:"}
+{"id":"food-013","domain":"food","prompt":"A community garden has limited space and wants to grow a variety of crops. Succession planting makes better use of:"}
+{"id":"food-014","domain":"food","prompt":"A cook tastes soup before adding more salt. Acidity, herbs, and texture can also affect how balanced the flavor:"}
+{"id":"food-015","domain":"food","prompt":"A food cooperative buys staples in bulk for its members. Transparent records help it manage inventory, costs, and:"}
+{"id":"food-016","domain":"food","prompt":"A city composts food scraps collected from households. Composting returns nutrients to soil when the process has enough air and:"}
+{"id":"reasoning-001","domain":"reasoning","prompt":"A committee must choose between a fast temporary repair and a slower durable solution. A sound decision compares risks, costs, and:"}
+{"id":"reasoning-002","domain":"reasoning","prompt":"A person changes their opinion after seeing strong contrary evidence. This is an example of intellectual humility because it:"}
+{"id":"reasoning-003","domain":"reasoning","prompt":"A team is sure that a product change caused higher sales, but the launch coincided with a holiday. A useful next step is to:"}
+{"id":"reasoning-004","domain":"reasoning","prompt":"A manager asks for the simplest explanation of a complicated failure. Simplicity is useful, but the explanation should still account for:"}
+{"id":"reasoning-005","domain":"reasoning","prompt":"A witness remembers an event differently after hearing other people's accounts. Investigators should separate direct observation from:"}
+{"id":"reasoning-006","domain":"reasoning","prompt":"A project has a deadline, a limited budget, and several quality goals. The team can make trade-offs clearer by ranking:"}
+{"id":"reasoning-007","domain":"reasoning","prompt":"A decision appears successful because its outcome was favorable. Judging the decision itself also requires considering:"}
+{"id":"reasoning-008","domain":"reasoning","prompt":"A colleague raises a concern about a plan during a meeting. A constructive response first clarifies the concern and:"}
+{"id":"reasoning-009","domain":"reasoning","prompt":"A forecast gives a range rather than a single number. Communicating uncertainty well explains what assumptions could move the result:"}
+{"id":"reasoning-010","domain":"reasoning","prompt":"A negotiator treats every disagreement as a contest with one winner. Looking for shared interests can create options that:"}
+{"id":"reasoning-011","domain":"reasoning","prompt":"A team finds an impressive result after trying many different analyses. It should account for multiple comparisons before:"}
+{"id":"reasoning-012","domain":"reasoning","prompt":"A family chooses a care plan for an older relative. A respectful discussion includes the person's preferences, practical limits, and:"}
+{"id":"reasoning-013","domain":"reasoning","prompt":"A product feature makes a task easier for most users but harder for a smaller group. An inclusive review examines:"}
+{"id":"reasoning-014","domain":"reasoning","prompt":"A journalist receives a dramatic claim from an anonymous source. Before publishing, the journalist should seek independent corroboration and:"}
+{"id":"reasoning-015","domain":"reasoning","prompt":"A scientist cannot reproduce a result reported by another laboratory. The laboratories should compare methods, materials, and:"}
+{"id":"reasoning-016","domain":"reasoning","prompt":"A city pilot project succeeds on one street but may not scale to the whole region. Decision-makers should test whether:"}

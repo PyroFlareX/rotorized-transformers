@@ -33,6 +33,7 @@ def _prepare(
         cascade = RotorCascade(spec, dtype=torch.float32, device=device)
         gen = torch.Generator(device=torch.device(device)).manual_seed(seed)
         cascade.init_from_dense(W, angle_std=init_angle_std, generator=gen)
+    cascade.grad_checkpoint = True
     return cascade, W
 
 

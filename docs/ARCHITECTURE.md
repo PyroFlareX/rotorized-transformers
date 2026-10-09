@@ -4,7 +4,7 @@
 
 ```
 src/rotor/
-  storage.py       NAS path resolution, write guards, atomic publish, sha256
+  telemetry.py    asynchronous process, host, and device resource sampling (JSONL)
   environment.py   measured host/software capability detection and resource monitoring
   reporting.py     atomic experiment run directories, metrics/estimates, logs and figures
   data.py          tokenization, deterministic token windows, window fingerprints
@@ -44,7 +44,7 @@ flowchart LR
   A --> F[Fit<br/>converters.fit<br/>weight or activation]
   C[Calibration inputs<br/>converters.calibration] -.-> F
   F --> M[Manifest + safetensors<br/>formats.write_structured]
-  M -->|atomic_dir| X[Derived checkpoint on NAS<br/>rotor_derived_root]
+  M -->|atomic_dir| X[Derived checkpoint under NAS temp/ (rotor_derived_root)]
   X --> L[load_converted<br/>models.loading]
   B --> L
   L --> E[Evaluation<br/>LM, generation, tasks, retrieval, long-context, performance]
@@ -57,202 +57,72 @@ Each run directory is published by `rotor.reporting.ExperimentRun`; `ROTOR_REPOR
 Failed runs are published with status `failed` before exceptions propagate. Formula-derived values are estimates and remain
 separate from measured metrics.
 
-The base checkpoint is hashed (sha256 of shards) into manifest provenance; untouched tensors are always read from the
-base, so base weights are never duplicated. Conversion refuses if the base is missing and reports the exact HF id,
-revision and target path to fetch; nothing is downloaded automatically.
+## Runtime telemetry and performance measurement
 
-## Derived checkpoint format
+`rotor.telemetry.RuntimeTelemetry(path: Path, interval_seconds: float = 1.0)` records process/runtime resource use to a
+separate JSONL listing, without changing `ResourceMonitor` or its existing report fields. Use it around conversion,
+model loading, and/or evaluation where a time series is needed. The supplied path is opened exclusively (`x` mode):
+choose a new path for each run; a pre-existing listing is never overwritten. Parent directories are created when
+needed. Every sample and phase/error record is JSON-serializable, schema version 1, UTC-stamped, and includes a
+monotonic elapsed offset in seconds. The sampler emits immediately on entry, then at the configured interval (default
+1 Hz), and once on exit. Each line is flushed immediately, and the sampler thread is stopped and joined even when
+the measured operation raises. A `run_exception` record preserves the exception type/message. Sampling or file
+errors are retained in `as_dict()` and do not mask an exception from measured work.
 
-Name `rotor-scaler`, version `FORMAT_VERSION` (1). A derived checkpoint directory contains `rotor_manifest.json`
-(`Manifest`: base provenance, per-layer `LayerEntry` with spec/dtype/param and byte counts/metrics, conversion config,
-environment, notes), `rotor_weights.safetensors` (per module: `angles`, `d_in`, `d_mid`, `d_out`, optional `residual.U`,
-`residual.V`, `bias`), and `base_metadata/` (small base files). **`src/rotor/formats/spec.py` is normative** for
-tensor keys and for the forward semantics (`y = D_0 * P(R_1 D_1 … R_k E(D_k x)) + U(Vx) + bias`). Allowed storage
-dtypes: float32, bfloat16, float16 (`bytes_per_param`).
+Call `set_phase(name, request_id=None)` as work moves between loading, conversion, prefill/generation, or individual
+prompts. A `phase` record marks each change, and subsequent samples carry that phase/request id. Samples before the
+first explicit attribution use `phase: "unattributed"` and `request_id: null`. `as_dict()` is intended after context
+exit; it reports sample count, requested interval, measured duration, total process CPU time and utilization, current and
+sampled-peak RSS, per-device sampled memory peaks, host available RAM/swap, and process I/O counters, plus sampling
+errors when applicable. Device snapshots in each sample contain current values.
 
-## Storage and safety mechanisms
+### JSONL sample field definitions
 
-- Everything model-sized lives under `nas_root` (`/mnt/NAS/MediaHome/Local-Models/`): base in `base_root`, derived in
-  `rotor_derived_root` (`derived/rotor-scaler/`). Configured in `configs/storage.yaml`; override with
-  `configs/storage.local.yaml` (gitignored) or `ROTOR_STORAGE_CONFIG` (tests use this to redirect to tmp dirs).
-- `Storage.validate()` rejects roots outside `nas_root`; `assert_under_nas(p)` rejects other paths.
-- `Storage.assert_writable(p)` refuses writes into `base_root` and into any `preexisting_read_only` directory
-  (existing Qwen-Image, Qwen3.8-Flash-Next, gemma-4, ternary-bonsai-27b, temp contents).
-- `Storage.derived_path(*parts)` returns a destination already checked by `assert_writable`.
-- `atomic_dir(dest)` builds output in a temp directory and renames into place; it refuses to overwrite an existing
-  destination. `atomic_write_bytes` does the same for single files.
-- Weights and datasets are never downloaded by code; remote access is header-only HTTP range reads
-  (`remote_tensors`, `remote_json`, `remote_repo_info`).
-- Tests use `make_tiny_checkpoint` and tmp storage; no NAS access required (`nas` marker for tests that need it).
+All names carry units explicitly. Every record has integer `schema_version` (currently 1), `record_type` (`sample`,
+`phase`, `run_exception`, or `telemetry_error`), `timestamp_utc` (ISO-8601 UTC), `elapsed_seconds` (monotonic time
+since context entry), `phase` (string), and `request_id` (string or null). Samples additionally have a zero-based
+`sample_index` and `sampling_interval_seconds` (requested interval, seconds), then these fields:
+| Field | Meaning |
+|---|---|
+| `process_cpu_time_seconds` | Cumulative user+system CPU seconds of this process at sample time. |
+| `process_cpu_utilization_percent` | CPU seconds divided by monotonic seconds since previous sample × 100. 100% means one fully occupied logical CPU; threaded processes may exceed 100%. First sample is null. |
+| `process_rss_bytes` | Current resident set size, not a process-lifetime high-water mark. |
+| `host_memory.available_ram_bytes`, `available_swap_bytes`, `total_swap_bytes`, `used_swap_bytes` | Host MemAvailable and swap capacity/free/used bytes. |
+| `process_io.read_bytes`, `write_bytes` | Process block-storage bytes read/written where procfs provides them; these are kernel I/O accounting, not model-file byte totals. |
+| `devices[]` (`backend: amd_sysfs`) | `card`, optional `pci_address`/`name`/`driver`, `gpu_busy_percent`, current/total `vram_*_bytes` and `gtt_*_bytes`, exposed `temperature_c` map, and `power_w`. GPU busy is percent, temperatures °C, power watts. |
+| `devices[]` (`backend: cuda`) | `device_index`, `name`, current allocator `allocated_bytes` and `reserved_bytes`, only when an already-loaded PyTorch CUDA build reports CUDA available. These are allocator counters, not total device use. |
+| `device_sensors` | Per-backend observation booleans; false means no supported sensor/backend was observable (not that the device was idle). |
 
-## Entry points
+Unavailable or unsupported measurements are JSON null (or an empty device list when no device backend is observable),
+never fabricated zero values. Per-device fields may be null independently. AMD and process/host metrics use procfs/sysfs
+direct reads; there is no per-sample `nvidia-smi` subprocess. CUDA allocator calls are conditional, but may involve a
+runtime API call. The sampler wakes at the requested low rate and does cheap reads; OS scheduling, device API calls,
+and filesystem flush latency still add overhead and are not guaranteed zero. For short operations, initial/final
+samples dominate: treat the samples as a coarse timeline rather than cycle-level profiling. RSS/device peaks are
+sampled high-water marks and can miss transient spikes. Host RAM/swap is system-wide. AMD VRAM/GTT are device-global,
+not process-attributed. For CUDA, use allocator fields for this process and do not conflate them with total board use.
 
-All CLIs live in `scripts/` and are run as `.venv/bin/python scripts/<name>.py …`. Derived checkpoints are written under
-`rotor_derived_root` via `atomic_dir`; experiment runs use `ExperimentRun` under `reports/experiments/` (or the root
-overridden by `ROTOR_REPORTS_DIR`).
+### Generation timing standard
 
-| Script | Purpose | Key flags | Writes |
-|---|---|---|---|
-| `inspect_model.py` | Tensor groups, layer types, FFN projections of a base checkpoint (local, or header-only with `--remote`) | `--model`, `--base-dir`, `--remote`, `--checksums`, `--json`, `--record` | optional JSON; run directory with `--record` |
-| `convert_model.py` | Fit FFN projections into rotor-cascade form from experiment YAML | `--config` (required), `--base-dir`, `--out`, `--name`, `--layers`, `--steps-scale`, `--target`, `--dry-run`, `--no-report` | derived checkpoint; report run unless `--no-report`; dry run prints plan only |
-| `evaluate_model.py` | NLL/perplexity, generation, multiple-choice and synthetic passkey retrieval | `--config`, `--base-dir`, `--model`, `--ckpt`, `--text-file`, `--random-tokens`, `--seq-len`, `--num-windows`, `--seed`, `--device`, `--dtype`, `--batch-size`, `--long-context-buckets`, `--generation-prompt-tokens`, `--max-new-tokens`, `--mc-jsonl`, `--passkey`, `--passkey-context`, `--max-context`, `--short-context-verified`, `--compare-base`, `--name` | report run directory |
-| `sweep_compression.py` | Weight-space equal-byte sweep over selected FFN tensors | `--config` (required), `--base-dir`, `--byte-ratios` or `--targets` or `--target`, `--topologies`, `--residual-ranks`, `--layers`, `--max-tensors`, `--steps-scale`, `--dry-run`, `--name` | report run directory; dry-run plans only |
-| `compare_baselines.py` | Per-matrix comparison: dense, truncated SVD, SVD→Givens, magnitude sparse, butterfly, rotor variants and controls | exactly one of `--base-dir`, `--model`, `--synthetic IN,OUT`; `--tensors`, `--max-tensors`, `--byte-ratio` or `--target`, `--storage-dtype`, `--topology`, `--topology-seed`, `--stages-per-rotor`, `--residual-rank`, `--steps`, `--lr-angles`, `--lr-scales`, `--lr-residual`, `--with-activations`, `--text-file`, `--seq-len`, `--num-windows`, `--max-rows`, `--seed`, `--name` | report run directory |
-| `benchmark.py` | Microbenchmark dense `nn.Linear` vs `RotorLinear` vs `LowRankLinear` at equal stored bytes | `--in`, `--out`, `--model`, `--family`, `--byte-ratio`, `--batch-sizes`, `--topology`, `--stages-per-rotor`, `--residual-rank`, `--device`, `--dtype`, `--seed`, `--refuse-swap` / `--no-refuse-swap` | report run directory |
-| `train_recovery.py` | KL-distillation recovery of a converted checkpoint; trains only `RotorLinear` parameters | `--ckpt` and `--out` (required), exactly one of `--text-file`/`--random-tokens`, `--seq-len`, `--num-windows`, `--steps`, `--batch-size`, `--lr-angles`, `--lr-scales`, `--lr-residual`, `--temperature`, `--ce-weight`, `--grad-clip`, `--log-every`, `--seed`, `--device` | recovered derived checkpoint and report run |
-| `audit_environment.py` | Read-only host capability and NAS-layout audit | `--json`, `--report` | optional JSON; report run with `--report` |
+Performance comparisons MUST report the input and generated token counts along with TTFT, prefill and decode rates
+from the existing `rotor.evaluation.generation.measure_generation` result. It defines TTFT as whole-prompt prefill
+plus first-token projection/argmax; prefill tokens/s is prompt tokens divided by TTFT. Decode tokens/s covers only
+steps after the first generated token (one cached single-token forward plus argmax each), with rate
+`(generated_tokens - 1) / decode_seconds`; it is null for a one-token output. Preserve the returned token IDs/text and
+counts to establish which prompt/result was measured. Its resource subrecord is `ResourceMonitor` (peak RSS and
+CUDA allocation), while RuntimeTelemetry provides the separate sampled time series; retain both rather than
+substituting one for the other.
 
-Experiment YAMLs for `convert_model.py` / `sweep_compression.py` are in `configs/experiments/`; evaluation YAMLs are in
-`configs/evaluation/`. Report templates live in `reports/templates/`, and paper sources/materials in `reports/papers/`.
+`measure_generation` performs no warmup. Label the first call cold/startup-inclusive; to report steady state, run a
+distinct warmup generation and report a subsequent measured call as warm (do not silently discard or combine the cold
+measurement). For base-versus-rotor comparisons, hold exact prompt token IDs, generated-token limit, device, dtype,
+and runtime settings fixed and record both models' prompt/input and output token counts. GPU performance claims MUST
+be backed by an actual GPU execution: if PyTorch falls back to CPU, report CPU measurements only, not GPU speed or
+GPU throughput. Record device/runtime identity and relevant host memory/swap conditions; sampling evidence can expose
+resource pressure but is not itself a substitute for generation latency metrics.
 
-Library entry points: `rotor.environment.detect_environment`, `capability_summary`, `ResourceMonitor`; `rotor.reporting.ExperimentRun`,
-`markdown_table`, `make_run_id`, `flatten`; `rotor.converters.pipeline.convert`, `converters.budget.allocate`,
-`converters.fit.fit_weight/fit_activation`; `evaluation.baselines.equal_budget_baselines`,
-`evaluation.lm.evaluate_lm`, `evaluation.longcontext.nll_by_position`, `evaluation.performance.linear_microbench`,
-`evaluation.generation.greedy_decode/measure_generation/compare_generations`,
-`evaluation.tasks.load_jsonl_items/continuation_loglik/multiple_choice_accuracy`,
-`evaluation.retrieval.passkey_items/passkey_accuracy`; `models.loading.load_base/load_converted`,
-`training.recovery.train_recovery/export_recovered`, `models.discovery.remote_tensors/local_tensors`.
+Example around full conversion (use a new, non-existing JSONL path for each run):
+
+```sh
+.venv/bin/python scripts/convert_model.py --config configs/experiments/qwen3.5-0.8b-ffn-weight.yaml --name <unique> --telemetry <new-jsonl-path>
 ```
-
-### Dependency rules
-
-- `rotor.math` imports only `torch`/stdlib: **no** `transformers`, no model or checkpoint concepts.
-- `rotor.models` is the **only** place that knows checkpoint tensor names and module paths
-  (`model.language_model.layers.N.mlp.up_proj.weight` on disk, `model.layers.N.mlp.up_proj` in the loaded model).
-- `rotor.formats` depends on `math`, not on `models`; model-specific names enter only as opaque module strings.
-- `rotor.converters`, `rotor.evaluation`, `rotor.training` may use `math`, `formats`, `models`; `math` and `formats` never import them.
-- `runtime/` implements the format in C++ and does not depend on Python; the normative semantics live in
-  `src/rotor/formats/spec.py` (mirrored by `runtime/interfaces/rotor_format.h`).
-- Paths come only from `rotor.storage.load_storage()`; scripts never hardcode locations.
-
-## Data flow
-
-```mermaid
-flowchart LR
-  B[Base checkpoint on NAS<br/>base_root, read-only] --> D[Discovery<br/>models.discovery / qwen3_5]
-  D --> A[Allocation<br/>converters.budget]
-  A --> F[Fit<br/>converters.fit<br/>weight or activation]
-  C[Calibration inputs<br/>converters.calibration] -.-> F
-  F --> M[Manifest + safetensors<br/>formats.write_structured]
-  M -->|atomic_dir| X[Derived checkpoint on NAS<br/>rotor_derived_root]
-  X --> L[load_converted<br/>models.loading]
-  B --> L
-  L --> E[Evaluation<br/>LM, generation, tasks, retrieval, long-context, performance]
-  E --> R[ExperimentRun<br/>reports/experiments/<model>__<method>__<target>__<UTCstamp>/]
-  H[detect_environment / ResourceMonitor] --> R
-  R --> O[report.md, metrics.json, config.yaml, environment.json, figures/, logs/run.log]
-```
-
-Each run directory is published by `rotor.reporting.ExperimentRun`; `ROTOR_REPORTS_DIR` overrides the reports root.
-Failed runs are published with status `failed` before exceptions propagate. Formula-derived values are estimates and remain
-separate from measured metrics.
-
-The base checkpoint is hashed (sha256 of shards) into manifest provenance; untouched tensors are always read from the
-base, so base weights are never duplicated. Conversion refuses if the base is missing and reports the exact HF id,
-revision and target path to fetch; nothing is downloaded automatically.
-
-## Derived checkpoint format
-
-Name `rotor-scaler`, version `FORMAT_VERSION` (1). A derived checkpoint directory contains `rotor_manifest.json`
-(`Manifest`: base provenance, per-layer `LayerEntry` with spec/dtype/param and byte counts/metrics, conversion config,
-environment, notes), `rotor_weights.safetensors` (per module: `angles`, `d_in`, `d_mid`, `d_out`, optional `residual.U`,
-`residual.V`, `bias`), and `base_metadata/` (small base files). **`src/rotor/formats/spec.py` is normative** for
-tensor keys and for the forward semantics (`y = D_0 * P(R_1 D_1 … R_k E(D_k x)) + U(Vx) + bias`). Allowed storage
-dtypes: float32, bfloat16, float16 (`bytes_per_param`).
-
-## Storage and safety mechanisms
-
-- Everything model-sized lives under `nas_root` (`/mnt/NAS/MediaHome/Local-Models/`): base in `base_root`, derived in
-  `rotor_derived_root` (`derived/rotor-scaler/`). Configured in `configs/storage.yaml`; override with
-  `configs/storage.local.yaml` (gitignored) or `ROTOR_STORAGE_CONFIG` (tests use this to redirect to tmp dirs).
-- `Storage.validate()` rejects roots outside `nas_root`; `assert_under_nas(p)` rejects other paths.
-- `Storage.assert_writable(p)` refuses writes into `base_root` and into any `preexisting_read_only` directory
-  (existing Qwen-Image, Qwen3.8-Flash-Next, gemma-4, ternary-bonsai-27b, temp contents).
-- `Storage.derived_path(*parts)` returns a destination already checked by `assert_writable`.
-- `atomic_dir(dest)` builds output in a temp directory and renames into place; it refuses to overwrite an existing
-  destination. `atomic_write_bytes` does the same for single files.
-- Weights and datasets are never downloaded by code; remote access is header-only HTTP range reads
-  (`remote_tensors`, `remote_json`, `remote_repo_info`).
-- Tests use `make_tiny_checkpoint` and tmp storage; no NAS access required (`nas` marker for tests that need it).
-
-## Entry points
-
-All CLIs live in `scripts/` and are run as `.venv/bin/python scripts/<name>.py …`. Derived checkpoints are written under
-`rotor_derived_root` via `atomic_dir`; experiment runs use `ExperimentRun` under `reports/experiments/` (or the root
-overridden by `ROTOR_REPORTS_DIR`).
-
-| Script | Purpose | Key flags | Writes |
-|---|---|---|---|
-| `inspect_model.py` | Tensor groups, layer types, FFN projections of a base checkpoint (local, or header-only with `--remote`) | `--model`, `--base-dir`, `--remote`, `--checksums`, `--json`, `--record` | optional JSON; run directory with `--record` |
-| `convert_model.py` | Fit FFN projections into rotor-cascade form from experiment YAML | `--config` (required), `--base-dir`, `--out`, `--name`, `--layers`, `--steps-scale`, `--target`, `--dry-run`, `--no-report` | derived checkpoint; report run unless `--no-report`; dry run prints plan only |
-| `evaluate_model.py` | NLL/perplexity, generation, multiple-choice and synthetic passkey retrieval | `--config`, `--base-dir`, `--model`, `--ckpt`, `--text-file`, `--random-tokens`, `--seq-len`, `--num-windows`, `--seed`, `--device`, `--dtype`, `--batch-size`, `--long-context-buckets`, `--generation-prompt-tokens`, `--max-new-tokens`, `--mc-jsonl`, `--passkey`, `--passkey-context`, `--max-context`, `--short-context-verified`, `--compare-base`, `--name` | report run directory |
-| `sweep_compression.py` | Weight-space equal-byte sweep over selected FFN tensors | `--config` (required), `--base-dir`, `--byte-ratios` or `--targets` or `--target`, `--topologies`, `--residual-ranks`, `--layers`, `--max-tensors`, `--steps-scale`, `--dry-run`, `--name` | report run directory; dry-run plans only |
-| `compare_baselines.py` | Per-matrix comparison: dense, truncated SVD, SVD→Givens, magnitude sparse, butterfly, rotor variants and controls | exactly one of `--base-dir`, `--model`, `--synthetic IN,OUT`; `--tensors`, `--max-tensors`, `--byte-ratio` or `--target`, `--storage-dtype`, `--topology`, `--topology-seed`, `--stages-per-rotor`, `--residual-rank`, `--steps`, `--lr-angles`, `--lr-scales`, `--lr-residual`, `--with-activations`, `--text-file`, `--seq-len`, `--num-windows`, `--max-rows`, `--seed`, `--name` | report run directory |
-| `benchmark.py` | Microbenchmark dense `nn.Linear` vs `RotorLinear` vs `LowRankLinear` at equal stored bytes | `--in`, `--out`, `--model`, `--family`, `--byte-ratio`, `--batch-sizes`, `--topology`, `--stages-per-rotor`, `--residual-rank`, `--device`, `--dtype`, `--seed`, `--refuse-swap` / `--no-refuse-swap` | report run directory |
-| `train_recovery.py` | KL-distillation recovery of a converted checkpoint; trains only `RotorLinear` parameters | `--ckpt` and `--out` (required), exactly one of `--text-file`/`--random-tokens`, `--seq-len`, `--num-windows`, `--steps`, `--batch-size`, `--lr-angles`, `--lr-scales`, `--lr-residual`, `--temperature`, `--ce-weight`, `--grad-clip`, `--log-every`, `--seed`, `--device` | recovered derived checkpoint and report run |
-| `audit_environment.py` | Read-only host capability and NAS-layout audit | `--json`, `--report` | optional JSON; report run with `--report` |
-
-Experiment YAMLs for `convert_model.py` / `sweep_compression.py` are in `configs/experiments/`; evaluation YAMLs are in
-`configs/evaluation/`. Report templates live in `reports/templates/`, and paper sources/materials in `reports/papers/`.
-
-Library entry points: `rotor.environment.detect_environment`, `capability_summary`, `ResourceMonitor`; `rotor.reporting.ExperimentRun`,
-`markdown_table`, `make_run_id`, `flatten`; `rotor.converters.pipeline.convert`, `converters.budget.allocate`,
-`converters.fit.fit_weight/fit_activation`; `evaluation.baselines.equal_budget_baselines`,
-`evaluation.lm.evaluate_lm`, `evaluation.longcontext.nll_by_position`, `evaluation.performance.linear_microbench`,
-`evaluation.generation.greedy_decode/measure_generation/compare_generations`,
-`evaluation.tasks.load_jsonl_items/continuation_loglik/multiple_choice_accuracy`,
-`evaluation.retrieval.passkey_items/passkey_accuracy`; `models.loading.load_base/load_converted`,
-`training.recovery.train_recovery/export_recovered`, `models.discovery.remote_tensors/local_tensors`.
-## Derived checkpoint format
-
-Name `rotor-scaler`, version `FORMAT_VERSION` (1). A derived checkpoint directory contains `rotor_manifest.json`
-(`Manifest`: base provenance, per-layer `LayerEntry` with spec/dtype/param and byte counts/metrics, conversion config,
-environment, notes), `rotor_weights.safetensors` (per module: `angles`, `d_in`, `d_mid`, `d_out`, optional `residual.U`,
-`residual.V`, `bias`), and `base_metadata/` (small base files). **`src/rotor/formats/spec.py` is normative** for
-tensor keys and for the forward semantics (`y = D_0 * P(R_1 D_1 … R_k E(D_k x)) + U(Vx) + bias`). Allowed storage
-dtypes: float32, bfloat16, float16 (`bytes_per_param`).
-
-## Storage and safety mechanisms
-
-- Everything model-sized lives under `nas_root` (`/mnt/NAS/MediaHome/Local-Models/`): base in `base_root`, derived in
-  `rotor_derived_root` (`derived/rotor-scaler/`). Configured in `configs/storage.yaml`; override with
-  `configs/storage.local.yaml` (gitignored) or `ROTOR_STORAGE_CONFIG` (tests use this to redirect to tmp dirs).
-- `Storage.validate()` rejects roots outside `nas_root`; `assert_under_nas(p)` rejects other paths.
-- `Storage.assert_writable(p)` refuses writes into `base_root` and into any `preexisting_read_only` directory
-  (existing Qwen-Image, Qwen3.8-Flash-Next, gemma-4, ternary-bonsai-27b, temp contents).
-- `Storage.derived_path(*parts)` returns a destination already checked by `assert_writable`.
-- `atomic_dir(dest)` builds output in a temp directory and renames into place; it refuses to overwrite an existing
-  destination. `atomic_write_bytes` does the same for single files.
-- Weights and datasets are never downloaded by code; remote access is header-only HTTP range reads
-  (`remote_tensors`, `remote_json`, `remote_repo_info`).
-- Tests use `make_tiny_checkpoint` and tmp storage; no NAS access required (`nas` marker for tests that need it).
-
-## Entry points
-
-All CLIs live in `scripts/` and are run as `.venv/bin/python scripts/<name>.py …`. Derived checkpoints are written under
-`rotor_derived_root` via `atomic_dir`; experiment runs use `ExperimentRun` under `reports/experiments/` (or the root
-overridden by `ROTOR_REPORTS_DIR`).
-
-| Script | Purpose | Key flags | Writes |
-|---|---|---|---|
-| `inspect_model.py` | Tensor groups, layer types, FFN projections of a base checkpoint (local, or header-only with `--remote`) | `--model`, `--base-dir`, `--remote`, `--checksums`, `--json`, `--record` | optional JSON; run directory with `--record` |
-| `convert_model.py` | Fit FFN projections into rotor-cascade form from experiment YAML | `--config` (required), `--base-dir`, `--out`, `--name`, `--layers`, `--steps-scale`, `--target`, `--dry-run`, `--no-report` | derived checkpoint; report run unless `--no-report`; dry run prints plan only |
-| `evaluate_model.py` | NLL/perplexity, generation, multiple-choice and synthetic passkey retrieval | `--config`, `--base-dir`, `--model`, `--ckpt`, `--text-file`, `--random-tokens`, `--seq-len`, `--num-windows`, `--seed`, `--device`, `--dtype`, `--batch-size`, `--long-context-buckets`, `--generation-prompt-tokens`, `--max-new-tokens`, `--mc-jsonl`, `--passkey`, `--passkey-context`, `--max-context`, `--short-context-verified`, `--compare-base`, `--name` | report run directory |
-| `sweep_compression.py` | Weight-space equal-byte sweep over selected FFN tensors | `--config` (required), `--base-dir`, `--byte-ratios` or `--targets` or `--target`, `--topologies`, `--residual-ranks`, `--layers`, `--max-tensors`, `--steps-scale`, `--dry-run`, `--name` | report run directory; dry-run plans only |
-| `compare_baselines.py` | Per-matrix comparison: dense, truncated SVD, SVD→Givens, magnitude sparse, butterfly, rotor variants and controls | exactly one of `--base-dir`, `--model`, `--synthetic IN,OUT`; `--tensors`, `--max-tensors`, `--byte-ratio` or `--target`, `--storage-dtype`, `--topology`, `--topology-seed`, `--stages-per-rotor`, `--residual-rank`, `--steps`, `--lr-angles`, `--lr-scales`, `--lr-residual`, `--with-activations`, `--text-file`, `--seq-len`, `--num-windows`, `--max-rows`, `--seed`, `--name` | report run directory |
-| `benchmark.py` | Microbenchmark dense `nn.Linear` vs `RotorLinear` vs `LowRankLinear` at equal stored bytes | `--in`, `--out`, `--model`, `--family`, `--byte-ratio`, `--batch-sizes`, `--topology`, `--stages-per-rotor`, `--residual-rank`, `--device`, `--dtype`, `--seed`, `--refuse-swap` / `--no-refuse-swap` | report run directory |
-| `train_recovery.py` | KL-distillation recovery of a converted checkpoint; trains only `RotorLinear` parameters | `--ckpt` and `--out` (required), exactly one of `--text-file`/`--random-tokens`, `--seq-len`, `--num-windows`, `--steps`, `--batch-size`, `--lr-angles`, `--lr-scales`, `--lr-residual`, `--temperature`, `--ce-weight`, `--grad-clip`, `--log-every`, `--seed`, `--device` | recovered derived checkpoint and report run |
-| `audit_environment.py` | Read-only host capability and NAS-layout audit | `--json`, `--report` | optional JSON; report run with `--report` |
-
-Experiment YAMLs for `convert_model.py` / `sweep_compression.py` are in `configs/experiments/`; evaluation YAMLs are in
-`configs/evaluation/`. Report templates live in `reports/templates/`, and paper sources/materials in `reports/papers/`.
-
-Library entry points: `rotor.environment.detect_environment`, `capability_summary`, `ResourceMonitor`; `rotor.reporting.ExperimentRun`,
-`markdown_table`, `make_run_id`, `flatten`; `rotor.converters.pipeline.convert`, `converters.budget.allocate`,
-`converters.fit.fit_weight/fit_activation`; `evaluation.baselines.equal_budget_baselines`,
-`evaluation.lm.evaluate_lm`, `evaluation.longcontext.nll_by_position`, `evaluation.performance.linear_microbench`,
-`evaluation.generation.greedy_decode/measure_generation/compare_generations`,
-`evaluation.tasks.load_jsonl_items/continuation_loglik/multiple_choice_accuracy`,
-`evaluation.retrieval.passkey_items/passkey_accuracy`; `models.loading.load_base/load_converted`,
-`training.recovery.train_recovery/export_recovered`, `models.discovery.remote_tensors/local_tensors`.

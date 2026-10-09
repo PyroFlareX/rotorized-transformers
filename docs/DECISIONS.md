@@ -10,7 +10,7 @@ ADR-style log. All entries dated 2026-10-08.
 
 **Context:** Model weights and derived checkpoints are large and must not live in the repo. A NAS is available, but parts of it already hold unrelated content.
 
-**Decision:** Use `/mnt/NAS/MediaHome/Local-Models/` as the root, with `base/` for downloaded upstream checkpoints and `derived/rotor-scaler/` for rotor-derived artifacts. All paths are centralized in `configs/storage.yaml`. Pre-existing NAS directories are read-only to this project; only the `base/` and `derived/rotor-scaler/` subtrees are written.
+**Decision:** Use `/mnt/NAS/MediaHome/Local-Models/` as the root, with `base/` for downloaded upstream checkpoints (each model in its own containing directory) and `temp/<run-name>/` for rotor-derived artifacts, as requested by the user on 2026-10-08. All paths are centralized in `configs/storage.yaml`. Unrelated pre-existing NAS directories are read-only; new conversion directories under `temp/` are authorized, and existing destinations are never overwritten.
 
 **Consequences:**
 - No code hardcodes NAS paths; everything resolves through `configs/storage.yaml`.
@@ -252,5 +252,23 @@ ADR-style log. All entries dated 2026-10-08.
 **Consequences:**
 - Paper builds use explicit pdflatex/bibtex passes rather than latexmk or biber.
 - A future host with a different toolchain does not silently change project dependencies.
+
+**Status:** Accepted.
+
+---
+
+## D16 — Fixed prompt outputs and sampled runtime telemetry
+
+**Date:** 2026-10-08
+
+**Context:** The user requested a 256-entry list of input/output results and a consistent runtime measurement standard before comparing the 0.8B conversion.
+
+**Decision:** Keep 256 curated Base-model continuation prompts in the repository, and record deterministic greedy output text, input/output token IDs and counts, settings, and fingerprints in per-run JSONL listings. Reuse the base tokenizer for converted runs; reject comparisons with mismatched inputs or settings. Record TTFT, prefill and decode throughput with their existing definitions separately from low-rate (default 1 Hz) process, host, and device telemetry. Attribute telemetry to loading/inference/conversion phases; unavailable sensors are null rather than zero.
+
+**Consequences:**
+- Output agreement is observable but is not a substitute for language-model quality metrics or equal-byte baselines.
+- Measurements retain actual hardware/software and timing provenance; CPU execution is never described as GPU performance.
+- Progressive listings remain inspectable during long runs, and failures retain their evidence.
+- The full configured conversion is launched without reducing projection scope, target budget, or fit steps. A process memory cap and no additional swap allocation protect the interactive host.
 
 **Status:** Accepted.

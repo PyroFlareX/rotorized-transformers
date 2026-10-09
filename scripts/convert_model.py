@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+from contextlib import nullcontext
 from pathlib import Path
 
 import yaml
@@ -11,6 +12,7 @@ import yaml
 from rotor.converters import convert
 from rotor.converters.budget import COMPRESSION_TARGETS, parse_target
 from rotor.converters.pipeline import ConversionConfig
+from rotor.telemetry import RuntimeTelemetry
 
 
 def build_config_dict(args: argparse.Namespace) -> dict:
@@ -24,6 +26,8 @@ def build_config_dict(args: argparse.Namespace) -> dict:
         budget = {k: v for k, v in (d.get("budget") or {}).items() if k != "byte_ratio"}
         budget["target"] = args.target
         d["budget"] = budget
+    if args.device:
+        d.setdefault("fit", {})["device"] = args.device
     if args.steps_scale is not None:
         if args.steps_scale <= 0:
             raise SystemExit("--steps-scale must be > 0")
@@ -40,6 +44,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--name", help="override derived output name")
     ap.add_argument("--layers", help="comma-separated layer indices, e.g. 0,1")
     ap.add_argument("--steps-scale", type=float, help="multiply every phase's step count")
+    ap.add_argument("--device", help="fit device override, e.g. cuda (ROCm builds also report cuda); default: config")
     ap.add_argument(
         "--target",
         help=f"compression target override: preset {sorted(COMPRESSION_TARGETS)} or a byte-ratio float in (0, 1]",
@@ -48,13 +53,23 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument(
         "--no-report", action="store_true", help="do not publish an ExperimentRun under reports/experiments"
     )
+    ap.add_argument("--telemetry", type=Path, help="new JSONL path for 1 Hz runtime resource samples")
     args = ap.parse_args(argv)
 
     cfg = ConversionConfig.from_dict(build_config_dict(args))
     info: dict = {}
-    res = convert(
-        cfg, base_dir=args.base_dir, out_dir=args.out, dry_run=args.dry_run, report=not args.no_report, run_info=info
-    )
+    telemetry = RuntimeTelemetry(args.telemetry) if args.telemetry is not None else nullcontext()
+    with telemetry as sampler:
+        if sampler is not None:
+            sampler.set_phase("conversion-plan" if args.dry_run else "conversion-fit")
+        res = convert(
+            cfg,
+            base_dir=args.base_dir,
+            out_dir=args.out,
+            dry_run=args.dry_run,
+            report=not args.no_report,
+            run_info=info,
+        )
     if args.dry_run:
         print(json.dumps(res, indent=2, default=str))
     else:

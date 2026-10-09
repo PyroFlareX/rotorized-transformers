@@ -1,0 +1,57 @@
+{
+  "run_id": "local-model__base__na__20261009T013211Z",
+  "kind": "prompt-generation",
+  "status": "failed",
+  "created_utc": "2026-10-09T01:32:11.377405+00:00",
+  "finished_utc": "2026-10-09T01:32:18.011153+00:00",
+  "model": "local-model",
+  "method": "base",
+  "target": "na",
+  "metrics": {
+    "provenance": {
+      "prompt_dataset": "/mnt/Projects/rotorized-transformers/configs/evaluation/prompts-256.jsonl",
+      "prompt_dataset_sha256": "73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641",
+      "prompt_count": 256,
+      "evaluated_prompt_count": 2,
+      "tokenizer": {
+        "name": "/tmp/rotor-prompt-smoke-v82q05pq/base",
+        "files_sha256": {
+          "tokenizer.json": "ef1c3ff58cc98c1a751cc0fa074dff66d033b78f9b906bf13eb4b7e6563fd418",
+          "tokenizer_config.json": "2e82dbc3e20a656b022331e8b616deb37897c4544b5c4489a598793cae589c91"
+        },
+        "sha256": "adfd1d298310edca0c63b33461d0afcf46bae040b330ebbc1fa6fd24ea7984a3"
+      },
+      "model_config_sha256": "ffb6951b48c1fc0de525051736835eb8e92e0316326b9b6970f3eabca4956416",
+      "base_model_hf_id": null,
+      "base_model_revision": null,
+      "base_model_path": "/tmp/rotor-prompt-smoke-v82q05pq/base",
+      "checkpoint_path": null,
+      "seed": 0,
+      "device": "cpu",
+      "dtype": "float32",
+      "max_new_tokens": 4,
+      "run_note": null
+    },
+    "settings": {
+      "prompt_dataset_sha256": "73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641",
+      "base_model": {
+        "hf_id": null,
+        "revision": null,
+        "config_sha256": "ffb6951b48c1fc0de525051736835eb8e92e0316326b9b6970f3eabca4956416",
+        "model_type": "qwen3_5"
+      },
+      "tokenizer_sha256": "adfd1d298310edca0c63b33461d0afcf46bae040b330ebbc1fa6fd24ea7984a3",
+      "seed": 0,
+      "device": "cpu",
+      "dtype": "float32",
+      "max_new_tokens": 4,
+      "decoding": {
+        "strategy": "greedy",
+        "do_sample": false,
+        "chat_template": false
+      }
+    }
+  },
+  "estimates": {},
+  "failure": "Traceback (most recent call last):\n  File \"/mnt/Projects/rotorized-transformers/src/rotor/evaluation/prompts.py\", line 264, in run_prompt_evaluation\n    raise ValueError(f\"tokenizer produced no input tokens for {prompt['id']}\")\nValueError: tokenizer produced no input tokens for science-001\n"
+}

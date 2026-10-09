@@ -1,0 +1,4 @@
+2026-10-09T02:44:09+00:00 dataset: 256 prompts; sha256 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641
+2026-10-09T02:44:09+00:00 CPU slow fallback selected; timings are diagnostic, not GPU performance measurements.
+2026-10-09T02:44:09+00:00 Run note: Shared host: CPU conversion is running concurrently; timing is diagnostic, not isolated throughput.
+2026-10-09T02:50:57+00:00 FAILED: OSError: [Errno 112] Host is down: '/mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base/tokenizer_config.json'

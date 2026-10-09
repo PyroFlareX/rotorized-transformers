@@ -6,6 +6,7 @@ __pycache__/
 build/
 dist/
 .venv/
+.venv-*/
 venv/
 .pytest_cache/
 .ruff_cache/
@@ -54,6 +55,11 @@ runtime/**/*.a
 *.ptx
 *.fatbin
 reports/papers/build/
+
+# Bulk 1 Hz runtime-telemetry listings (rotor.telemetry); size grows with run length, so they stay local.
+# Run directories (report.md, metrics.json, ...) and prompt-result JSONL remain tracked as evidence.
+/reports/telemetry/
+*.telemetry.jsonl
 
 # Editors / OS
 .vscode/

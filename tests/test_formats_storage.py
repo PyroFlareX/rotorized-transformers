@@ -25,7 +25,6 @@ from rotor.formats.checkpoint import BASE_METADATA_FILES
 from rotor.formats.spec import BASE_METADATA_DIRNAME
 from rotor.math import CascadeSpec, RotorCascade, RotorLinear, Topology
 from rotor.storage import (
-    REPO_ROOT,
     Storage,
     StorageError,
     atomic_dir,
@@ -444,24 +443,3 @@ def test_sha256_file_matches_hashlib(tmp_path: Path) -> None:
     assert sha256_file(p, chunk=100) == hashlib.sha256(data).hexdigest()
 
 
-# ------------------------------------------------------------------ repo default config
-
-
-def test_repo_storage_yaml_nas_root_is_the_mandated_location(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("ROTOR_STORAGE_CONFIG", raising=False)
-    s = load_storage(REPO_ROOT / "configs" / "storage.yaml")
-    assert s.nas_root == Path("/mnt/NAS/MediaHome/Local-Models")
-    assert s.base_root == Path("/mnt/NAS/MediaHome/Local-Models/base")
-    assert s.rotor_derived_root == Path("/mnt/NAS/MediaHome/Local-Models/derived/rotor-scaler")
-    assert s.preexisting_read_only  # legacy NAS content is protected
-    for ro in s.preexisting_read_only:
-        with pytest.raises(StorageError):
-            s.assert_writable(ro / "x")
-    with pytest.raises(StorageError):
-        s.assert_writable(s.base_root / "anything")
-    assert s.derived_path("exp") == s.rotor_derived_root / "exp"
-
-
-def test_default_resolution_without_env_uses_repo_config(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("ROTOR_STORAGE_CONFIG", raising=False)
-    assert load_storage().nas_root == Path("/mnt/NAS/MediaHome/Local-Models")

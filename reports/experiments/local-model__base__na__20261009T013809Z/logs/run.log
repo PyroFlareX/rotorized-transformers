@@ -1,0 +1,4 @@
+2026-10-09T01:38:11+00:00 dataset: 2 prompts; sha256 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641
+2026-10-09T01:38:11+00:00 CPU slow fallback selected; timings are diagnostic, not GPU performance measurements.
+2026-10-09T01:38:11+00:00 [1/2] science-001: 4 tokens, 0.012s (cold_first_generation)
+2026-10-09T01:38:11+00:00 [2/2] science-002: 4 tokens, 0.008s (warm_model_resident)

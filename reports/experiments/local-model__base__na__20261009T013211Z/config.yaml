@@ -1,0 +1,33 @@
+base_dir: /tmp/rotor-prompt-smoke-v82q05pq/base
+model: null
+ckpt: null
+prompts: /mnt/Projects/rotorized-transformers/configs/evaluation/prompts-256.jsonl
+limit: 2
+max_new_tokens: 4
+seed: 0
+device: cpu
+dtype: float32
+compare_to: null
+output: /tmp/rotor-prompt-smoke-v82q05pq/base-results.jsonl
+telemetry_path: null
+name: null
+run_note: null
+base_dir_resolved: /tmp/rotor-prompt-smoke-v82q05pq/base
+checkpoint_resolved: null
+settings:
+  prompt_dataset_sha256: 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641
+  base_model:
+    hf_id: null
+    revision: null
+    config_sha256: ffb6951b48c1fc0de525051736835eb8e92e0316326b9b6970f3eabca4956416
+    model_type: qwen3_5
+  tokenizer_sha256: adfd1d298310edca0c63b33461d0afcf46bae040b330ebbc1fa6fd24ea7984a3
+  seed: 0
+  device: cpu
+  dtype: float32
+  max_new_tokens: 4
+  decoding:
+    strategy: greedy
+    do_sample: false
+    chat_template: false
+prompt_dataset_sha256: 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641

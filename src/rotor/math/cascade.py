@@ -26,6 +26,7 @@ from dataclasses import asdict, dataclass, field
 
 import torch
 from torch import nn
+from torch.utils.checkpoint import checkpoint as torch_checkpoint
 
 from rotor.math.givens import build_stages
 from rotor.math.lowrank import LowRankResidual
@@ -144,6 +145,7 @@ class RotorCascade(nn.Module):
         for st in self._stages:
             self._stage_slices.append(slice(off, off + st.num_pairs))
             off += st.num_pairs
+        self.grad_checkpoint = False  # recompute each rotor in backward: exact gradients, O(k) not O(k*stages) memory
         self.angles = nn.Parameter(torch.zeros(k, off, dtype=dtype, device=device))
         self.d_in = nn.Parameter(torch.ones(spec.in_features, dtype=dtype, device=device))
         self.d_mid = nn.Parameter(torch.ones(k - 1, n, dtype=dtype, device=device))
@@ -158,8 +160,8 @@ class RotorCascade(nn.Module):
         out = super()._apply(fn, recurse)
         dev = self.angles.device
         for st in self._stages:
-            st.a = st.a.to(dev)
-            st.b = st.b.to(dev)
+            st.a, st.b = st.a.to(dev), st.b.to(dev)
+            st.partner, st.inv_perm = st.partner.to(dev), st.inv_perm.to(dev)
         return out
 
     def _rotor(self, h: torch.Tensor, i: int, transpose: bool = False) -> torch.Tensor:
@@ -170,12 +172,23 @@ class RotorCascade(nn.Module):
             h = self._stages[s].apply(h, theta[self._stage_slices[s]], transpose=transpose)
         return h
 
+    def _rotor_rows(self, h: torch.Tensor, i: int) -> torch.Tensor:
+        """:meth:`_rotor` on the transposed layout ``h: (n, B)`` (see ``GivensStage.apply_rows``)."""
+        theta = self.angles[i]
+        for s in range(len(self._stages) - 1, -1, -1):
+            h = self._stages[s].apply_rows(h, theta[self._stage_slices[s]])
+        return h
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         h = x.to(self.angles.dtype) * self.d_in
         h = self.adapter.embed(h)
         k = self.spec.num_rotors
+        checkpoint = self.grad_checkpoint and torch.is_grad_enabled()
         for i in range(k - 1, -1, -1):  # R_k first, then D_{k-1}, ..., R_1
-            h = self._rotor(h, i)
+            if checkpoint:
+                h = torch_checkpoint(self._rotor, h, i, use_reentrant=False)
+            else:
+                h = self._rotor(h, i)
             if i > 0:
                 h = h * self.d_mid[i - 1]
         y = self.adapter.project(h) * self.d_out
@@ -184,9 +197,24 @@ class RotorCascade(nn.Module):
         return y.to(x.dtype)
 
     def dense_weight(self) -> torch.Tensor:
-        """Materialize ``W_hat`` (``out x in``). Differentiable; used for weight-space fitting."""
-        eye = torch.eye(self.spec.in_features, dtype=self.angles.dtype, device=self.angles.device)
-        return self.forward(eye).T
+        """Materialize ``W_hat`` (``out x in``). Differentiable; used for weight-space fitting.
+
+        Runs the cascade on ``H = [diag(d_in); 0]`` in the ``(n, in)`` row layout, so ``W_hat`` falls out without a
+        transpose and every Givens stage is one contiguous row gather plus a fused multiply-add.
+        """
+        dev, dt = self.angles.device, self.angles.dtype
+        n, k = self.spec.width, self.spec.num_rotors
+        eye = torch.eye(self.spec.in_features, dtype=dt, device=dev)
+        h = nn.functional.pad(eye * self.d_in, (0, 0, 0, n - self.spec.in_features))
+        checkpoint = self.grad_checkpoint and torch.is_grad_enabled()
+        for i in range(k - 1, -1, -1):
+            h = torch_checkpoint(self._rotor_rows, h, i, use_reentrant=False) if checkpoint else self._rotor_rows(h, i)
+            if i > 0:
+                h = h * self.d_mid[i - 1].unsqueeze(1)
+        w = h[: self.spec.out_features] * self.d_out.unsqueeze(1)
+        if self.residual is not None:
+            w = w + self.residual(eye).T
+        return w
 
     @torch.no_grad()
     def init_from_dense(self, W: torch.Tensor, angle_std: float = 0.0, generator: torch.Generator | None = None):

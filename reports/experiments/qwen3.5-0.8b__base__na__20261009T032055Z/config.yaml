@@ -1,0 +1,34 @@
+base_dir: null
+model: qwen3.5-0.8b
+ckpt: null
+prompts: /mnt/Projects/rotorized-transformers/configs/evaluation/prompts-256.jsonl
+limit: null
+max_new_tokens: 64
+seed: 0
+device: cpu
+dtype: bfloat16
+compare_to: null
+output: reports/prompt-evaluations/qwen35-08b-base-256-r2.jsonl
+telemetry_path: null
+name: null
+run_note: 'Shared host: CPU conversion is running concurrently; timing is diagnostic,
+  not isolated throughput.'
+base_dir_resolved: /mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base
+checkpoint_resolved: null
+settings:
+  prompt_dataset_sha256: 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641
+  base_model:
+    hf_id: Qwen/Qwen3.5-0.8B-Base
+    revision: dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68
+    config_sha256: b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204
+    model_type: qwen3_5
+  tokenizer_sha256: 2e62378632909af479a51106c74337cb6a11f23cbc832e71eb422931ba85a118
+  seed: 0
+  device: cpu
+  dtype: bfloat16
+  max_new_tokens: 64
+  decoding:
+    strategy: greedy
+    do_sample: false
+    chat_template: false
+prompt_dataset_sha256: 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641

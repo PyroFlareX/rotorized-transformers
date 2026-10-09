@@ -128,17 +128,30 @@ def select_projections(
 
 
 def load_text_model(model_dir: Path, dtype=None, device=None):
-    """Load the text-only causal LM (vision/MTP weights are skipped by transformers)."""
+    """Load the text-only causal LM from local files (vision/MTP weights are skipped)."""
     import torch
     from transformers import AutoModelForCausalLM
 
-    model = AutoModelForCausalLM.from_pretrained(str(model_dir), dtype=dtype or torch.bfloat16)
+    model = AutoModelForCausalLM.from_pretrained(
+        str(model_dir), dtype=dtype or torch.bfloat16, local_files_only=True
+    )
     if device is not None:
         model = model.to(device)
     return model.eval()
 
 
 def load_tokenizer(model_dir: Path):
+    """Load the checkpoint's local tokenizer, including generic tiny-fixture tokenizers."""
+    import json
+
     from transformers import AutoTokenizer
 
-    return AutoTokenizer.from_pretrained(str(model_dir))
+    model_dir = Path(model_dir)
+    tokenizer_config = model_dir / "tokenizer_config.json"
+    if tokenizer_config.is_file():
+        config = json.loads(tokenizer_config.read_text(encoding="utf-8"))
+        if config.get("tokenizer_class") == "TokenizersBackend":
+            from transformers.tokenization_utils_tokenizers import TokenizersBackend
+
+            return TokenizersBackend.from_pretrained(str(model_dir), local_files_only=True)
+    return AutoTokenizer.from_pretrained(str(model_dir), local_files_only=True)

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import math
 from pathlib import Path
 
@@ -10,9 +11,11 @@ import torch
 
 from rotor.data import random_windows, windows_fingerprint
 from rotor.evaluation.baselines import equal_budget_baselines, gaussian_random, spectrum_matched_random
+from rotor.evaluation.generation import compare_generations
 from rotor.evaluation.lm import evaluate_lm
 from rotor.evaluation.longcontext import nll_by_position
 from rotor.evaluation.performance import linear_microbench, time_callable
+from rotor.evaluation.prompts import _token_hash, _validate_baseline
 from rotor.math.lowrank import LowRankLinear
 from rotor.models.qwen3_5 import load_text_model
 
@@ -286,3 +289,68 @@ def test_linear_microbench_rows_cover_every_impl_and_batch(W):
     assert by[("dense", 1)]["params"] == OUT_F * IN_F
     assert by[("svd9", 1)]["params"] == 9 * (OUT_F + IN_F)
     assert by[("dense", 4)]["estimated_flops"] == 4 * by[("dense", 1)]["estimated_flops"]
+
+
+def _baseline_row(
+    settings: dict,
+    input_ids: list[int],
+    output_ids: list[int],
+    input_text: str = "Explain a falling object:",
+) -> dict:
+
+    return {
+        "prompt_id": "p1",
+        "domain": "science",
+        "settings": settings,
+        "input_text": input_text,
+        "input_ids": input_ids,
+        "input_token_count": len(input_ids),
+        "input_tokens_sha256": _token_hash(input_ids),
+        "output_ids": output_ids,
+        "output_token_count": len(output_ids),
+        "output_tokens_sha256": _token_hash(output_ids),
+    }
+
+
+def test_prompt_baseline_validates_inputs_then_compares_prefix_and_exact(tmp_path):
+    settings = {"prompt_dataset_sha256": "dataset", "max_new_tokens": 4, "dtype": "bfloat16"}
+    expected = [{
+        "prompt_id": "p1",
+        "domain": "science",
+        "input_text": "Explain a falling object:",
+        "input_ids": [11, 12],
+        "input_token_count": 2,
+        "input_tokens_sha256": "dummy",
+    }]
+
+    expected[0]["input_tokens_sha256"] = _token_hash(expected[0]["input_ids"])
+    first = _baseline_row(settings, [11, 12], [21, 22, 23, 24])
+    path = tmp_path / "baseline.jsonl"
+    path.write_text(json.dumps(first) + "\n", encoding="utf-8")
+    baseline = _validate_baseline(path, expected, settings)
+    assert len(baseline) == 1
+    assert compare_generations(baseline[0]["output_ids"], [21, 99, 23, 24]) == {
+        "match_prefix_len": 1,
+        "exact_match": False,
+        "len_a": 4,
+        "len_b": 4,
+    }
+    assert compare_generations(baseline[0]["output_ids"], [21, 22, 23, 24])["exact_match"] is True
+
+
+def test_prompt_baseline_rejects_settings_and_input_mismatches(tmp_path):
+    settings = {"prompt_dataset_sha256": "dataset", "max_new_tokens": 4}
+    expected = [{
+        "prompt_id": "p1", "domain": "science", "input_text": "Explain:",
+        "input_ids": [5, 6], "input_token_count": 2,
+    }]
+
+    expected[0]["input_tokens_sha256"] = _token_hash(expected[0]["input_ids"])
+    row = _baseline_row(settings, [5, 6], [7, 8], input_text="Explain:")
+    path = tmp_path / "baseline.jsonl"
+    path.write_text(json.dumps(row) + "\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="settings"):
+        _validate_baseline(path, expected, {**settings, "max_new_tokens": 5})
+    changed = [dict(expected[0], input_ids=[5, 9], input_tokens_sha256=_token_hash([5, 9]))]
+    with pytest.raises(ValueError, match="input_ids"):
+        _validate_baseline(path, changed, settings)

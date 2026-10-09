@@ -1,0 +1,143 @@
+{
+  "run_id": "qwen3.5-0.8b__rotor-converted__b025__20261009T013925Z",
+  "kind": "prompt-generation",
+  "status": "completed",
+  "created_utc": "2026-10-09T01:39:25.766647+00:00",
+  "finished_utc": "2026-10-09T01:39:29.268375+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "rotor:converted",
+  "target": "b025",
+  "metrics": {
+    "provenance": {
+      "prompt_dataset": "/mnt/Projects/rotorized-transformers/configs/evaluation/prompts-256.jsonl",
+      "prompt_dataset_sha256": "73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641",
+      "prompt_count": 256,
+      "evaluated_prompt_count": 2,
+      "tokenizer": {
+        "name": "/tmp/rotor-prompt-smoke-2y25zy0p/base",
+        "files_sha256": {
+          "tokenizer.json": "fc1288cf9a8df1800a3081f77f3382f50e196a0d4b08966d9b1033e005e0dc80",
+          "tokenizer_config.json": "2e82dbc3e20a656b022331e8b616deb37897c4544b5c4489a598793cae589c91"
+        },
+        "sha256": "c12c3a3ddb926c50e354fa743b6566496e4cceaecb0945007c813d8c53ff33ce"
+      },
+      "model_config_sha256": "ffb6951b48c1fc0de525051736835eb8e92e0316326b9b6970f3eabca4956416",
+      "base_model_hf_id": "Qwen/Qwen3.5-0.8B-Base",
+      "base_model_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+      "base_model_path": "/tmp/rotor-prompt-smoke-2y25zy0p/base",
+      "checkpoint_path": "/tmp/rotor-prompt-smoke-2y25zy0p/derived/converted",
+      "seed": 0,
+      "device": "cpu",
+      "dtype": "float32",
+      "max_new_tokens": 4,
+      "run_note": null
+    },
+    "settings": {
+      "prompt_dataset_sha256": "73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641",
+      "base_model": {
+        "hf_id": "Qwen/Qwen3.5-0.8B-Base",
+        "revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+        "config_sha256": "ffb6951b48c1fc0de525051736835eb8e92e0316326b9b6970f3eabca4956416",
+        "model_type": "qwen3_5"
+      },
+      "tokenizer_sha256": "c12c3a3ddb926c50e354fa743b6566496e4cceaecb0945007c813d8c53ff33ce",
+      "seed": 0,
+      "device": "cpu",
+      "dtype": "float32",
+      "max_new_tokens": 4,
+      "decoding": {
+        "strategy": "greedy",
+        "do_sample": false,
+        "chat_template": false
+      }
+    },
+    "results": {
+      "jsonl_path": "/tmp/rotor-prompt-smoke-2y25zy0p/converted-results.jsonl",
+      "jsonl_rows": 2,
+      "telemetry_jsonl_path": "/tmp/rotor-prompt-smoke-2y25zy0p/converted-results.telemetry.jsonl",
+      "runtime_telemetry": {
+        "schema_version": 1,
+        "measured": true,
+        "samples_path": "/tmp/rotor-prompt-smoke-2y25zy0p/converted-results.telemetry.jsonl",
+        "sampling_interval_seconds": 1.0,
+        "sample_count": 2,
+        "duration_seconds": 0.1560426659998484,
+        "cpu_logical_count": 12,
+        "process_cpu_time_seconds": 0.47550567999999993,
+        "process_cpu_utilization_percent": 304.72799022830196,
+        "current_process_rss_bytes": 380403712,
+        "peak_sampled_process_rss_bytes": 380403712,
+        "peak_sampled_cpu_utilization_percent": 301.3570549685831,
+        "devices": [
+          {
+            "backend": "amd_sysfs",
+            "card": "card1",
+            "pci_address": "0000:03:00.0",
+            "name": null,
+            "driver": "amdgpu",
+            "gpu_busy_percent": 17,
+            "vram_used_bytes": 3146694656,
+            "vram_total_bytes": 25753026560,
+            "gtt_used_bytes": 320331776,
+            "gtt_total_bytes": 33266819072,
+            "temperature_c": {
+              "edge": 44.0,
+              "junction": 50.0,
+              "mem": 50.0
+            },
+            "power_w": 36.0
+          },
+          {
+            "backend": "amd_sysfs",
+            "card": "card2",
+            "pci_address": "0000:0e:00.0",
+            "name": null,
+            "driver": "amdgpu",
+            "gpu_busy_percent": 0,
+            "vram_used_bytes": 26116096,
+            "vram_total_bytes": 536870912,
+            "gtt_used_bytes": 16257024,
+            "gtt_total_bytes": 33266819072,
+            "temperature_c": {
+              "edge": 39.0
+            },
+            "power_w": 4.184
+          }
+        ],
+        "peak_sampled_device_memory": [
+          {
+            "backend": "amd_sysfs",
+            "device_id": "0000:03:00.0",
+            "name": null,
+            "vram_used_bytes": 3146694656,
+            "gtt_used_bytes": 320331776
+          },
+          {
+            "backend": "amd_sysfs",
+            "device_id": "0000:0e:00.0",
+            "name": null,
+            "vram_used_bytes": 26116096,
+            "gtt_used_bytes": 16257024
+          }
+        ],
+        "host_available_ram_bytes": 52630560768,
+        "host_available_swap_bytes": 4517871616,
+        "host_total_swap_bytes": 8589930496,
+        "process_read_bytes": 0,
+        "process_write_bytes": 139264,
+        "phase": "generation",
+        "request_id": "science-002",
+        "sampling_error": null
+      },
+      "generation_total_seconds": 0.0852170109974395,
+      "timing_note": "No generation warm-up: first measured prompt is cold; later prompts use a resident model.",
+      "comparison": {
+        "baseline_jsonl": "/tmp/rotor-prompt-smoke-2y25zy0p/catalog-base.jsonl",
+        "exact_matches": 2,
+        "prompts": 2
+      }
+    }
+  },
+  "estimates": {},
+  "failure": null
+}

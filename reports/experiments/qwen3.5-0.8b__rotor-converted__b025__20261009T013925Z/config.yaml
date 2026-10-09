@@ -1,0 +1,33 @@
+base_dir: /tmp/rotor-prompt-smoke-2y25zy0p/base
+model: qwen3.5-0.8b
+ckpt: /tmp/rotor-prompt-smoke-2y25zy0p/derived/converted
+prompts: /mnt/Projects/rotorized-transformers/configs/evaluation/prompts-256.jsonl
+limit: 2
+max_new_tokens: 4
+seed: 0
+device: cpu
+dtype: float32
+compare_to: /tmp/rotor-prompt-smoke-2y25zy0p/catalog-base.jsonl
+output: /tmp/rotor-prompt-smoke-2y25zy0p/converted-results.jsonl
+telemetry_path: null
+name: null
+run_note: null
+base_dir_resolved: /tmp/rotor-prompt-smoke-2y25zy0p/base
+checkpoint_resolved: /tmp/rotor-prompt-smoke-2y25zy0p/derived/converted
+settings:
+  prompt_dataset_sha256: 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641
+  base_model:
+    hf_id: Qwen/Qwen3.5-0.8B-Base
+    revision: dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68
+    config_sha256: ffb6951b48c1fc0de525051736835eb8e92e0316326b9b6970f3eabca4956416
+    model_type: qwen3_5
+  tokenizer_sha256: c12c3a3ddb926c50e354fa743b6566496e4cceaecb0945007c813d8c53ff33ce
+  seed: 0
+  device: cpu
+  dtype: float32
+  max_new_tokens: 4
+  decoding:
+    strategy: greedy
+    do_sample: false
+    chat_template: false
+prompt_dataset_sha256: 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641

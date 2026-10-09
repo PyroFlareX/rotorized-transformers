@@ -18,14 +18,23 @@ YAML files for `scripts/evaluate_model.py --config <file>`. Keys are the CLI opt
 | `max_context` | int | 2048 | contexts above this also need `--short-context-verified` |
 | `short_context_verified` | bool | false | operator assertion that the short-context path matched its reference |
 | `compare_base` | bool | false | evaluate base on identical inputs; report side-by-side table, deltas, generation match |
+
+
 | `name` | str | null | free-form label stored in the run config |
+
+## Curated prompt continuations
+
+`prompts-256.jsonl` contains 256 manually authored raw, open-ended prompt prefixes spanning 16 domains. `scripts/evaluate_prompts.py` runs the corpus against local base or rotor-converted checkpoints with deterministic greedy decoding (no sampling, no chat template), default `max_new_tokens=64`, and records the shared seed, model/config provenance, tokenizer-file SHA-256, corpus SHA-256, and per-prompt input-token SHA-256. The model/tokenizer loader is local-only; the command never downloads model files.
+
+Each completed prompt appends and flushes one result JSONL row containing text and token IDs/counts for input and output, total tokens, `measure_generation` timing/resource metrics, cold-first versus warm-resident timing label, and (when comparing) output longest-common-prefix and exact-match status. A separate `RuntimeTelemetry` JSONL samples model loading and generation with prompt IDs. The run publishes `ExperimentRun` evidence under `reports/experiments/`; JSONL results and telemetry live outside model directories. CPU is explicitly labeled a slow reference fallback. `--limit N` enables smoke runs. Records contain output-token and output-text SHA-256 values, and each result row is flushed and synced to disk before advancing to the next prompt.
+
+For a converted run, `--compare-to <base-results.jsonl>` rejects any differences in dataset hash, selected prompt IDs, model config, tokenizer fingerprint, seed, device, dtype, generation settings, prompt text or token IDs before per-output comparison. Result/runtime paths are exclusive and must not already exist.
+
+For a tiny real-checkpoint smoke run, point `--base-dir` at a local tiny Qwen checkpoint with tokenizer files and use `--limit 1 --output /tmp/tiny-prompts.jsonl`; no mocked model or tokenizer is substituted.
 
 ## Outputs
 
-Each run publishes `reports/experiments/<model>__<method>__<target>__<UTC stamp>/` (see `reports/experiments/README.md`);
-`method` is `base` or `rotor:<ckpt name>`, `target` comes from the checkpoint manifest's `budget` (`na` for base).
-`metrics.json` records the tokenizer name and `sha256` of `tokenizer.json` (when present), the windows fingerprint,
-and hashes of the corpus / JSONL files. Everything in the Measured metrics section is measured on this host.
+`scripts/evaluate_model.py` publishes its experiment runs under `reports/experiments/` as described in the sections below. Prompt continuation runs record the generated JSONL path and runtime telemetry summary in their ExperimentRun metrics; individual rows retain token hashes and generation timing/resource data.
 
 ## Metric definitions
 

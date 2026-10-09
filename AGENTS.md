@@ -8,7 +8,7 @@
 |---|---|
 | NAS root (everything model-sized) | `/mnt/NAS/MediaHome/Local-Models/` |
 | Default base location | `/mnt/NAS/MediaHome/Local-Models/base/` |
-| Default derived location | `/mnt/NAS/MediaHome/Local-Models/derived/rotor-scaler/` |
+| Default derived location | `/mnt/NAS/MediaHome/Local-Models/temp/` (one new directory per conversion run) |
 
 - **Never use the project repository for full checkpoints.** Git excludes weights (`.gitignore`), and the repo is not a model store.
 - Resolve every path through the centralized storage configuration: `configs/storage.yaml`, loaded with `rotor.storage.load_storage()`. Per-machine overlay: `configs/storage.local.yaml` (gitignored) or the file named by the `ROTOR_STORAGE_CONFIG` environment variable (tests use it to redirect to tmp dirs). **Do not scatter hardcoded absolute paths** in scripts, configs, or code.
@@ -18,9 +18,9 @@
   - `/mnt/NAS/MediaHome/Local-Models/Qwen3.8-Flash-Next/`
   - `/mnt/NAS/MediaHome/Local-Models/gemma-4-e4b-v2-sol-fable/`
   - `/mnt/NAS/MediaHome/Local-Models/ternary-bonsai-27b/`
-  - `/mnt/NAS/MediaHome/Local-Models/temp/`
 - **Never move, overwrite, delete, or duplicate preexisting model weights without explicit permission.**
 - `Storage.assert_writable()` already refuses writes into `base_root` and into `preexisting_read_only`; do not bypass it.
+- The user authorized conversion outputs under `temp/` on 2026-10-08. Existing outputs remain protected by no-overwrite atomic publishing.
 
 ## Safety and bandwidth
 
@@ -82,7 +82,7 @@ flowchart LR
   A --> F[converters.fit<br/>weight or activation]
   C[converters.calibration] -.-> F
   F --> M[formats.write_structured]
-  M -->|atomic_dir| X[Derived checkpoint on NAS<br/>derived/rotor-scaler/]
+  M -->|atomic_dir| X[Derived checkpoint on NAS<br/>temp/run-name/]
   X --> L[models.loading.load_converted]
   B --> L
   L --> E[evaluation.lm / longcontext / performance]

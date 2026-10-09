@@ -1,0 +1,38 @@
+name: converted
+model: qwen3.5-0.8b
+families:
+- ffn.gate
+- ffn.up
+- ffn.down
+layers:
+- 0
+budget:
+  storage_dtype: bfloat16
+  byte_ratio: 0.25
+cascade:
+  topology:
+    kind: butterfly
+    seed: 0
+  stages_per_rotor: auto
+  residual_rank: 0
+  adapter: pad_truncate
+fit:
+  objective: weight
+  seed: 0
+  device: cpu
+  init_angle_std: 0.01
+  schedule:
+    phases:
+    - train:
+      - angles
+      - scales
+      steps: 2
+calibration:
+  source: random
+  path: null
+  seq_len: 256
+  num_windows: 8
+  seed: 0
+  max_rows: 4096
+base_dir: /tmp/rotor-prompt-smoke-2y25zy0p/base
+output_dir: /tmp/rotor-prompt-smoke-2y25zy0p/derived/converted

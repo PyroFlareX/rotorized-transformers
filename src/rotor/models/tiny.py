@@ -40,4 +40,19 @@ def make_tiny_checkpoint(out_dir: Path, seed: int = 0) -> Path:
     torch.manual_seed(seed)
     model = Qwen3_5ForConditionalGeneration(cfg).eval()
     model.save_pretrained(str(out_dir))
+    from tokenizers import Regex, Tokenizer, decoders, models, pre_tokenizers
+    from transformers import PreTrainedTokenizerFast
+
+    vocabulary = {"<unk>": 0, "<pad>": 1, "<bos>": 2, "<eos>": 3}
+    vocabulary.update({chr(codepoint): codepoint - 27 for codepoint in range(32, 127)})
+    tokenizer = Tokenizer(models.WordLevel(vocabulary, unk_token="<unk>"))
+    tokenizer.pre_tokenizer = pre_tokenizers.Split(Regex(""), behavior="isolated")
+    tokenizer.decoder = decoders.Fuse()
+    PreTrainedTokenizerFast(
+        tokenizer_object=tokenizer,
+        unk_token="<unk>",
+        pad_token="<pad>",
+        bos_token="<bos>",
+        eos_token="<eos>",
+    ).save_pretrained(str(out_dir))
     return out_dir
