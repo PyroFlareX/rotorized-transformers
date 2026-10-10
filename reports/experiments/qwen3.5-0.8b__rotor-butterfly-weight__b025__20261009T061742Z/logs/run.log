@@ -1,0 +1,834 @@
+2026-10-09T06:20:16+00:00 [angles+scales] step 0/1800 loss 0.996327
+2026-10-09T06:23:59+00:00 [angles+scales] step 200/1800 loss 0.830042
+2026-10-09T06:27:36+00:00 [angles+scales] step 400/1800 loss 0.688413
+2026-10-09T06:31:12+00:00 [angles+scales] step 600/1800 loss 0.621419
+2026-10-09T06:34:48+00:00 [angles+scales] step 800/1800 loss 0.583666
+2026-10-09T06:38:22+00:00 [angles+scales] step 1000/1800 loss 0.560567
+2026-10-09T06:41:55+00:00 [angles+scales] step 1200/1800 loss 0.546453
+2026-10-09T06:45:27+00:00 [angles+scales] step 1400/1800 loss 0.538223
+2026-10-09T06:47:45+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791528463461746689-b6ab6f60d1f6484888178a016ce0e9ea
+2026-10-09T06:49:20+00:00 [angles+scales] step 1600/1800 loss 0.533803
+2026-10-09T06:55:08+00:00 [1/72] model.layers.0.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7289 final_loss=0.5314 fit=2255.99s
+2026-10-09T06:55:08+00:00 [scales] step 0/200 loss 2.00071
+2026-10-09T06:55:39+00:00 [angles+scales] step 0/1800 loss 0.996602
+2026-10-09T06:56:35+00:00 [angles+scales] step 200/1800 loss 0.810672
+2026-10-09T06:57:31+00:00 [angles+scales] step 400/1800 loss 0.677048
+2026-10-09T06:58:37+00:00 [angles+scales] step 600/1800 loss 0.614523
+2026-10-09T06:59:32+00:00 [angles+scales] step 800/1800 loss 0.578758
+2026-10-09T07:00:28+00:00 [angles+scales] step 1000/1800 loss 0.556745
+2026-10-09T07:01:24+00:00 [angles+scales] step 1200/1800 loss 0.543134
+2026-10-09T07:02:19+00:00 [angles+scales] step 1400/1800 loss 0.535087
+2026-10-09T07:03:15+00:00 [angles+scales] step 1600/1800 loss 0.530734
+2026-10-09T07:04:11+00:00 [2/72] model.layers.0.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.7269 final_loss=0.5283 fit=542.89s
+2026-10-09T07:04:12+00:00 [scales] step 0/200 loss 2.00109
+2026-10-09T07:04:43+00:00 [angles+scales] step 0/1800 loss 0.996361
+2026-10-09T07:05:39+00:00 [angles+scales] step 200/1800 loss 0.855511
+2026-10-09T07:06:34+00:00 [angles+scales] step 400/1800 loss 0.716069
+2026-10-09T07:07:30+00:00 [angles+scales] step 600/1800 loss 0.648021
+2026-10-09T07:08:26+00:00 [angles+scales] step 800/1800 loss 0.608685
+2026-10-09T07:09:22+00:00 [angles+scales] step 1000/1800 loss 0.584542
+2026-10-09T07:10:18+00:00 [angles+scales] step 1200/1800 loss 0.569606
+2026-10-09T07:11:13+00:00 [angles+scales] step 1400/1800 loss 0.560898
+2026-10-09T07:12:07+00:00 [angles+scales] step 1600/1800 loss 0.556219
+2026-10-09T07:12:59+00:00 [3/72] model.layers.0.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7441 final_loss=0.5536 fit=528.10s
+2026-10-09T07:13:01+00:00 [scales] step 0/200 loss 1.99874
+2026-10-09T07:15:26+00:00 [angles+scales] step 0/1800 loss 0.995837
+2026-10-09T07:17:48+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791530264281708134-8f15a7017a104b099758219f2c88d450
+2026-10-09T07:19:02+00:00 [angles+scales] step 200/1800 loss 0.849093
+2026-10-09T07:22:33+00:00 [angles+scales] step 400/1800 loss 0.703672
+2026-10-09T07:26:05+00:00 [angles+scales] step 600/1800 loss 0.632952
+2026-10-09T07:29:37+00:00 [angles+scales] step 800/1800 loss 0.592747
+2026-10-09T07:33:09+00:00 [angles+scales] step 1000/1800 loss 0.568159
+2026-10-09T07:36:41+00:00 [angles+scales] step 1200/1800 loss 0.552984
+2026-10-09T07:40:12+00:00 [angles+scales] step 1400/1800 loss 0.544021
+2026-10-09T07:43:44+00:00 [angles+scales] step 1600/1800 loss 0.539179
+2026-10-09T07:47:16+00:00 [4/72] model.layers.1.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7325 final_loss=0.5365 fit=2055.89s
+2026-10-09T07:47:16+00:00 [scales] step 0/200 loss 1.99995
+2026-10-09T07:47:48+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791532064417656143-3e5d7dbee1314c288d3b90439bdfdba1
+2026-10-09T07:47:51+00:00 [angles+scales] step 0/1800 loss 0.996322
+2026-10-09T07:48:42+00:00 [angles+scales] step 200/1800 loss 0.812463
+2026-10-09T07:49:34+00:00 [angles+scales] step 400/1800 loss 0.665052
+2026-10-09T07:50:26+00:00 [angles+scales] step 600/1800 loss 0.597026
+2026-10-09T07:51:17+00:00 [angles+scales] step 800/1800 loss 0.55947
+2026-10-09T07:52:09+00:00 [angles+scales] step 1000/1800 loss 0.536714
+2026-10-09T07:53:01+00:00 [angles+scales] step 1200/1800 loss 0.52291
+2026-10-09T07:53:53+00:00 [angles+scales] step 1400/1800 loss 0.51485
+2026-10-09T07:54:44+00:00 [angles+scales] step 1600/1800 loss 0.510516
+2026-10-09T07:55:37+00:00 [5/72] model.layers.1.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.7128 final_loss=0.5081 fit=500.49s
+2026-10-09T07:55:37+00:00 [scales] step 0/200 loss 2.00104
+2026-10-09T07:56:07+00:00 [angles+scales] step 0/1800 loss 0.996391
+2026-10-09T07:56:59+00:00 [angles+scales] step 200/1800 loss 0.842096
+2026-10-09T07:57:51+00:00 [angles+scales] step 400/1800 loss 0.707515
+2026-10-09T07:58:43+00:00 [angles+scales] step 600/1800 loss 0.64132
+2026-10-09T07:59:35+00:00 [angles+scales] step 800/1800 loss 0.602677
+2026-10-09T08:00:26+00:00 [angles+scales] step 1000/1800 loss 0.578607
+2026-10-09T08:01:18+00:00 [angles+scales] step 1200/1800 loss 0.56376
+2026-10-09T08:02:10+00:00 [angles+scales] step 1400/1800 loss 0.555046
+2026-10-09T08:03:02+00:00 [angles+scales] step 1600/1800 loss 0.550365
+2026-10-09T08:03:54+00:00 [6/72] model.layers.1.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7401 final_loss=0.5478 fit=496.85s
+2026-10-09T08:03:55+00:00 [scales] step 0/200 loss 2.00107
+2026-10-09T08:06:21+00:00 [angles+scales] step 0/1800 loss 0.99622
+2026-10-09T08:09:52+00:00 [angles+scales] step 200/1800 loss 0.805116
+2026-10-09T08:13:24+00:00 [angles+scales] step 400/1800 loss 0.659585
+2026-10-09T08:16:56+00:00 [angles+scales] step 600/1800 loss 0.592972
+2026-10-09T08:17:51+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791533865153859641-ee3c87b38cdc42e18cdf940f31426171
+2026-10-09T08:20:34+00:00 [angles+scales] step 800/1800 loss 0.55587
+2026-10-09T08:24:06+00:00 [angles+scales] step 1000/1800 loss 0.533375
+2026-10-09T08:27:38+00:00 [angles+scales] step 1200/1800 loss 0.519525
+2026-10-09T08:31:10+00:00 [angles+scales] step 1400/1800 loss 0.511431
+2026-10-09T08:34:42+00:00 [angles+scales] step 1600/1800 loss 0.507089
+2026-10-09T08:38:13+00:00 [7/72] model.layers.2.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7104 final_loss=0.5047 fit=2058.91s
+2026-10-09T08:38:14+00:00 [scales] step 0/200 loss 1.99961
+2026-10-09T08:38:44+00:00 [angles+scales] step 0/1800 loss 0.995932
+2026-10-09T08:39:36+00:00 [angles+scales] step 200/1800 loss 0.791993
+2026-10-09T08:40:28+00:00 [angles+scales] step 400/1800 loss 0.63204
+2026-10-09T08:41:19+00:00 [angles+scales] step 600/1800 loss 0.561609
+2026-10-09T08:42:11+00:00 [angles+scales] step 800/1800 loss 0.523125
+2026-10-09T08:43:03+00:00 [angles+scales] step 1000/1800 loss 0.500209
+2026-10-09T08:43:55+00:00 [angles+scales] step 1200/1800 loss 0.486362
+2026-10-09T08:44:46+00:00 [angles+scales] step 1400/1800 loss 0.478292
+2026-10-09T08:45:38+00:00 [angles+scales] step 1600/1800 loss 0.473971
+2026-10-09T08:46:30+00:00 [8/72] model.layers.2.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6867 final_loss=0.4716 fit=496.63s
+2026-10-09T08:46:31+00:00 [scales] step 0/200 loss 2.00117
+2026-10-09T08:47:01+00:00 [angles+scales] step 0/1800 loss 0.996341
+2026-10-09T08:47:54+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791535665166630147-1ecba81d903942288b7fe665bc8bdd62
+2026-10-09T08:48:03+00:00 [angles+scales] step 200/1800 loss 0.844087
+2026-10-09T08:48:54+00:00 [angles+scales] step 400/1800 loss 0.708229
+2026-10-09T08:49:46+00:00 [angles+scales] step 600/1800 loss 0.642758
+2026-10-09T08:50:38+00:00 [angles+scales] step 800/1800 loss 0.605281
+2026-10-09T08:51:30+00:00 [angles+scales] step 1000/1800 loss 0.582293
+2026-10-09T08:52:21+00:00 [angles+scales] step 1200/1800 loss 0.568051
+2026-10-09T08:53:13+00:00 [angles+scales] step 1400/1800 loss 0.55962
+2026-10-09T08:54:05+00:00 [angles+scales] step 1600/1800 loss 0.55505
+2026-10-09T08:54:57+00:00 [9/72] model.layers.2.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7433 final_loss=0.5525 fit=506.36s
+2026-10-09T08:54:58+00:00 [scales] step 0/200 loss 2.0017
+2026-10-09T08:57:24+00:00 [angles+scales] step 0/1800 loss 0.996405
+2026-10-09T09:00:55+00:00 [angles+scales] step 200/1800 loss 0.81942
+2026-10-09T09:04:27+00:00 [angles+scales] step 400/1800 loss 0.668912
+2026-10-09T09:07:59+00:00 [angles+scales] step 600/1800 loss 0.596869
+2026-10-09T09:11:31+00:00 [angles+scales] step 800/1800 loss 0.556358
+2026-10-09T09:15:03+00:00 [angles+scales] step 1000/1800 loss 0.531902
+2026-10-09T09:17:53+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791537466060690120-a54530c1feb84d31aea1b3d2955bbcc5
+2026-10-09T09:18:42+00:00 [angles+scales] step 1200/1800 loss 0.517163
+2026-10-09T09:22:13+00:00 [angles+scales] step 1400/1800 loss 0.508576
+2026-10-09T09:25:45+00:00 [angles+scales] step 1600/1800 loss 0.503966
+2026-10-09T09:29:18+00:00 [10/72] model.layers.3.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7081 final_loss=0.5014 fit=2060.14s
+2026-10-09T09:29:18+00:00 [scales] step 0/200 loss 1.99881
+2026-10-09T09:29:49+00:00 [angles+scales] step 0/1800 loss 0.996598
+2026-10-09T09:30:40+00:00 [angles+scales] step 200/1800 loss 0.772898
+2026-10-09T09:31:32+00:00 [angles+scales] step 400/1800 loss 0.616116
+2026-10-09T09:32:24+00:00 [angles+scales] step 600/1800 loss 0.547749
+2026-10-09T09:33:16+00:00 [angles+scales] step 800/1800 loss 0.510157
+2026-10-09T09:34:08+00:00 [angles+scales] step 1000/1800 loss 0.487756
+2026-10-09T09:34:59+00:00 [angles+scales] step 1200/1800 loss 0.474144
+2026-10-09T09:35:51+00:00 [angles+scales] step 1400/1800 loss 0.466145
+2026-10-09T09:36:43+00:00 [angles+scales] step 1600/1800 loss 0.461862
+2026-10-09T09:37:35+00:00 [11/72] model.layers.3.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6779 final_loss=0.4595 fit=497.09s
+2026-10-09T09:37:36+00:00 [scales] step 0/200 loss 2.00061
+2026-10-09T09:38:07+00:00 [angles+scales] step 0/1800 loss 0.996426
+2026-10-09T09:38:58+00:00 [angles+scales] step 200/1800 loss 0.841722
+2026-10-09T09:39:50+00:00 [angles+scales] step 400/1800 loss 0.704081
+2026-10-09T09:40:42+00:00 [angles+scales] step 600/1800 loss 0.636808
+2026-10-09T09:41:34+00:00 [angles+scales] step 800/1800 loss 0.5978
+2026-10-09T09:42:26+00:00 [angles+scales] step 1000/1800 loss 0.573663
+2026-10-09T09:43:17+00:00 [angles+scales] step 1200/1800 loss 0.558583
+2026-10-09T09:44:09+00:00 [angles+scales] step 1400/1800 loss 0.549658
+2026-10-09T09:45:01+00:00 [angles+scales] step 1600/1800 loss 0.544876
+2026-10-09T09:45:53+00:00 [12/72] model.layers.3.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7364 final_loss=0.5423 fit=497.04s
+2026-10-09T09:45:54+00:00 [scales] step 0/200 loss 1.99863
+2026-10-09T09:47:55+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791539266730596646-407f54ff213f467d912674bd281c5dd2
+2026-10-09T09:48:29+00:00 [angles+scales] step 0/1800 loss 0.996249
+2026-10-09T09:52:01+00:00 [angles+scales] step 200/1800 loss 0.814351
+2026-10-09T09:55:33+00:00 [angles+scales] step 400/1800 loss 0.664179
+2026-10-09T09:59:04+00:00 [angles+scales] step 600/1800 loss 0.595043
+2026-10-09T10:02:36+00:00 [angles+scales] step 800/1800 loss 0.556762
+2026-10-09T10:06:08+00:00 [angles+scales] step 1000/1800 loss 0.533485
+2026-10-09T16:03:31+00:00 [angles+scales] step 1200/1800 loss 0.519191
+2026-10-09T16:07:16+00:00 [angles+scales] step 1400/1800 loss 0.510846
+2026-10-09T16:11:35+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791562282209552337-c1c2c33104724866bb059099e276b163
+2026-10-09T16:12:09+00:00 [angles+scales] step 1600/1800 loss 0.506377
+2026-10-09T16:16:57+00:00 [13/72] model.layers.4.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7099 final_loss=0.5039 fit=2248.30s
+2026-10-09T16:16:58+00:00 [scales] step 0/200 loss 2.00121
+2026-10-09T16:17:56+00:00 [angles+scales] step 0/1800 loss 0.996395
+2026-10-09T16:19:39+00:00 [angles+scales] step 200/1800 loss 0.755889
+2026-10-09T16:21:29+00:00 [angles+scales] step 400/1800 loss 0.597273
+2026-10-09T16:22:58+00:00 [angles+scales] step 600/1800 loss 0.529801
+2026-10-09T16:24:46+00:00 [angles+scales] step 800/1800 loss 0.493412
+2026-10-09T16:26:15+00:00 [angles+scales] step 1000/1800 loss 0.47192
+2026-10-09T16:28:04+00:00 [angles+scales] step 1200/1800 loss 0.459002
+2026-10-09T16:29:31+00:00 [angles+scales] step 1400/1800 loss 0.451494
+2026-10-09T16:31:17+00:00 [angles+scales] step 1600/1800 loss 0.447484
+2026-10-09T16:32:49+00:00 [14/72] model.layers.4.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6673 final_loss=0.4453 fit=951.17s
+2026-10-09T16:32:50+00:00 [scales] step 0/200 loss 1.99956
+2026-10-09T16:33:46+00:00 [angles+scales] step 0/1800 loss 0.996421
+2026-10-09T16:35:14+00:00 [angles+scales] step 200/1800 loss 0.824036
+2026-10-09T16:37:02+00:00 [angles+scales] step 400/1800 loss 0.684647
+2026-10-09T16:38:30+00:00 [angles+scales] step 600/1800 loss 0.618418
+2026-10-09T16:40:18+00:00 [angles+scales] step 800/1800 loss 0.580904
+2026-10-09T16:41:35+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791564082963702175-8dc7ef121eab426e8e09bb7d096a0a70
+2026-10-09T16:42:02+00:00 [angles+scales] step 1000/1800 loss 0.557876
+2026-10-09T16:43:46+00:00 [angles+scales] step 1200/1800 loss 0.543708
+2026-10-09T16:45:14+00:00 [angles+scales] step 1400/1800 loss 0.53538
+2026-10-09T16:47:02+00:00 [angles+scales] step 1600/1800 loss 0.53091
+2026-10-09T16:48:25+00:00 [15/72] model.layers.4.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7269 final_loss=0.5285 fit=934.59s
+2026-10-09T16:48:26+00:00 [scales] step 0/200 loss 2.00131
+2026-10-09T16:51:34+00:00 [angles+scales] step 0/1800 loss 0.996307
+2026-10-09T16:56:42+00:00 [angles+scales] step 200/1800 loss 0.785348
+2026-10-09T17:01:40+00:00 [angles+scales] step 400/1800 loss 0.628788
+2026-10-09T17:06:39+00:00 [angles+scales] step 600/1800 loss 0.559599
+2026-10-09T17:11:30+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791565883554538437-bf4131645528487486d03b7b6b284d9d
+2026-10-09T17:11:56+00:00 [angles+scales] step 800/1800 loss 0.522168
+2026-10-09T17:16:56+00:00 [angles+scales] step 1000/1800 loss 0.500118
+2026-10-09T17:21:50+00:00 [angles+scales] step 1200/1800 loss 0.486749
+2026-10-09T17:26:41+00:00 [angles+scales] step 1400/1800 loss 0.478939
+2026-10-09T17:30:37+00:00 [angles+scales] step 1600/1800 loss 0.474767
+2026-10-09T17:34:09+00:00 [16/72] model.layers.5.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.6874 final_loss=0.4725 fit=2743.42s
+2026-10-09T17:34:10+00:00 [scales] step 0/200 loss 1.9991
+2026-10-09T17:34:40+00:00 [angles+scales] step 0/1800 loss 0.996325
+2026-10-09T17:35:32+00:00 [angles+scales] step 200/1800 loss 0.769892
+2026-10-09T17:36:24+00:00 [angles+scales] step 400/1800 loss 0.609505
+2026-10-09T17:37:15+00:00 [angles+scales] step 600/1800 loss 0.539651
+2026-10-09T17:38:07+00:00 [angles+scales] step 800/1800 loss 0.501919
+2026-10-09T17:38:59+00:00 [angles+scales] step 1000/1800 loss 0.479263
+2026-10-09T17:39:51+00:00 [angles+scales] step 1200/1800 loss 0.465354
+2026-10-09T17:40:43+00:00 [angles+scales] step 1400/1800 loss 0.45722
+2026-10-09T17:41:46+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791567683768441806-5950d036418b47f8b2418d53bf5d1238
+2026-10-09T17:41:58+00:00 [angles+scales] step 1600/1800 loss 0.452856
+2026-10-09T17:42:50+00:00 [17/72] model.layers.5.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6712 final_loss=0.4505 fit=520.52s
+2026-10-09T17:42:51+00:00 [scales] step 0/200 loss 1.99845
+2026-10-09T17:43:21+00:00 [angles+scales] step 0/1800 loss 0.996442
+2026-10-09T17:44:13+00:00 [angles+scales] step 200/1800 loss 0.821473
+2026-10-09T17:45:04+00:00 [angles+scales] step 400/1800 loss 0.682693
+2026-10-09T17:45:56+00:00 [angles+scales] step 600/1800 loss 0.616368
+2026-10-09T17:46:48+00:00 [angles+scales] step 800/1800 loss 0.577837
+2026-10-09T17:47:40+00:00 [angles+scales] step 1000/1800 loss 0.553809
+2026-10-09T17:48:32+00:00 [angles+scales] step 1200/1800 loss 0.539193
+2026-10-09T17:49:23+00:00 [angles+scales] step 1400/1800 loss 0.530596
+2026-10-09T17:50:15+00:00 [angles+scales] step 1600/1800 loss 0.525975
+2026-10-09T17:51:08+00:00 [18/72] model.layers.5.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7235 final_loss=0.5234 fit=497.01s
+2026-10-09T17:51:09+00:00 [scales] step 0/200 loss 2.00041
+2026-10-09T17:53:35+00:00 [angles+scales] step 0/1800 loss 0.996344
+2026-10-09T17:57:07+00:00 [angles+scales] step 200/1800 loss 0.801095
+2026-10-09T18:00:39+00:00 [angles+scales] step 400/1800 loss 0.642419
+2026-10-09T18:04:11+00:00 [angles+scales] step 600/1800 loss 0.569168
+2026-10-09T18:07:43+00:00 [angles+scales] step 800/1800 loss 0.528989
+2026-10-09T18:11:15+00:00 [angles+scales] step 1000/1800 loss 0.504697
+2026-10-09T18:11:36+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791569484017933747-71a0219569144e03a595171a680ef68c
+2026-10-09T18:15:00+00:00 [angles+scales] step 1200/1800 loss 0.4896
+2026-10-09T18:18:32+00:00 [angles+scales] step 1400/1800 loss 0.480765
+2026-10-09T18:22:04+00:00 [angles+scales] step 1600/1800 loss 0.476019
+2026-10-09T18:25:36+00:00 [19/72] model.layers.6.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.688 final_loss=0.4734 fit=2068.49s
+2026-10-09T18:25:38+00:00 [scales] step 0/200 loss 2.00089
+2026-10-09T18:26:08+00:00 [angles+scales] step 0/1800 loss 0.996056
+2026-10-09T18:26:59+00:00 [angles+scales] step 200/1800 loss 0.734216
+2026-10-09T18:27:51+00:00 [angles+scales] step 400/1800 loss 0.572437
+2026-10-09T18:28:43+00:00 [angles+scales] step 600/1800 loss 0.506034
+2026-10-09T18:29:35+00:00 [angles+scales] step 800/1800 loss 0.468965
+2026-10-09T18:30:27+00:00 [angles+scales] step 1000/1800 loss 0.447131
+2026-10-09T18:31:18+00:00 [angles+scales] step 1200/1800 loss 0.433405
+2026-10-09T18:32:10+00:00 [angles+scales] step 1400/1800 loss 0.425623
+2026-10-09T18:33:02+00:00 [angles+scales] step 1600/1800 loss 0.421424
+2026-10-09T18:33:55+00:00 [20/72] model.layers.6.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6474 final_loss=0.4191 fit=497.14s
+2026-10-09T18:33:55+00:00 [scales] step 0/200 loss 2.00046
+2026-10-09T18:34:25+00:00 [angles+scales] step 0/1800 loss 0.996442
+2026-10-09T18:35:17+00:00 [angles+scales] step 200/1800 loss 0.797896
+2026-10-09T18:36:09+00:00 [angles+scales] step 400/1800 loss 0.649255
+2026-10-09T18:37:01+00:00 [angles+scales] step 600/1800 loss 0.579553
+2026-10-09T18:37:52+00:00 [angles+scales] step 800/1800 loss 0.540539
+2026-10-09T18:38:44+00:00 [angles+scales] step 1000/1800 loss 0.517158
+2026-10-09T18:39:36+00:00 [angles+scales] step 1200/1800 loss 0.502853
+2026-10-09T18:40:28+00:00 [angles+scales] step 1400/1800 loss 0.494496
+2026-10-09T18:41:20+00:00 [angles+scales] step 1600/1800 loss 0.490032
+2026-10-09T18:41:33+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791571284252054537-4366e143baa14a6fa7220da06ad804c4
+2026-10-09T18:42:21+00:00 [21/72] model.layers.6.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.6983 final_loss=0.4876 fit=505.87s
+2026-10-09T18:42:22+00:00 [scales] step 0/200 loss 2.00175
+2026-10-09T18:44:48+00:00 [angles+scales] step 0/1800 loss 0.996589
+2026-10-09T18:48:20+00:00 [angles+scales] step 200/1800 loss 0.809266
+2026-10-09T18:51:52+00:00 [angles+scales] step 400/1800 loss 0.653659
+2026-10-09T18:55:24+00:00 [angles+scales] step 600/1800 loss 0.582439
+2026-10-09T18:58:56+00:00 [angles+scales] step 800/1800 loss 0.542136
+2026-10-09T19:02:28+00:00 [angles+scales] step 1000/1800 loss 0.517841
+2026-10-09T19:06:00+00:00 [angles+scales] step 1200/1800 loss 0.502915
+2026-10-09T19:09:33+00:00 [angles+scales] step 1400/1800 loss 0.494102
+2026-10-09T19:11:45+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791573084556580393-1ba2c74286454fa085e06c2d0a1f35a5
+2026-10-09T19:13:26+00:00 [angles+scales] step 1600/1800 loss 0.489359
+2026-10-09T19:16:58+00:00 [22/72] model.layers.7.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.6977 final_loss=0.4868 fit=2076.15s
+2026-10-09T19:16:59+00:00 [scales] step 0/200 loss 2.00055
+2026-10-09T19:17:29+00:00 [angles+scales] step 0/1800 loss 0.996099
+2026-10-09T19:18:21+00:00 [angles+scales] step 200/1800 loss 0.769598
+2026-10-09T19:19:12+00:00 [angles+scales] step 400/1800 loss 0.609018
+2026-10-09T19:20:04+00:00 [angles+scales] step 600/1800 loss 0.537768
+2026-10-09T19:20:56+00:00 [angles+scales] step 800/1800 loss 0.499674
+2026-10-09T19:21:48+00:00 [angles+scales] step 1000/1800 loss 0.476635
+2026-10-09T19:22:40+00:00 [angles+scales] step 1200/1800 loss 0.462568
+2026-10-09T19:23:32+00:00 [angles+scales] step 1400/1800 loss 0.454349
+2026-10-09T19:24:23+00:00 [angles+scales] step 1600/1800 loss 0.449942
+2026-10-09T19:25:16+00:00 [23/72] model.layers.7.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.669 final_loss=0.4475 fit=497.20s
+2026-10-09T19:25:16+00:00 [scales] step 0/200 loss 2.00083
+2026-10-09T19:25:46+00:00 [angles+scales] step 0/1800 loss 0.996647
+2026-10-09T19:26:38+00:00 [angles+scales] step 200/1800 loss 0.815476
+2026-10-09T19:27:30+00:00 [angles+scales] step 400/1800 loss 0.667646
+2026-10-09T19:28:22+00:00 [angles+scales] step 600/1800 loss 0.59939
+2026-10-09T19:29:14+00:00 [angles+scales] step 800/1800 loss 0.560755
+2026-10-09T19:30:05+00:00 [angles+scales] step 1000/1800 loss 0.537419
+2026-10-09T19:30:57+00:00 [angles+scales] step 1200/1800 loss 0.523036
+2026-10-09T19:31:49+00:00 [angles+scales] step 1400/1800 loss 0.514545
+2026-10-09T19:32:41+00:00 [angles+scales] step 1600/1800 loss 0.509965
+2026-10-09T19:33:33+00:00 [24/72] model.layers.7.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7123 final_loss=0.5074 fit=497.10s
+2026-10-09T19:33:34+00:00 [scales] step 0/200 loss 1.9995
+2026-10-09T19:36:00+00:00 [angles+scales] step 0/1800 loss 0.99638
+2026-10-09T19:39:32+00:00 [angles+scales] step 200/1800 loss 0.780389
+2026-10-09T19:41:43+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791574885239100506-164e5ca6104e47209c3fb8550d9427aa
+2026-10-09T19:43:22+00:00 [angles+scales] step 400/1800 loss 0.625132
+2026-10-09T19:46:54+00:00 [angles+scales] step 600/1800 loss 0.557289
+2026-10-09T19:50:27+00:00 [angles+scales] step 800/1800 loss 0.519831
+2026-10-09T19:53:59+00:00 [angles+scales] step 1000/1800 loss 0.496827
+2026-10-09T19:57:31+00:00 [angles+scales] step 1200/1800 loss 0.482869
+2026-10-09T20:01:03+00:00 [angles+scales] step 1400/1800 loss 0.474634
+2026-10-09T20:04:35+00:00 [angles+scales] step 1600/1800 loss 0.470219
+2026-10-09T20:08:07+00:00 [25/72] model.layers.8.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.684 final_loss=0.4678 fit=2073.49s
+2026-10-09T20:08:08+00:00 [scales] step 0/200 loss 2.00105
+2026-10-09T20:08:38+00:00 [angles+scales] step 0/1800 loss 0.996143
+2026-10-09T20:09:29+00:00 [angles+scales] step 200/1800 loss 0.73101
+2026-10-09T20:10:21+00:00 [angles+scales] step 400/1800 loss 0.575725
+2026-10-09T20:11:13+00:00 [angles+scales] step 600/1800 loss 0.510051
+2026-10-09T20:11:35+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791576685380759415-439c7b009f6540bd9c18b333a3bd68d4
+2026-10-09T20:12:14+00:00 [angles+scales] step 800/1800 loss 0.475434
+2026-10-09T20:13:06+00:00 [angles+scales] step 1000/1800 loss 0.454849
+2026-10-09T20:13:58+00:00 [angles+scales] step 1200/1800 loss 0.44225
+2026-10-09T20:14:50+00:00 [angles+scales] step 1400/1800 loss 0.434863
+2026-10-09T20:15:42+00:00 [angles+scales] step 1600/1800 loss 0.430883
+2026-10-09T20:16:34+00:00 [26/72] model.layers.8.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6547 final_loss=0.4287 fit=506.50s
+2026-10-09T20:16:35+00:00 [scales] step 0/200 loss 1.99862
+2026-10-09T20:17:05+00:00 [angles+scales] step 0/1800 loss 0.996574
+2026-10-09T20:17:57+00:00 [angles+scales] step 200/1800 loss 0.818348
+2026-10-09T20:18:49+00:00 [angles+scales] step 400/1800 loss 0.671882
+2026-10-09T20:19:41+00:00 [angles+scales] step 600/1800 loss 0.602457
+2026-10-09T20:20:32+00:00 [angles+scales] step 800/1800 loss 0.563185
+2026-10-09T20:21:24+00:00 [angles+scales] step 1000/1800 loss 0.539226
+2026-10-09T20:22:16+00:00 [angles+scales] step 1200/1800 loss 0.524523
+2026-10-09T20:23:08+00:00 [angles+scales] step 1400/1800 loss 0.51593
+2026-10-09T20:24:00+00:00 [angles+scales] step 1600/1800 loss 0.511312
+2026-10-09T20:24:52+00:00 [27/72] model.layers.8.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7133 final_loss=0.5088 fit=497.39s
+2026-10-09T20:24:53+00:00 [scales] step 0/200 loss 2.00075
+2026-10-09T20:27:19+00:00 [angles+scales] step 0/1800 loss 0.996148
+2026-10-09T20:30:51+00:00 [angles+scales] step 200/1800 loss 0.780239
+2026-10-09T20:34:23+00:00 [angles+scales] step 400/1800 loss 0.622984
+2026-10-09T20:37:55+00:00 [angles+scales] step 600/1800 loss 0.554752
+2026-10-09T20:41:46+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791578485837397442-a8d00162a6a84fd0922af9413744605d
+2026-10-09T20:41:48+00:00 [angles+scales] step 800/1800 loss 0.516273
+2026-10-09T20:45:20+00:00 [angles+scales] step 1000/1800 loss 0.492828
+2026-10-09T20:48:52+00:00 [angles+scales] step 1200/1800 loss 0.478474
+2026-10-09T20:52:24+00:00 [angles+scales] step 1400/1800 loss 0.470055
+2026-10-09T20:55:56+00:00 [angles+scales] step 1600/1800 loss 0.465532
+2026-10-09T20:59:28+00:00 [28/72] model.layers.9.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.6805 final_loss=0.463 fit=2075.91s
+2026-10-09T20:59:29+00:00 [scales] step 0/200 loss 1.99921
+2026-10-09T20:59:59+00:00 [angles+scales] step 0/1800 loss 0.995879
+2026-10-09T21:00:51+00:00 [angles+scales] step 200/1800 loss 0.743611
+2026-10-09T21:01:42+00:00 [angles+scales] step 400/1800 loss 0.587065
+2026-10-09T21:02:34+00:00 [angles+scales] step 600/1800 loss 0.522266
+2026-10-09T21:03:26+00:00 [angles+scales] step 800/1800 loss 0.487657
+2026-10-09T21:04:18+00:00 [angles+scales] step 1000/1800 loss 0.465951
+2026-10-09T21:05:10+00:00 [angles+scales] step 1200/1800 loss 0.452889
+2026-10-09T21:06:02+00:00 [angles+scales] step 1400/1800 loss 0.445267
+2026-10-09T21:06:53+00:00 [angles+scales] step 1600/1800 loss 0.441176
+2026-10-09T21:07:46+00:00 [29/72] model.layers.9.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6625 final_loss=0.4389 fit=497.12s
+2026-10-09T21:07:47+00:00 [scales] step 0/200 loss 1.99735
+2026-10-09T21:08:16+00:00 [angles+scales] step 0/1800 loss 0.99624
+2026-10-09T21:09:08+00:00 [angles+scales] step 200/1800 loss 0.796967
+2026-10-09T21:10:00+00:00 [angles+scales] step 400/1800 loss 0.645104
+2026-10-09T21:10:52+00:00 [angles+scales] step 600/1800 loss 0.576448
+2026-10-09T21:11:46+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791580285983588146-73c26eec3a66464a9fe4e4505117593e
+2026-10-09T21:12:04+00:00 [angles+scales] step 800/1800 loss 0.537933
+2026-10-09T21:12:56+00:00 [angles+scales] step 1000/1800 loss 0.514839
+2026-10-09T21:13:48+00:00 [angles+scales] step 1200/1800 loss 0.500707
+2026-10-09T21:14:39+00:00 [angles+scales] step 1400/1800 loss 0.492383
+2026-10-09T21:15:31+00:00 [angles+scales] step 1600/1800 loss 0.487934
+2026-10-09T21:16:24+00:00 [30/72] model.layers.9.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.6968 final_loss=0.4855 fit=517.35s
+2026-10-09T21:16:25+00:00 [scales] step 0/200 loss 1.99858
+2026-10-09T21:18:51+00:00 [angles+scales] step 0/1800 loss 0.996268
+2026-10-09T21:22:23+00:00 [angles+scales] step 200/1800 loss 0.769277
+2026-10-09T21:25:55+00:00 [angles+scales] step 400/1800 loss 0.609003
+2026-10-09T21:29:27+00:00 [angles+scales] step 600/1800 loss 0.539617
+2026-10-09T21:32:59+00:00 [angles+scales] step 800/1800 loss 0.501966
+2026-10-09T21:36:32+00:00 [angles+scales] step 1000/1800 loss 0.479559
+2026-10-09T21:40:04+00:00 [angles+scales] step 1200/1800 loss 0.465956
+2026-10-09T21:41:39+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791582086923674986-9fc9ecd9400943f7910e4e6bba04aab7
+2026-10-09T21:43:48+00:00 [angles+scales] step 1400/1800 loss 0.457998
+2026-10-09T21:47:20+00:00 [angles+scales] step 1600/1800 loss 0.453754
+2026-10-09T21:50:52+00:00 [31/72] model.layers.10.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.6719 final_loss=0.4514 fit=2067.73s
+2026-10-09T21:50:53+00:00 [scales] step 0/200 loss 2.00124
+2026-10-09T21:51:23+00:00 [angles+scales] step 0/1800 loss 0.995438
+2026-10-09T21:52:14+00:00 [angles+scales] step 200/1800 loss 0.689885
+2026-10-09T21:53:06+00:00 [angles+scales] step 400/1800 loss 0.535938
+2026-10-09T21:53:58+00:00 [angles+scales] step 600/1800 loss 0.473414
+2026-10-09T21:54:50+00:00 [angles+scales] step 800/1800 loss 0.440087
+2026-10-09T21:55:42+00:00 [angles+scales] step 1000/1800 loss 0.41997
+2026-10-09T21:56:34+00:00 [angles+scales] step 1200/1800 loss 0.407649
+2026-10-09T21:57:25+00:00 [angles+scales] step 1400/1800 loss 0.400564
+2026-10-09T21:58:17+00:00 [angles+scales] step 1600/1800 loss 0.396749
+2026-10-09T21:59:10+00:00 [32/72] model.layers.10.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6282 final_loss=0.3946 fit=497.06s
+2026-10-09T21:59:10+00:00 [scales] step 0/200 loss 1.99972
+2026-10-09T21:59:41+00:00 [angles+scales] step 0/1800 loss 0.996368
+2026-10-09T22:00:32+00:00 [angles+scales] step 200/1800 loss 0.788461
+2026-10-09T22:01:24+00:00 [angles+scales] step 400/1800 loss 0.643435
+2026-10-09T22:02:16+00:00 [angles+scales] step 600/1800 loss 0.578052
+2026-10-09T22:03:08+00:00 [angles+scales] step 800/1800 loss 0.541648
+2026-10-09T22:04:00+00:00 [angles+scales] step 1000/1800 loss 0.519244
+2026-10-09T22:04:52+00:00 [angles+scales] step 1200/1800 loss 0.505625
+2026-10-09T22:05:44+00:00 [angles+scales] step 1400/1800 loss 0.497576
+2026-10-09T22:06:36+00:00 [angles+scales] step 1600/1800 loss 0.493246
+2026-10-09T22:07:28+00:00 [33/72] model.layers.10.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7006 final_loss=0.4909 fit=497.83s
+2026-10-09T22:07:29+00:00 [scales] step 0/200 loss 1.99973
+2026-10-09T22:09:55+00:00 [angles+scales] step 0/1800 loss 0.996105
+2026-10-09T22:11:39+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791583887689202514-49bdd7ce9bf649b3b1f1f27d87eec784
+2026-10-09T22:13:39+00:00 [angles+scales] step 200/1800 loss 0.76335
+2026-10-09T22:17:11+00:00 [angles+scales] step 400/1800 loss 0.606538
+2026-10-09T22:20:43+00:00 [angles+scales] step 600/1800 loss 0.538168
+2026-10-09T22:24:15+00:00 [angles+scales] step 800/1800 loss 0.501041
+2026-10-09T22:27:48+00:00 [angles+scales] step 1000/1800 loss 0.478627
+2026-10-09T22:31:20+00:00 [angles+scales] step 1200/1800 loss 0.464962
+2026-10-09T22:34:52+00:00 [angles+scales] step 1400/1800 loss 0.45692
+2026-10-09T22:38:24+00:00 [angles+scales] step 1600/1800 loss 0.452586
+2026-10-09T22:41:49+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791585687929618727-77be10e83e16470790c7585a5de8e680
+2026-10-09T22:42:18+00:00 [34/72] model.layers.11.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.671 final_loss=0.4502 fit=2089.51s
+2026-10-09T22:42:19+00:00 [scales] step 0/200 loss 1.99902
+2026-10-09T22:42:49+00:00 [angles+scales] step 0/1800 loss 0.995381
+2026-10-09T22:43:41+00:00 [angles+scales] step 200/1800 loss 0.715391
+2026-10-09T22:44:32+00:00 [angles+scales] step 400/1800 loss 0.562602
+2026-10-09T22:45:24+00:00 [angles+scales] step 600/1800 loss 0.498988
+2026-10-09T22:46:16+00:00 [angles+scales] step 800/1800 loss 0.465511
+2026-10-09T22:47:08+00:00 [angles+scales] step 1000/1800 loss 0.444272
+2026-10-09T22:48:00+00:00 [angles+scales] step 1200/1800 loss 0.431331
+2026-10-09T22:48:52+00:00 [angles+scales] step 1400/1800 loss 0.423877
+2026-10-09T22:49:43+00:00 [angles+scales] step 1600/1800 loss 0.419842
+2026-10-09T22:50:36+00:00 [35/72] model.layers.11.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6462 final_loss=0.4176 fit=497.64s
+2026-10-09T22:50:37+00:00 [scales] step 0/200 loss 1.9978
+2026-10-09T22:51:07+00:00 [angles+scales] step 0/1800 loss 0.996331
+2026-10-09T22:51:59+00:00 [angles+scales] step 200/1800 loss 0.807622
+2026-10-09T22:52:50+00:00 [angles+scales] step 400/1800 loss 0.661141
+2026-10-09T22:53:42+00:00 [angles+scales] step 600/1800 loss 0.5926
+2026-10-09T22:54:34+00:00 [angles+scales] step 800/1800 loss 0.554154
+2026-10-09T22:55:26+00:00 [angles+scales] step 1000/1800 loss 0.530189
+2026-10-09T22:56:18+00:00 [angles+scales] step 1200/1800 loss 0.515512
+2026-10-09T22:57:10+00:00 [angles+scales] step 1400/1800 loss 0.506879
+2026-10-09T22:58:02+00:00 [angles+scales] step 1600/1800 loss 0.502247
+2026-10-09T22:58:54+00:00 [36/72] model.layers.11.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7069 final_loss=0.4997 fit=497.55s
+2026-10-09T22:58:55+00:00 [scales] step 0/200 loss 2.00051
+2026-10-09T23:01:21+00:00 [angles+scales] step 0/1800 loss 0.996151
+2026-10-09T23:04:53+00:00 [angles+scales] step 200/1800 loss 0.798077
+2026-10-09T23:08:25+00:00 [angles+scales] step 400/1800 loss 0.638133
+2026-10-09T23:11:53+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791587488251383207-066db98a00bd4fe1877a93260e8eff25
+2026-10-09T23:12:23+00:00 [angles+scales] step 600/1800 loss 0.568227
+2026-10-09T23:15:55+00:00 [angles+scales] step 800/1800 loss 0.529258
+2026-10-09T23:19:27+00:00 [angles+scales] step 1000/1800 loss 0.505502
+2026-10-09T23:22:59+00:00 [angles+scales] step 1200/1800 loss 0.490933
+2026-10-09T23:26:31+00:00 [angles+scales] step 1400/1800 loss 0.482354
+2026-10-09T23:30:03+00:00 [angles+scales] step 1600/1800 loss 0.477723
+2026-10-09T23:33:36+00:00 [37/72] model.layers.12.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.6893 final_loss=0.4752 fit=2081.04s
+2026-10-09T23:33:36+00:00 [scales] step 0/200 loss 2.00089
+2026-10-09T23:34:06+00:00 [angles+scales] step 0/1800 loss 0.996607
+2026-10-09T23:34:58+00:00 [angles+scales] step 200/1800 loss 0.648858
+2026-10-09T23:35:50+00:00 [angles+scales] step 400/1800 loss 0.511138
+2026-10-09T23:36:42+00:00 [angles+scales] step 600/1800 loss 0.456364
+2026-10-09T23:37:34+00:00 [angles+scales] step 800/1800 loss 0.426984
+2026-10-09T23:38:26+00:00 [angles+scales] step 1000/1800 loss 0.409038
+2026-10-09T23:39:17+00:00 [angles+scales] step 1200/1800 loss 0.398117
+2026-10-09T23:40:09+00:00 [angles+scales] step 1400/1800 loss 0.391657
+2026-10-09T23:41:01+00:00 [angles+scales] step 1600/1800 loss 0.38817
+2026-10-09T23:41:51+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791589288404536616-36f773f21a524692aa49d1823bbdfdc5
+2026-10-09T23:42:16+00:00 [38/72] model.layers.12.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6215 final_loss=0.3863 fit=520.33s
+2026-10-09T23:42:17+00:00 [scales] step 0/200 loss 1.99898
+2026-10-09T23:42:47+00:00 [angles+scales] step 0/1800 loss 0.996216
+2026-10-09T23:43:39+00:00 [angles+scales] step 200/1800 loss 0.800494
+2026-10-09T23:44:30+00:00 [angles+scales] step 400/1800 loss 0.652204
+2026-10-09T23:45:22+00:00 [angles+scales] step 600/1800 loss 0.586682
+2026-10-09T23:46:14+00:00 [angles+scales] step 800/1800 loss 0.549947
+2026-10-09T23:47:06+00:00 [angles+scales] step 1000/1800 loss 0.52726
+2026-10-09T23:47:58+00:00 [angles+scales] step 1200/1800 loss 0.513461
+2026-10-09T23:48:50+00:00 [angles+scales] step 1400/1800 loss 0.505314
+2026-10-09T23:49:42+00:00 [angles+scales] step 1600/1800 loss 0.500937
+2026-10-09T23:50:34+00:00 [39/72] model.layers.12.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7061 final_loss=0.4985 fit=497.27s
+2026-10-09T23:50:35+00:00 [scales] step 0/200 loss 1.99974
+2026-10-09T23:53:01+00:00 [angles+scales] step 0/1800 loss 0.995865
+2026-10-09T23:56:33+00:00 [angles+scales] step 200/1800 loss 0.789805
+2026-10-10T00:00:06+00:00 [angles+scales] step 400/1800 loss 0.626353
+2026-10-10T00:03:38+00:00 [angles+scales] step 600/1800 loss 0.55594
+2026-10-10T00:07:10+00:00 [angles+scales] step 800/1800 loss 0.517283
+2026-10-10T00:10:42+00:00 [angles+scales] step 1000/1800 loss 0.493821
+2026-10-10T00:11:56+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791591089282628497-36a8fd11b25c470a8590a2efc3ec20d6
+2026-10-10T00:14:42+00:00 [angles+scales] step 1200/1800 loss 0.479475
+2026-10-10T00:18:14+00:00 [angles+scales] step 1400/1800 loss 0.471063
+2026-10-10T00:21:46+00:00 [angles+scales] step 1600/1800 loss 0.466543
+2026-10-10T00:25:18+00:00 [40/72] model.layers.13.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.6812 final_loss=0.4641 fit=2083.37s
+2026-10-10T00:25:19+00:00 [scales] step 0/200 loss 1.99831
+2026-10-10T00:25:48+00:00 [angles+scales] step 0/1800 loss 0.995778
+2026-10-10T00:26:40+00:00 [angles+scales] step 200/1800 loss 0.682196
+2026-10-10T00:27:32+00:00 [angles+scales] step 400/1800 loss 0.530085
+2026-10-10T00:28:24+00:00 [angles+scales] step 600/1800 loss 0.468731
+2026-10-10T00:29:16+00:00 [angles+scales] step 800/1800 loss 0.436112
+2026-10-10T00:30:08+00:00 [angles+scales] step 1000/1800 loss 0.417049
+2026-10-10T00:30:59+00:00 [angles+scales] step 1200/1800 loss 0.404949
+2026-10-10T00:31:51+00:00 [angles+scales] step 1400/1800 loss 0.398019
+2026-10-10T00:32:43+00:00 [angles+scales] step 1600/1800 loss 0.39428
+2026-10-10T00:33:36+00:00 [41/72] model.layers.13.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6263 final_loss=0.3922 fit=497.06s
+2026-10-10T00:33:36+00:00 [scales] step 0/200 loss 2.00124
+2026-10-10T00:34:06+00:00 [angles+scales] step 0/1800 loss 0.996064
+2026-10-10T00:34:58+00:00 [angles+scales] step 200/1800 loss 0.811805
+2026-10-10T00:35:50+00:00 [angles+scales] step 400/1800 loss 0.6614
+2026-10-10T00:36:42+00:00 [angles+scales] step 600/1800 loss 0.59284
+2026-10-10T00:37:34+00:00 [angles+scales] step 800/1800 loss 0.554763
+2026-10-10T00:38:26+00:00 [angles+scales] step 1000/1800 loss 0.531629
+2026-10-10T00:39:18+00:00 [angles+scales] step 1200/1800 loss 0.517476
+2026-10-10T00:40:09+00:00 [angles+scales] step 1400/1800 loss 0.509187
+2026-10-10T00:41:01+00:00 [angles+scales] step 1600/1800 loss 0.504714
+2026-10-10T00:41:44+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791592889372865594-75cf98a6df674c2184291d1b90d7b399
+2026-10-10T00:42:09+00:00 [42/72] model.layers.13.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7087 final_loss=0.5022 fit=513.18s
+2026-10-10T00:42:11+00:00 [scales] step 0/200 loss 1.99951
+2026-10-10T00:44:37+00:00 [angles+scales] step 0/1800 loss 0.99567
+2026-10-10T00:48:09+00:00 [angles+scales] step 200/1800 loss 0.798312
+2026-10-10T00:51:41+00:00 [angles+scales] step 400/1800 loss 0.639923
+2026-10-10T00:55:13+00:00 [angles+scales] step 600/1800 loss 0.570543
+2026-10-10T00:58:45+00:00 [angles+scales] step 800/1800 loss 0.532703
+2026-10-10T01:02:17+00:00 [angles+scales] step 1000/1800 loss 0.510121
+2026-10-10T01:05:50+00:00 [angles+scales] step 1200/1800 loss 0.496272
+2026-10-10T01:09:27+00:00 [angles+scales] step 1400/1800 loss 0.488292
+2026-10-10T01:11:52+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791594690070295891-d9e259d8d8a04e759c1c062715185d6e
+2026-10-10T01:13:26+00:00 [angles+scales] step 1600/1800 loss 0.484027
+2026-10-10T01:17:03+00:00 [43/72] model.layers.14.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.694 final_loss=0.4817 fit=2093.50s
+2026-10-10T01:17:04+00:00 [scales] step 0/200 loss 2.00037
+2026-10-10T01:17:34+00:00 [angles+scales] step 0/1800 loss 0.995225
+2026-10-10T01:18:27+00:00 [angles+scales] step 200/1800 loss 0.638346
+2026-10-10T01:19:20+00:00 [angles+scales] step 400/1800 loss 0.479061
+2026-10-10T01:20:13+00:00 [angles+scales] step 600/1800 loss 0.420809
+2026-10-10T01:21:06+00:00 [angles+scales] step 800/1800 loss 0.390306
+2026-10-10T01:21:59+00:00 [angles+scales] step 1000/1800 loss 0.371776
+2026-10-10T01:22:52+00:00 [angles+scales] step 1200/1800 loss 0.36057
+2026-10-10T01:23:44+00:00 [angles+scales] step 1400/1800 loss 0.354092
+2026-10-10T01:24:37+00:00 [angles+scales] step 1600/1800 loss 0.350618
+2026-10-10T01:25:31+00:00 [44/72] model.layers.14.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.5905 final_loss=0.3487 fit=507.05s
+2026-10-10T01:25:31+00:00 [scales] step 0/200 loss 2.00093
+2026-10-10T01:26:02+00:00 [angles+scales] step 0/1800 loss 0.995942
+2026-10-10T01:26:55+00:00 [angles+scales] step 200/1800 loss 0.808068
+2026-10-10T01:27:48+00:00 [angles+scales] step 400/1800 loss 0.660941
+2026-10-10T01:28:41+00:00 [angles+scales] step 600/1800 loss 0.593059
+2026-10-10T01:29:34+00:00 [angles+scales] step 800/1800 loss 0.554909
+2026-10-10T01:30:26+00:00 [angles+scales] step 1000/1800 loss 0.531541
+2026-10-10T01:31:19+00:00 [angles+scales] step 1200/1800 loss 0.51712
+2026-10-10T01:32:12+00:00 [angles+scales] step 1400/1800 loss 0.508569
+2026-10-10T01:33:05+00:00 [angles+scales] step 1600/1800 loss 0.503951
+2026-10-10T01:33:59+00:00 [45/72] model.layers.14.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7081 final_loss=0.5014 fit=507.34s
+2026-10-10T01:34:01+00:00 [scales] step 0/200 loss 1.99895
+2026-10-10T01:36:31+00:00 [angles+scales] step 0/1800 loss 0.995837
+2026-10-10T01:40:08+00:00 [angles+scales] step 200/1800 loss 0.793375
+2026-10-10T01:42:04+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791596490563701536-0d1d50fc141a41908f089f9f718739cf
+2026-10-10T01:44:19+00:00 [angles+scales] step 400/1800 loss 0.64539
+2026-10-10T01:47:56+00:00 [angles+scales] step 600/1800 loss 0.57809
+2026-10-10T01:51:32+00:00 [angles+scales] step 800/1800 loss 0.540512
+2026-10-10T01:55:09+00:00 [angles+scales] step 1000/1800 loss 0.517848
+2026-10-10T01:58:46+00:00 [angles+scales] step 1200/1800 loss 0.503784
+2026-10-10T02:02:23+00:00 [angles+scales] step 1400/1800 loss 0.495459
+2026-10-10T02:06:00+00:00 [angles+scales] step 1600/1800 loss 0.490988
+2026-10-10T02:09:37+00:00 [46/72] model.layers.15.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.6989 final_loss=0.4885 fit=2136.99s
+2026-10-10T02:09:38+00:00 [scales] step 0/200 loss 2.00087
+2026-10-10T02:10:08+00:00 [angles+scales] step 0/1800 loss 0.995351
+2026-10-10T02:11:01+00:00 [angles+scales] step 200/1800 loss 0.680818
+2026-10-10T02:12:03+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791598290600116676-ff442cd3a65a489d8c164ba9a53e9cbe
+2026-10-10T02:12:27+00:00 [angles+scales] step 400/1800 loss 0.522102
+2026-10-10T02:13:20+00:00 [angles+scales] step 600/1800 loss 0.459293
+2026-10-10T02:14:13+00:00 [angles+scales] step 800/1800 loss 0.426688
+2026-10-10T02:15:06+00:00 [angles+scales] step 1000/1800 loss 0.40737
+2026-10-10T02:15:59+00:00 [angles+scales] step 1200/1800 loss 0.395703
+2026-10-10T02:16:52+00:00 [angles+scales] step 1400/1800 loss 0.388898
+2026-10-10T02:17:45+00:00 [angles+scales] step 1600/1800 loss 0.385237
+2026-10-10T02:18:39+00:00 [47/72] model.layers.15.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.619 final_loss=0.3832 fit=541.12s
+2026-10-10T02:18:39+00:00 [scales] step 0/200 loss 2.00044
+2026-10-10T02:19:10+00:00 [angles+scales] step 0/1800 loss 0.99604
+2026-10-10T02:20:03+00:00 [angles+scales] step 200/1800 loss 0.796584
+2026-10-10T02:20:56+00:00 [angles+scales] step 400/1800 loss 0.65237
+2026-10-10T02:21:49+00:00 [angles+scales] step 600/1800 loss 0.588902
+2026-10-10T02:22:42+00:00 [angles+scales] step 800/1800 loss 0.55324
+2026-10-10T02:23:35+00:00 [angles+scales] step 1000/1800 loss 0.531497
+2026-10-10T02:24:30+00:00 [angles+scales] step 1200/1800 loss 0.518076
+2026-10-10T02:25:26+00:00 [angles+scales] step 1400/1800 loss 0.510068
+2026-10-10T02:26:21+00:00 [angles+scales] step 1600/1800 loss 0.505749
+2026-10-10T02:27:17+00:00 [48/72] model.layers.15.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7095 final_loss=0.5034 fit=518.38s
+2026-10-10T02:27:19+00:00 [scales] step 0/200 loss 2.00007
+2026-10-10T02:29:53+00:00 [angles+scales] step 0/1800 loss 0.995723
+2026-10-10T02:33:30+00:00 [angles+scales] step 200/1800 loss 0.809918
+2026-10-10T02:37:07+00:00 [angles+scales] step 400/1800 loss 0.654367
+2026-10-10T02:40:44+00:00 [angles+scales] step 600/1800 loss 0.58642
+2026-10-10T02:42:05+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791600091327345343-4390aa612dea48d3b75358d764609985
+2026-10-10T02:44:55+00:00 [angles+scales] step 800/1800 loss 0.548423
+2026-10-10T02:48:32+00:00 [angles+scales] step 1000/1800 loss 0.525653
+2026-10-10T02:52:09+00:00 [angles+scales] step 1200/1800 loss 0.511738
+2026-10-10T02:55:47+00:00 [angles+scales] step 1400/1800 loss 0.503505
+2026-10-10T02:59:24+00:00 [angles+scales] step 1600/1800 loss 0.499072
+2026-10-10T03:03:01+00:00 [49/72] model.layers.16.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7047 final_loss=0.4966 fit=2142.23s
+2026-10-10T03:03:01+00:00 [scales] step 0/200 loss 2.00083
+2026-10-10T03:03:32+00:00 [angles+scales] step 0/1800 loss 0.995852
+2026-10-10T03:04:25+00:00 [angles+scales] step 200/1800 loss 0.717655
+2026-10-10T03:05:18+00:00 [angles+scales] step 400/1800 loss 0.559527
+2026-10-10T03:06:11+00:00 [angles+scales] step 600/1800 loss 0.49427
+2026-10-10T03:07:04+00:00 [angles+scales] step 800/1800 loss 0.460837
+2026-10-10T03:07:57+00:00 [angles+scales] step 1000/1800 loss 0.439521
+2026-10-10T03:08:50+00:00 [angles+scales] step 1200/1800 loss 0.427139
+2026-10-10T03:09:43+00:00 [angles+scales] step 1400/1800 loss 0.419951
+2026-10-10T03:10:36+00:00 [angles+scales] step 1600/1800 loss 0.416096
+2026-10-10T03:11:30+00:00 [50/72] model.layers.16.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6434 final_loss=0.414 fit=508.77s
+2026-10-10T03:11:31+00:00 [scales] step 0/200 loss 2.00162
+2026-10-10T03:12:03+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791601891561109154-c4f11838662547b1a2bcaa899fa9fb68
+2026-10-10T03:12:34+00:00 [angles+scales] step 0/1800 loss 0.996076
+2026-10-10T03:13:27+00:00 [angles+scales] step 200/1800 loss 0.828405
+2026-10-10T03:14:20+00:00 [angles+scales] step 400/1800 loss 0.677766
+2026-10-10T03:15:13+00:00 [angles+scales] step 600/1800 loss 0.607021
+2026-10-10T03:16:06+00:00 [angles+scales] step 800/1800 loss 0.56737
+2026-10-10T03:16:59+00:00 [angles+scales] step 1000/1800 loss 0.543442
+2026-10-10T03:17:52+00:00 [angles+scales] step 1200/1800 loss 0.528842
+2026-10-10T03:18:45+00:00 [angles+scales] step 1400/1800 loss 0.520378
+2026-10-10T03:19:38+00:00 [angles+scales] step 1600/1800 loss 0.515849
+2026-10-10T03:20:32+00:00 [51/72] model.layers.16.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7165 final_loss=0.5134 fit=541.01s
+2026-10-10T03:20:33+00:00 [scales] step 0/200 loss 1.99994
+2026-10-10T03:23:03+00:00 [angles+scales] step 0/1800 loss 0.995973
+2026-10-10T03:26:40+00:00 [angles+scales] step 200/1800 loss 0.812797
+2026-10-10T03:30:18+00:00 [angles+scales] step 400/1800 loss 0.659435
+2026-10-10T03:33:55+00:00 [angles+scales] step 600/1800 loss 0.590116
+2026-10-10T03:37:32+00:00 [angles+scales] step 800/1800 loss 0.55137
+2026-10-10T03:41:09+00:00 [angles+scales] step 1000/1800 loss 0.527874
+2026-10-10T03:41:57+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791603692364295716-5dfcead81829420b83db4955a0fe6eee
+2026-10-10T03:45:12+00:00 [angles+scales] step 1200/1800 loss 0.513435
+2026-10-10T03:48:49+00:00 [angles+scales] step 1400/1800 loss 0.505008
+2026-10-10T03:52:26+00:00 [angles+scales] step 1600/1800 loss 0.500493
+2026-10-10T03:56:03+00:00 [52/72] model.layers.17.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7057 final_loss=0.498 fit=2130.72s
+2026-10-10T03:56:04+00:00 [scales] step 0/200 loss 1.99916
+2026-10-10T03:56:34+00:00 [angles+scales] step 0/1800 loss 0.996168
+2026-10-10T03:57:27+00:00 [angles+scales] step 200/1800 loss 0.759551
+2026-10-10T03:58:20+00:00 [angles+scales] step 400/1800 loss 0.60003
+2026-10-10T03:59:13+00:00 [angles+scales] step 600/1800 loss 0.530106
+2026-10-10T04:00:06+00:00 [angles+scales] step 800/1800 loss 0.492042
+2026-10-10T04:00:59+00:00 [angles+scales] step 1000/1800 loss 0.469426
+2026-10-10T04:01:52+00:00 [angles+scales] step 1200/1800 loss 0.455781
+2026-10-10T04:02:45+00:00 [angles+scales] step 1400/1800 loss 0.447824
+2026-10-10T04:03:38+00:00 [angles+scales] step 1600/1800 loss 0.443556
+2026-10-10T04:04:32+00:00 [53/72] model.layers.17.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6642 final_loss=0.4412 fit=508.57s
+2026-10-10T04:04:33+00:00 [scales] step 0/200 loss 1.99923
+2026-10-10T04:05:03+00:00 [angles+scales] step 0/1800 loss 0.996048
+2026-10-10T04:05:56+00:00 [angles+scales] step 200/1800 loss 0.834454
+2026-10-10T04:06:49+00:00 [angles+scales] step 400/1800 loss 0.686128
+2026-10-10T04:07:42+00:00 [angles+scales] step 600/1800 loss 0.615778
+2026-10-10T04:08:35+00:00 [angles+scales] step 800/1800 loss 0.576417
+2026-10-10T04:09:28+00:00 [angles+scales] step 1000/1800 loss 0.552405
+2026-10-10T04:10:21+00:00 [angles+scales] step 1200/1800 loss 0.537681
+2026-10-10T04:11:15+00:00 [angles+scales] step 1400/1800 loss 0.529016
+2026-10-10T04:11:54+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791605492580994570-0d98abeded94443a9220238f518d0b74
+2026-10-10T04:12:29+00:00 [angles+scales] step 1600/1800 loss 0.524376
+2026-10-10T04:13:23+00:00 [54/72] model.layers.17.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7224 final_loss=0.5218 fit=530.45s
+2026-10-10T04:13:24+00:00 [scales] step 0/200 loss 1.99985
+2026-10-10T04:15:54+00:00 [angles+scales] step 0/1800 loss 0.995614
+2026-10-10T04:19:32+00:00 [angles+scales] step 200/1800 loss 0.817108
+2026-10-10T04:23:09+00:00 [angles+scales] step 400/1800 loss 0.657985
+2026-10-10T04:26:46+00:00 [angles+scales] step 600/1800 loss 0.5866
+2026-10-10T04:30:23+00:00 [angles+scales] step 800/1800 loss 0.547
+2026-10-10T04:34:00+00:00 [angles+scales] step 1000/1800 loss 0.52313
+2026-10-10T04:37:37+00:00 [angles+scales] step 1200/1800 loss 0.508552
+2026-10-10T04:41:14+00:00 [angles+scales] step 1400/1800 loss 0.499971
+2026-10-10T04:42:12+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791607293157560152-9d78846efd8846138f16dfb9f2799799
+2026-10-10T04:45:30+00:00 [angles+scales] step 1600/1800 loss 0.49537
+2026-10-10T04:49:07+00:00 [55/72] model.layers.18.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.702 final_loss=0.4929 fit=2143.47s
+2026-10-10T04:49:08+00:00 [scales] step 0/200 loss 1.99966
+2026-10-10T04:49:38+00:00 [angles+scales] step 0/1800 loss 0.996005
+2026-10-10T04:50:31+00:00 [angles+scales] step 200/1800 loss 0.763695
+2026-10-10T04:51:24+00:00 [angles+scales] step 400/1800 loss 0.609209
+2026-10-10T04:52:17+00:00 [angles+scales] step 600/1800 loss 0.539657
+2026-10-10T04:53:10+00:00 [angles+scales] step 800/1800 loss 0.501817
+2026-10-10T04:54:03+00:00 [angles+scales] step 1000/1800 loss 0.479413
+2026-10-10T04:54:56+00:00 [angles+scales] step 1200/1800 loss 0.46578
+2026-10-10T04:55:49+00:00 [angles+scales] step 1400/1800 loss 0.457807
+2026-10-10T04:56:42+00:00 [angles+scales] step 1600/1800 loss 0.453514
+2026-10-10T04:57:36+00:00 [56/72] model.layers.18.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6717 final_loss=0.4512 fit=507.99s
+2026-10-10T04:57:36+00:00 [scales] step 0/200 loss 1.99974
+2026-10-10T04:58:07+00:00 [angles+scales] step 0/1800 loss 0.996132
+2026-10-10T04:59:00+00:00 [angles+scales] step 200/1800 loss 0.846882
+2026-10-10T04:59:53+00:00 [angles+scales] step 400/1800 loss 0.699044
+2026-10-10T05:00:46+00:00 [angles+scales] step 600/1800 loss 0.627612
+2026-10-10T05:01:39+00:00 [angles+scales] step 800/1800 loss 0.587324
+2026-10-10T05:02:32+00:00 [angles+scales] step 1000/1800 loss 0.562406
+2026-10-10T05:03:25+00:00 [angles+scales] step 1200/1800 loss 0.547119
+2026-10-10T05:04:18+00:00 [angles+scales] step 1400/1800 loss 0.538139
+2026-10-10T05:05:11+00:00 [angles+scales] step 1600/1800 loss 0.533309
+2026-10-10T05:06:05+00:00 [57/72] model.layers.18.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7285 final_loss=0.5307 fit=508.41s
+2026-10-10T05:06:06+00:00 [scales] step 0/200 loss 1.99986
+2026-10-10T05:08:36+00:00 [angles+scales] step 0/1800 loss 0.995979
+2026-10-10T05:12:23+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791609093685618633-f13b8324081b44708e9cb165d19ca97f
+2026-10-10T05:13:03+00:00 [angles+scales] step 200/1800 loss 0.832763
+2026-10-10T05:16:40+00:00 [angles+scales] step 400/1800 loss 0.685521
+2026-10-10T05:20:17+00:00 [angles+scales] step 600/1800 loss 0.616494
+2026-10-10T05:23:54+00:00 [angles+scales] step 800/1800 loss 0.577887
+2026-10-10T05:27:31+00:00 [angles+scales] step 1000/1800 loss 0.554266
+2026-10-10T05:31:08+00:00 [angles+scales] step 1200/1800 loss 0.539616
+2026-10-10T05:34:46+00:00 [angles+scales] step 1400/1800 loss 0.531002
+2026-10-10T05:38:23+00:00 [angles+scales] step 1600/1800 loss 0.526379
+2026-10-10T05:41:53+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791610894252915914-b3bfbd2e90964fc591149a6161012eea
+2026-10-10T05:42:19+00:00 [58/72] model.layers.19.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7238 final_loss=0.5238 fit=2173.84s
+2026-10-10T05:42:20+00:00 [scales] step 0/200 loss 2.00054
+2026-10-10T05:42:51+00:00 [angles+scales] step 0/1800 loss 0.995991
+2026-10-10T05:43:44+00:00 [angles+scales] step 200/1800 loss 0.747328
+2026-10-10T05:44:37+00:00 [angles+scales] step 400/1800 loss 0.587616
+2026-10-10T05:45:30+00:00 [angles+scales] step 600/1800 loss 0.518274
+2026-10-10T05:46:23+00:00 [angles+scales] step 800/1800 loss 0.481331
+2026-10-10T05:47:16+00:00 [angles+scales] step 1000/1800 loss 0.459325
+2026-10-10T05:48:09+00:00 [angles+scales] step 1200/1800 loss 0.445919
+2026-10-10T05:49:02+00:00 [angles+scales] step 1400/1800 loss 0.43819
+2026-10-10T05:49:55+00:00 [angles+scales] step 1600/1800 loss 0.434046
+2026-10-10T05:50:49+00:00 [59/72] model.layers.19.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6571 final_loss=0.4318 fit=508.99s
+2026-10-10T05:50:49+00:00 [scales] step 0/200 loss 1.99902
+2026-10-10T05:51:20+00:00 [angles+scales] step 0/1800 loss 0.996257
+2026-10-10T05:52:13+00:00 [angles+scales] step 200/1800 loss 0.82125
+2026-10-10T05:53:06+00:00 [angles+scales] step 400/1800 loss 0.675502
+2026-10-10T05:53:59+00:00 [angles+scales] step 600/1800 loss 0.606943
+2026-10-10T05:54:52+00:00 [angles+scales] step 800/1800 loss 0.567353
+2026-10-10T05:55:45+00:00 [angles+scales] step 1000/1800 loss 0.543567
+2026-10-10T05:56:38+00:00 [angles+scales] step 1200/1800 loss 0.528901
+2026-10-10T05:57:31+00:00 [angles+scales] step 1400/1800 loss 0.52023
+2026-10-10T05:58:24+00:00 [angles+scales] step 1600/1800 loss 0.515565
+2026-10-10T05:59:18+00:00 [60/72] model.layers.19.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7162 final_loss=0.513 fit=508.97s
+2026-10-10T05:59:20+00:00 [scales] step 0/200 loss 2.00036
+2026-10-10T06:01:50+00:00 [angles+scales] step 0/1800 loss 0.996023
+2026-10-10T06:05:27+00:00 [angles+scales] step 200/1800 loss 0.82717
+2026-10-10T06:09:04+00:00 [angles+scales] step 400/1800 loss 0.682112
+2026-10-10T06:12:09+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791612695130024462-1da68a077a9c4d49a1ee0fbd00588868
+2026-10-10T06:13:15+00:00 [angles+scales] step 600/1800 loss 0.615101
+2026-10-10T06:16:52+00:00 [angles+scales] step 800/1800 loss 0.577193
+2026-10-10T06:20:29+00:00 [angles+scales] step 1000/1800 loss 0.553796
+2026-10-10T06:24:06+00:00 [angles+scales] step 1200/1800 loss 0.539447
+2026-10-10T06:27:44+00:00 [angles+scales] step 1400/1800 loss 0.531025
+2026-10-10T06:31:21+00:00 [angles+scales] step 1600/1800 loss 0.526498
+2026-10-10T06:34:58+00:00 [61/72] model.layers.20.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7239 final_loss=0.524 fit=2139.60s
+2026-10-10T06:34:59+00:00 [scales] step 0/200 loss 2.00081
+2026-10-10T06:35:30+00:00 [angles+scales] step 0/1800 loss 0.995902
+2026-10-10T06:36:23+00:00 [angles+scales] step 200/1800 loss 0.762789
+2026-10-10T06:37:16+00:00 [angles+scales] step 400/1800 loss 0.609049
+2026-10-10T06:38:09+00:00 [angles+scales] step 600/1800 loss 0.538864
+2026-10-10T06:39:02+00:00 [angles+scales] step 800/1800 loss 0.500428
+2026-10-10T06:39:55+00:00 [angles+scales] step 1000/1800 loss 0.477443
+2026-10-10T06:40:48+00:00 [angles+scales] step 1200/1800 loss 0.463436
+2026-10-10T06:42:36+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791614495363141897-96c36f9fa0914b1ab2436c89306a3696
+2026-10-10T06:42:42+00:00 [angles+scales] step 1400/1800 loss 0.455235
+2026-10-10T06:43:35+00:00 [angles+scales] step 1600/1800 loss 0.450856
+2026-10-10T06:44:28+00:00 [62/72] model.layers.20.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6697 final_loss=0.4485 fit=569.43s
+2026-10-10T06:44:29+00:00 [scales] step 0/200 loss 2.00094
+2026-10-10T06:45:00+00:00 [angles+scales] step 0/1800 loss 0.99624
+2026-10-10T06:45:53+00:00 [angles+scales] step 200/1800 loss 0.819013
+2026-10-10T06:46:46+00:00 [angles+scales] step 400/1800 loss 0.672136
+2026-10-10T06:47:39+00:00 [angles+scales] step 600/1800 loss 0.603234
+2026-10-10T06:48:32+00:00 [angles+scales] step 800/1800 loss 0.565008
+2026-10-10T06:49:25+00:00 [angles+scales] step 1000/1800 loss 0.541884
+2026-10-10T06:50:18+00:00 [angles+scales] step 1200/1800 loss 0.527675
+2026-10-10T06:51:11+00:00 [angles+scales] step 1400/1800 loss 0.51932
+2026-10-10T06:52:04+00:00 [angles+scales] step 1600/1800 loss 0.514834
+2026-10-10T06:52:57+00:00 [63/72] model.layers.20.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7158 final_loss=0.5124 fit=508.43s
+2026-10-10T06:52:59+00:00 [scales] step 0/200 loss 2.00164
+2026-10-10T06:55:28+00:00 [angles+scales] step 0/1800 loss 0.996122
+2026-10-10T06:59:06+00:00 [angles+scales] step 200/1800 loss 0.817031
+2026-10-10T07:02:43+00:00 [angles+scales] step 400/1800 loss 0.670743
+2026-10-10T07:06:20+00:00 [angles+scales] step 600/1800 loss 0.60483
+2026-10-10T07:09:57+00:00 [angles+scales] step 800/1800 loss 0.566819
+2026-10-10T07:11:57+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791616295832776264-7599ae501c104596a5adcda0c051bb10
+2026-10-10T07:13:56+00:00 [angles+scales] step 1000/1800 loss 0.543596
+2026-10-10T07:17:34+00:00 [angles+scales] step 1200/1800 loss 0.529385
+2026-10-10T07:21:11+00:00 [angles+scales] step 1400/1800 loss 0.521047
+2026-10-10T07:24:48+00:00 [angles+scales] step 1600/1800 loss 0.516574
+2026-10-10T07:28:25+00:00 [64/72] model.layers.21.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.717 final_loss=0.5141 fit=2127.37s
+2026-10-10T07:28:26+00:00 [scales] step 0/200 loss 1.99973
+2026-10-10T07:28:57+00:00 [angles+scales] step 0/1800 loss 0.99595
+2026-10-10T07:29:50+00:00 [angles+scales] step 200/1800 loss 0.772358
+2026-10-10T07:30:43+00:00 [angles+scales] step 400/1800 loss 0.622109
+2026-10-10T07:31:36+00:00 [angles+scales] step 600/1800 loss 0.552947
+2026-10-10T07:32:28+00:00 [angles+scales] step 800/1800 loss 0.514494
+2026-10-10T07:33:21+00:00 [angles+scales] step 1000/1800 loss 0.491012
+2026-10-10T07:34:14+00:00 [angles+scales] step 1200/1800 loss 0.476831
+2026-10-10T07:35:07+00:00 [angles+scales] step 1400/1800 loss 0.468522
+2026-10-10T07:36:00+00:00 [angles+scales] step 1600/1800 loss 0.464062
+2026-10-10T07:36:54+00:00 [65/72] model.layers.21.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6794 final_loss=0.4616 fit=507.63s
+2026-10-10T07:36:54+00:00 [scales] step 0/200 loss 1.99778
+2026-10-10T07:37:25+00:00 [angles+scales] step 0/1800 loss 0.996227
+2026-10-10T07:38:18+00:00 [angles+scales] step 200/1800 loss 0.823964
+2026-10-10T07:39:11+00:00 [angles+scales] step 400/1800 loss 0.677945
+2026-10-10T07:40:04+00:00 [angles+scales] step 600/1800 loss 0.608646
+2026-10-10T07:40:57+00:00 [angles+scales] step 800/1800 loss 0.56949
+2026-10-10T07:41:59+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791618095920891420-45d97d5f60964f1a9f8874ffe66f23a0
+2026-10-10T07:42:14+00:00 [angles+scales] step 1000/1800 loss 0.545996
+2026-10-10T07:43:06+00:00 [angles+scales] step 1200/1800 loss 0.531626
+2026-10-10T07:43:59+00:00 [angles+scales] step 1400/1800 loss 0.523187
+2026-10-10T07:44:52+00:00 [angles+scales] step 1600/1800 loss 0.518669
+2026-10-10T07:45:46+00:00 [66/72] model.layers.21.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7185 final_loss=0.5162 fit=531.68s
+2026-10-10T07:45:48+00:00 [scales] step 0/200 loss 1.99921
+2026-10-10T07:48:18+00:00 [angles+scales] step 0/1800 loss 0.996015
+2026-10-10T07:51:55+00:00 [angles+scales] step 200/1800 loss 0.805772
+2026-10-10T07:55:31+00:00 [angles+scales] step 400/1800 loss 0.654474
+2026-10-10T07:59:08+00:00 [angles+scales] step 600/1800 loss 0.587689
+2026-10-10T08:02:45+00:00 [angles+scales] step 800/1800 loss 0.551323
+2026-10-10T08:06:22+00:00 [angles+scales] step 1000/1800 loss 0.529346
+2026-10-10T08:09:59+00:00 [angles+scales] step 1200/1800 loss 0.515867
+2026-10-10T08:12:21+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791619896914004321-98cd83cf0b29417e8d2975d725604df9
+2026-10-10T08:14:21+00:00 [angles+scales] step 1400/1800 loss 0.507994
+2026-10-10T08:17:58+00:00 [angles+scales] step 1600/1800 loss 0.503774
+2026-10-10T08:21:35+00:00 [67/72] model.layers.22.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7081 final_loss=0.5015 fit=2147.74s
+2026-10-10T08:21:35+00:00 [scales] step 0/200 loss 2.0002
+2026-10-10T08:22:06+00:00 [angles+scales] step 0/1800 loss 0.995765
+2026-10-10T08:22:59+00:00 [angles+scales] step 200/1800 loss 0.728725
+2026-10-10T08:23:52+00:00 [angles+scales] step 400/1800 loss 0.577008
+2026-10-10T08:24:45+00:00 [angles+scales] step 600/1800 loss 0.512396
+2026-10-10T08:25:38+00:00 [angles+scales] step 800/1800 loss 0.477545
+2026-10-10T08:26:31+00:00 [angles+scales] step 1000/1800 loss 0.455773
+2026-10-10T08:27:24+00:00 [angles+scales] step 1200/1800 loss 0.442868
+2026-10-10T08:28:17+00:00 [angles+scales] step 1400/1800 loss 0.435329
+2026-10-10T08:29:10+00:00 [angles+scales] step 1600/1800 loss 0.431278
+2026-10-10T08:30:03+00:00 [68/72] model.layers.22.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.655 final_loss=0.4291 fit=508.05s
+2026-10-10T08:30:04+00:00 [scales] step 0/200 loss 2.00213
+2026-10-10T08:30:35+00:00 [angles+scales] step 0/1800 loss 0.996156
+2026-10-10T08:31:28+00:00 [angles+scales] step 200/1800 loss 0.829013
+2026-10-10T08:32:21+00:00 [angles+scales] step 400/1800 loss 0.683873
+2026-10-10T08:33:13+00:00 [angles+scales] step 600/1800 loss 0.614455
+2026-10-10T08:34:06+00:00 [angles+scales] step 800/1800 loss 0.575186
+2026-10-10T08:34:59+00:00 [angles+scales] step 1000/1800 loss 0.551119
+2026-10-10T08:35:52+00:00 [angles+scales] step 1200/1800 loss 0.536419
+2026-10-10T08:36:45+00:00 [angles+scales] step 1400/1800 loss 0.527741
+2026-10-10T08:37:38+00:00 [angles+scales] step 1600/1800 loss 0.52307
+2026-10-10T08:38:32+00:00 [69/72] model.layers.22.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7215 final_loss=0.5205 fit=508.12s
+2026-10-10T08:38:33+00:00 [scales] step 0/200 loss 2.00147
+2026-10-10T08:41:03+00:00 [angles+scales] step 0/1800 loss 0.995556
+2026-10-10T08:42:06+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791621697361603837-3a89c26e647f4647807ea92c878ba579
+2026-10-10T08:45:10+00:00 [angles+scales] step 200/1800 loss 0.811513
+2026-10-10T08:48:47+00:00 [angles+scales] step 400/1800 loss 0.662193
+2026-10-10T08:52:24+00:00 [angles+scales] step 600/1800 loss 0.59569
+2026-10-10T08:56:01+00:00 [angles+scales] step 800/1800 loss 0.558639
+2026-10-10T08:59:38+00:00 [angles+scales] step 1000/1800 loss 0.535942
+2026-10-10T09:03:15+00:00 [angles+scales] step 1200/1800 loss 0.521997
+2026-10-10T09:06:52+00:00 [angles+scales] step 1400/1800 loss 0.513843
+2026-10-10T09:10:28+00:00 [angles+scales] step 1600/1800 loss 0.509463
+2026-10-10T09:12:09+00:00 saved conversion snapshot /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791623497413929547-49eb563c4c464f4699da11f2e945cf3e
+2026-10-10T09:14:38+00:00 [70/72] model.layers.23.mlp.down_proj (ffn.down) rotors=37 rel_fro=0.7121 final_loss=0.5071 fit=2165.46s
+2026-10-10T09:14:38+00:00 [scales] step 0/200 loss 1.99986
+2026-10-10T09:15:09+00:00 [angles+scales] step 0/1800 loss 0.994709
+2026-10-10T09:16:02+00:00 [angles+scales] step 200/1800 loss 0.751468
+2026-10-10T09:16:55+00:00 [angles+scales] step 400/1800 loss 0.611467
+2026-10-10T09:17:48+00:00 [angles+scales] step 600/1800 loss 0.546292
+2026-10-10T09:18:41+00:00 [angles+scales] step 800/1800 loss 0.510659
+2026-10-10T09:19:34+00:00 [angles+scales] step 1000/1800 loss 0.48855
+2026-10-10T09:20:27+00:00 [angles+scales] step 1200/1800 loss 0.474895
+2026-10-10T09:21:20+00:00 [angles+scales] step 1400/1800 loss 0.466827
+2026-10-10T09:22:12+00:00 [angles+scales] step 1600/1800 loss 0.462489
+2026-10-10T09:23:06+00:00 [71/72] model.layers.23.mlp.gate_proj (ffn.gate) rotors=37 rel_fro=0.6783 final_loss=0.4601 fit=507.77s
+2026-10-10T09:23:07+00:00 [scales] step 0/200 loss 2.00149
+2026-10-10T09:23:37+00:00 [angles+scales] step 0/1800 loss 0.996009
+2026-10-10T09:24:30+00:00 [angles+scales] step 200/1800 loss 0.79018
+2026-10-10T09:25:23+00:00 [angles+scales] step 400/1800 loss 0.646134
+2026-10-10T09:26:16+00:00 [angles+scales] step 600/1800 loss 0.576844
+2026-10-10T09:27:09+00:00 [angles+scales] step 800/1800 loss 0.537831
+2026-10-10T09:28:02+00:00 [angles+scales] step 1000/1800 loss 0.513993
+2026-10-10T09:28:55+00:00 [angles+scales] step 1200/1800 loss 0.499318
+2026-10-10T09:29:48+00:00 [angles+scales] step 1400/1800 loss 0.490674
+2026-10-10T09:30:41+00:00 [angles+scales] step 1600/1800 loss 0.486041
+2026-10-10T09:31:34+00:00 [72/72] model.layers.23.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.6953 final_loss=0.4835 fit=507.82s
+2026-10-10T09:32:38+00:00 wrote /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3: {'num_layers': 72, 'dense_bytes': 528482304, 'structured_bytes': 129724416, 'byte_ratio': 0.24546595982142858, 'learned_scalar_count': {'angles': 55240704, 'scales': 9621504, 'residual': 0, 'bias': 0, 'total': 64862208}, 'index_bytes': 0, 'index_bytes_note': '0: topologies are deterministic functions of (kind, seed, width); no index is stored', 'quantization_metadata_bytes': 0, 'quantization_metadata_note': '0: float storage dtypes only; no scales/zero-points/codebooks are stored', 'file_bytes': 129754992, 'header_bytes': 30568, 'manifest_bytes': 112625, 'padding_bytes': 0}

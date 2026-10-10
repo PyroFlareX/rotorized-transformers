@@ -54,6 +54,9 @@ def main(argv: list[str] | None = None) -> int:
         "--no-report", action="store_true", help="do not publish an ExperimentRun under reports/experiments"
     )
     ap.add_argument("--telemetry", type=Path, help="new JSONL path for 1 Hz runtime resource samples")
+    ap.add_argument("--snapshot-interval-seconds", type=float, default=1800, help="seconds between resumable snapshots")
+    ap.add_argument("--snapshot-keep", type=int, default=3, help="number of newest snapshots to retain")
+    ap.add_argument("--resume", type=Path, help="resume from a conversion snapshot directory")
     args = ap.parse_args(argv)
 
     cfg = ConversionConfig.from_dict(build_config_dict(args))
@@ -69,6 +72,9 @@ def main(argv: list[str] | None = None) -> int:
             dry_run=args.dry_run,
             report=not args.no_report,
             run_info=info,
+            snapshot_interval_seconds=args.snapshot_interval_seconds,
+            snapshot_keep=args.snapshot_keep,
+            resume_from=args.resume,
         )
     if args.dry_run:
         print(json.dumps(res, indent=2, default=str))

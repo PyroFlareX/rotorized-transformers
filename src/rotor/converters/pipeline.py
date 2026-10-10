@@ -8,10 +8,11 @@ from __future__ import annotations
 
 import contextlib
 import json
+import math
 import os
 import time
 from collections.abc import Callable
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import timedelta
 from pathlib import Path
 
@@ -29,12 +30,13 @@ from rotor.converters.budget import (
 )
 from rotor.converters.calibration import collect_inputs
 from rotor.converters.fit import fit_activation, fit_weight
+from rotor.converters.snapshots import SNAPSHOT_SCHEMA_VERSION, load_snapshot, prune_snapshots, publish_snapshot
 from rotor.data import random_windows, tokenize_text_file, windows_fingerprint, windows_from_ids
 from rotor.environment import ResourceMonitor
 from rotor.formats.checkpoint import layer_accounting, write_structured
 from rotor.formats.manifest import BaseProvenance, LayerEntry, Manifest
 from rotor.formats.spec import bytes_per_param
-from rotor.math.cascade import CascadeSpec, RotorLinear
+from rotor.math.cascade import CascadeSpec, RotorCascade, RotorLinear
 from rotor.math.topology import TOPOLOGY_KINDS
 from rotor.models import qwen3_5
 from rotor.models.discovery import TensorInfo, local_tensors
@@ -334,6 +336,122 @@ def _unique_run_id(run: ExperimentRun) -> None:
         run.run_id = make_run_id(run.model, run.method, run.target, run.created)
 
 
+
+def _snapshot_identity(
+    config: ConversionConfig,
+    base_provenance: BaseProvenance,
+    projections: list[qwen3_5.Projection],
+    plan: list[dict],
+    specs: dict[str, CascadeSpec],
+    windows_fingerprint_value: str | None,
+) -> dict:
+    config_identity = config.to_dict()
+    config_identity.pop("name", None)
+    return {
+        "conversion_config": config_identity,
+        "base": asdict(base_provenance),
+        "projections": [asdict(projection) for projection in projections],
+        "plan": plan,
+        "specs": {name: spec.to_dict() for name, spec in specs.items()},
+        "windows_fingerprint": windows_fingerprint_value,
+    }
+
+
+def _restore_completed_layers(
+    state: dict,
+    projections: list[qwen3_5.Projection],
+    specs: dict[str, CascadeSpec],
+    base: Path,
+    tensors: dict[str, TensorInfo],
+) -> tuple[list[LayerEntry], dict[str, RotorLinear]]:
+    count = state["next_projection_index"]
+    if count > len(projections):
+        raise ValueError("snapshot projection index exceeds the current projection plan")
+    expected = {projection.module for projection in projections[:count]}
+    records = state["layers"]
+    if set(records) != expected:
+        raise ValueError("snapshot completed layers do not match the projection prefix")
+    entries: list[LayerEntry] = []
+    layers: dict[str, RotorLinear] = {}
+    for projection in projections[:count]:
+        record = records[projection.module]
+        if not isinstance(record, dict) or set(record) != {"entry", "state_dict"}:
+            raise ValueError(f"invalid completed layer snapshot for {projection.module}")
+        entry = LayerEntry.from_dict(record["entry"])
+        if (
+            entry.module != projection.module
+            or entry.source_tensor != projection.tensor
+            or entry.spec != specs[projection.module]
+        ):
+            raise ValueError(f"snapshot layer metadata differs from projection plan for {projection.module}")
+        cascade = RotorCascade(entry.spec, dtype=torch.float32, device="cpu")
+        bias = _dense_bias(base, tensors, projection.tensor) if entry.has_bias else None
+        layer = RotorLinear(cascade, bias)
+        layer.load_state_dict(record["state_dict"], strict=True)
+        entries.append(entry)
+        layers[projection.module] = layer
+    return entries, layers
+
+
+def _validate_active_resume(active: object, projection: qwen3_5.Projection, schedule: FitSchedule) -> dict:
+    if not isinstance(active, dict) or set(active) != {"module", "fit_state", "elapsed_seconds"}:
+        raise ValueError("invalid active fit snapshot")
+    if active["module"] != projection.module or not isinstance(active["fit_state"], dict):
+        raise ValueError("active fit snapshot does not match the next projection")
+    if not isinstance(active["elapsed_seconds"], (int, float)) or active["elapsed_seconds"] < 0:
+        raise ValueError("active fit elapsed time must be a non-negative number")
+    state = active["fit_state"]
+    required = {"phase_index", "next_step", "history", "cascade_state", "optimizer_state"}
+    if set(state) != required:
+        raise ValueError("invalid active fitting progress fields")
+    phase_index, next_step = state["phase_index"], state["next_step"]
+    if isinstance(phase_index, bool) or not isinstance(phase_index, int) or not 0 <= phase_index < len(schedule.phases):
+        raise ValueError("active fit phase index is outside the configured schedule")
+    steps = schedule.phases[phase_index][1]
+    if isinstance(next_step, bool) or not isinstance(next_step, int) or not 0 <= next_step <= max(steps, 0):
+        raise ValueError("active fit next step is outside the configured phase")
+    if not isinstance(state["history"], list) or not all(
+        isinstance(loss, (int, float)) and not isinstance(loss, bool) for loss in state["history"]
+    ):
+        raise ValueError("active fit history must be a list of scalar losses")
+    if not isinstance(state["cascade_state"], dict) or not all(
+        isinstance(key, str) and isinstance(value, torch.Tensor) for key, value in state["cascade_state"].items()
+    ):
+        raise ValueError("active fit cascade state must map names to tensors")
+    optimizer_state = state["optimizer_state"]
+    if not isinstance(optimizer_state, dict) or set(optimizer_state) != {"state", "param_groups"}:
+        raise ValueError("active fit optimizer state has invalid fields")
+    if not isinstance(optimizer_state["state"], dict) or not isinstance(optimizer_state["param_groups"], list):
+        raise ValueError("active fit optimizer state has invalid structure")
+    return state
+
+
+def _snapshot_state(
+    identity: dict,
+    next_projection_index: int,
+    entries: list[LayerEntry],
+    layers: dict[str, RotorLinear],
+    fit_seconds: dict[str, float],
+    notes: list[str],
+    active: dict | None,
+) -> dict:
+    return {
+        "schema_version": SNAPSHOT_SCHEMA_VERSION,
+        "identity": identity,
+        "next_projection_index": next_projection_index,
+        "layers": {
+            entry.module: {
+                "entry": entry.to_dict(),
+                "state_dict": layers[entry.module].state_dict(),
+            }
+            for entry in entries
+        },
+        "active": active,
+        "fit_seconds": fit_seconds,
+        "notes": notes,
+    }
+
+
 def _layer_rows(manifest: Manifest, fit_seconds: dict[str, float]) -> list[dict]:
     rows = []
     for e in manifest.layers:
@@ -485,6 +603,10 @@ def convert(
     report: bool = True,
     report_root: Path | None = None,
     run_info: dict | None = None,
+    *,
+    snapshot_interval_seconds: float = 1800,
+    snapshot_keep: int = 3,
+    resume_from: Path | None = None,
 ) -> Path | dict:
     """Convert the configured projections of a local base checkpoint.
 
@@ -493,6 +615,10 @@ def convert(
     ``report_root`` (default ``reports/experiments``); its directory is stored in ``run_info["run_dir"]`` if a dict
     is given.
     """
+    if not math.isfinite(snapshot_interval_seconds) or snapshot_interval_seconds <= 0:
+        raise ValueError("snapshot_interval_seconds must be finite and > 0")
+    if isinstance(snapshot_keep, bool) or not isinstance(snapshot_keep, int) or snapshot_keep < 1:
+        raise ValueError("snapshot_keep must be an integer >= 1")
     storage = storage or load_storage()
     _, entry = model_entry(config.model)
     base = _resolve_base_dir(config, storage, base_dir)
@@ -526,6 +652,24 @@ def convert(
     storage.assert_writable(dest)
     if dest.exists():
         raise StorageError(f"refusing to overwrite existing output {dest}")
+    snapshot_root = dest.with_name(f"{dest.name}.snapshots")
+    storage.assert_writable(snapshot_root)
+    if snapshot_root.is_symlink():
+        raise StorageError(f"refusing to use symlinked snapshot root {snapshot_root}")
+    resume_snapshot = None
+    if resume_from is not None:
+        resume_path = Path(resume_from)
+        if resume_path.is_symlink():
+            raise StorageError(f"refusing to load symlinked conversion snapshot {resume_path}")
+        storage.assert_under_nas(resume_path)
+        try:
+            expected_snapshot_root = snapshot_root.resolve(strict=False)
+            actual_snapshot_root = resume_path.parent.resolve(strict=False)
+        except OSError as exc:
+            raise StorageError(f"cannot resolve conversion snapshot path {resume_path}: {exc}") from exc
+        if actual_snapshot_root != expected_snapshot_root:
+            raise StorageError(f"resume snapshot must be inside this output's snapshot root {snapshot_root}")
+        resume_snapshot = load_snapshot(resume_path)
 
     objective = config.fit.get("objective", "weight")
     seed = int(config.fit.get("seed", 0))
@@ -533,10 +677,24 @@ def convert(
     init_angle_std = float(config.fit.get("init_angle_std", 0.01))
     schedule = FitSchedule.from_dict(config.fit.get("schedule") or {})
     conversion_config = config.to_dict()
-    notes: list[str] = []
     original_checkpoint_bytes = sum(f.stat().st_size for f in sorted(base.glob("*.safetensors")))
     conversion_config["original_checkpoint_bytes"] = original_checkpoint_bytes
-
+    notes: list[str] = list(resume_snapshot["notes"]) if resume_snapshot is not None else []
+    base_provenance = _provenance(base, entry, config_json)
+    resume_index = 0
+    active_resume: dict | None = None
+    saved_fit_seconds: dict[str, float] = {}
+    if resume_snapshot is not None:
+        resume_index = resume_snapshot["next_projection_index"]
+        active_resume = resume_snapshot["active"]
+        saved_fit_seconds = dict(resume_snapshot["fit_seconds"])
+        if resume_index > len(projections):
+            raise ValueError("conversion snapshot projection index exceeds this projection plan")
+        if resume_index < len(projections) and active_resume is not None:
+            if active_resume.get("module") != projections[resume_index].module:
+                raise ValueError("conversion snapshot active fit does not match its next projection")
+        elif resume_index == len(projections) and active_resume is not None:
+            raise ValueError("completed conversion snapshot unexpectedly contains an active fit")
     run: ExperimentRun | None = None
     if report:
         topo_kind = config.cascade.get("topology", {"kind": "butterfly"})["kind"]
@@ -562,16 +720,20 @@ def convert(
         inputs: dict[str, torch.Tensor] = {}
         layer_entries: list[LayerEntry] = []
         layers: dict[str, RotorLinear] = {}
-        fit_seconds: dict[str, float] = {}
+        fit_seconds: dict[str, float] = dict(saved_fit_seconds)
+        last_snapshot_time = time.monotonic()
+        snapshot_identity: dict | None = None
         with ResourceMonitor() as monitor:
             if objective == "activation":
                 windows = _calibration_windows(config, base, config_json)
                 conversion_config["windows_fingerprint"] = windows_fingerprint(windows)
-                if config.calibration.get("source", "random") == "random":
+                if config.calibration.get("source", "random") == "random" and RANDOM_CALIBRATION_NOTE not in notes:
                     notes.append(RANDOM_CALIBRATION_NOTE)
-                notes.append(
+                calibration_note = (
                     "calibration inputs captured from the dense base model (not propagated through converted layers)"
                 )
+                if calibration_note not in notes:
+                    notes.append(calibration_note)
                 emit(
                     f"calibration: {tuple(windows.shape)} token windows, capturing inputs of {len(projections)} modules"
                 )
@@ -587,18 +749,96 @@ def convert(
                 finally:
                     del model
 
+            calibration_fingerprint = conversion_config.get("windows_fingerprint")
+            snapshot_identity = _snapshot_identity(
+                config, base_provenance, projections, plan, specs, calibration_fingerprint
+            )
+            if resume_snapshot is not None and resume_snapshot["identity"] != snapshot_identity:
+                raise ValueError("conversion snapshot identity does not match configuration, base, or projection plan")
+            if resume_snapshot is not None:
+                layer_entries, layers = _restore_completed_layers(
+                    resume_snapshot, projections, specs, base, tensors
+                )
+                fit_seconds = dict(saved_fit_seconds)
+                last_snapshot_time = time.monotonic()
+                if active_resume is not None:
+                    _validate_active_resume(active_resume, projections[resume_index], schedule)
+
+            def progress_callback(module: str, elapsed_seconds: float):
+                def on_step(progress: dict) -> None:
+                    nonlocal last_snapshot_time
+                    now = time.monotonic()
+                    if now - last_snapshot_time < snapshot_interval_seconds:
+                        return
+                    active = {
+                        "module": module,
+                        "fit_state": {**progress, "history": list(progress["history"])},
+                        "elapsed_seconds": elapsed_seconds + now - current_fit_started,
+                    }
+                    published = publish_snapshot(
+                        snapshot_root,
+                        _snapshot_state(
+                            snapshot_identity,
+                            current_projection_index,
+                            layer_entries,
+                            layers,
+                            fit_seconds,
+                            notes,
+                            active,
+                        ),
+                        snapshot_keep,
+                    )
+                    last_snapshot_time = now
+                    emit(f"saved conversion snapshot {published}")
+
+                return on_step
+
             plan_by_module = {r["module"]: r for r in plan}
-            for i, p in enumerate(projections):
+            current_projection_index = resume_index
+            for i, p in enumerate(projections[resume_index:], start=resume_index):
+                current_projection_index = i
                 spec = specs[p.module]
                 W = _dense_weight(base, tensors, p.tensor)
+                carried_elapsed = (
+                    float(active_resume["elapsed_seconds"])
+                    if i == resume_index and active_resume is not None
+                    else 0.0
+                )
                 t0 = time.perf_counter()
+                current_fit_started = time.monotonic()
+                fit_resume_state = (
+                    active_resume["fit_state"] if i == resume_index and active_resume is not None else None
+                )
+                on_progress = progress_callback(p.module, carried_elapsed)
                 if objective == "weight":
-                    cascade, metrics = fit_weight(W, spec, schedule, seed, init_angle_std, device, emit)
+                    cascade, metrics = fit_weight(
+                        W,
+                        spec,
+                        schedule,
+                        seed,
+                        init_angle_std,
+                        device,
+                        emit,
+                        resume_state=fit_resume_state,
+                        progress_callback=on_progress,
+                    )
                 else:
                     cascade, metrics = fit_activation(
-                        W, inputs[p.module], spec, schedule, seed, init_angle_std, None, device, emit
+                        W,
+                        inputs[p.module],
+                        spec,
+                        schedule,
+                        seed,
+                        init_angle_std,
+                        None,
+                        device,
+                        emit,
+                        resume_state=fit_resume_state,
+                        progress_callback=on_progress,
                     )
-                fit_seconds[p.module] = time.perf_counter() - t0
+                fit_seconds[p.module] = (
+                    time.perf_counter() - t0 + carried_elapsed + fit_seconds.get(p.module, 0.0)
+                )
                 metrics["fit_wall_seconds"] = fit_seconds[p.module]
                 bias = _dense_bias(base, tensors, p.tensor)  # dense bias is stored verbatim in the storage dtype
                 layer = RotorLinear(cascade.to("cpu"), bias)
@@ -631,6 +871,25 @@ def convert(
                     f"rel_fro={metrics['weight']['rel_fro']:.4g} final_loss={metrics['final_loss']:.4g} "
                     f"fit={fit_seconds[p.module]:.2f}s"
                 )
+                current_projection_index = i + 1
+                active_resume = None
+                now = time.monotonic()
+                if now - last_snapshot_time >= snapshot_interval_seconds:
+                    published = publish_snapshot(
+                        snapshot_root,
+                        _snapshot_state(
+                            snapshot_identity,
+                            current_projection_index,
+                            layer_entries,
+                            layers,
+                            fit_seconds,
+                            notes,
+                            None,
+                        ),
+                        snapshot_keep,
+                    )
+                    last_snapshot_time = now
+                    emit(f"saved conversion snapshot {published}")
 
             manifest = Manifest(
                 base=_provenance(base, entry, config_json),
@@ -647,6 +906,7 @@ def convert(
         with atomic_dir(dest) as tmp:
             write_structured(tmp, manifest, layers, base)
         write_seconds = time.perf_counter() - t0
+        prune_snapshots(snapshot_root, snapshot_keep, snapshot_identity)
         emit(f"wrote {dest}: {manifest.totals()}")
         if run is not None:
             _fill_run(

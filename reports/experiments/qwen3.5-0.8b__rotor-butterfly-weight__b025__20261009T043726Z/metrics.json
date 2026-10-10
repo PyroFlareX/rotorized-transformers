@@ -1,0 +1,76 @@
+{
+  "run_id": "qwen3.5-0.8b__rotor-butterfly-weight__b025__20261009T043726Z",
+  "kind": "convert",
+  "status": "completed",
+  "created_utc": "2026-10-09T04:37:26.300635+00:00",
+  "finished_utc": "2026-10-09T04:48:12.104334+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "rotor-butterfly-weight",
+  "target": "b025",
+  "metrics": {
+    "storage": {
+      "original_checkpoint_bytes": 1746942600,
+      "converted_dense_bytes": 7340032,
+      "structured_tensor_bytes": 1801728,
+      "layer_byte_ratio": 0.24546595982142858,
+      "derived_weights_file_bytes": 1802184,
+      "derived_manifest_bytes": 7932,
+      "derived_checkpoint_bytes": 1810116,
+      "file_compression_ratio": 0.24552808489118302,
+      "safetensors_header_bytes": 448,
+      "padding_bytes": 0,
+      "learned_scalar_count": {
+        "angles": 767232,
+        "scales": 133632,
+        "residual": 0,
+        "bias": 0,
+        "total": 900864
+      },
+      "index_bytes": 0,
+      "quantization_metadata_bytes": 0
+    },
+    "resources": {
+      "wall_seconds": 633.7034538749976,
+      "cpu_seconds": 876.130976567,
+      "peak_rss_bytes": 1516036096,
+      "peak_device_bytes": 1484390912,
+      "measured": true,
+      "scope": "base-shard hashing, calibration capture and all layer fits; excludes the final write",
+      "peak_rss_note": "process high-water mark (getrusage), an upper bound for this region"
+    },
+    "write_wall_seconds": 11.4197314669982,
+    "layers": [
+      {
+        "module": "model.layers.0.mlp.up_proj",
+        "family": "ffn.up",
+        "in": 1024,
+        "out": 3584,
+        "dense_dtype": "BF16",
+        "dense_params": 3670016,
+        "dense_bytes": 7340032,
+        "num_rotors": 37,
+        "structured_bytes": 1801728,
+        "byte_ratio": 0.24546595982142858,
+        "angles": 767232,
+        "scales": 133632,
+        "residual": 0,
+        "bias": 0,
+        "rel_fro": 0.744063576997419,
+        "fit_wall_seconds": 578.318195246
+      }
+    ],
+    "quality": {
+      "mean_weight_rel_fro": 0.744063576997419,
+      "max_weight_rel_fro": 0.744063576997419,
+      "min_weight_rel_fro": 0.744063576997419
+    }
+  },
+  "estimates": {
+    "whole_model_bytes_if_unconverted_tensors_kept": 1741412684,
+    "whole_model_ratio_if_unconverted_tensors_kept": 0.9968345176309743,
+    "note": "arithmetic on measured byte counts: original checkpoint with the converted tensors replaced by the derived file; not a measured file",
+    "flops_per_token_total": 4737024,
+    "flops_per_token_dense_total": 7340032
+  },
+  "failure": null
+}

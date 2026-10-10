@@ -1,0 +1,145 @@
+{
+  "run_id": "qwen3.5-0.8b__base__na__20261010T222444Z",
+  "kind": "prompt-generation",
+  "status": "completed",
+  "created_utc": "2026-10-10T22:24:44.831521+00:00",
+  "finished_utc": "2026-10-10T22:30:30.867900+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "base",
+  "target": "na",
+  "metrics": {
+    "provenance": {
+      "prompt_dataset": "/mnt/Projects/rotorized-transformers/configs/evaluation/prompts-256.jsonl",
+      "prompt_dataset_sha256": "73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641",
+      "prompt_count": 256,
+      "evaluated_prompt_count": 256,
+      "tokenizer": {
+        "name": "/mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base",
+        "files_sha256": {
+          "tokenizer.json": "fe000e3ed39ed12b8d2481d527d44f93c65d37e87645d2dcc80d1bf9d50d2927",
+          "tokenizer_config.json": "e611fbccc7c29ef3b1cafb1cb7ea548d189968632901d678fd62be68c47885de",
+          "vocab.json": "ce99b4cb2983d118806ce0a8b777a35b093e2000a503ebde25853284c9dfa003",
+          "merges.txt": "a9d356d7bdf1ef4949e3e748e95b8e10ad9d4e2e838eddc38a0a7b6b94d1db8d"
+        },
+        "sha256": "2e62378632909af479a51106c74337cb6a11f23cbc832e71eb422931ba85a118"
+      },
+      "model_config_sha256": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204",
+      "base_model_hf_id": "Qwen/Qwen3.5-0.8B-Base",
+      "base_model_revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+      "base_model_path": "/mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base",
+      "checkpoint_path": null,
+      "seed": 0,
+      "device": "cuda:0",
+      "dtype": "float16",
+      "max_new_tokens": 64,
+      "run_note": "Fresh matched GPU run; torch fallback DeltaNet kernels; timings are diagnostic, not optimized runtime performance."
+    },
+    "settings": {
+      "prompt_dataset_sha256": "73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641",
+      "base_model": {
+        "hf_id": "Qwen/Qwen3.5-0.8B-Base",
+        "revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+        "config_sha256": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204",
+        "model_type": "qwen3_5"
+      },
+      "tokenizer_sha256": "2e62378632909af479a51106c74337cb6a11f23cbc832e71eb422931ba85a118",
+      "seed": 0,
+      "device": "cuda:0",
+      "dtype": "float16",
+      "max_new_tokens": 64,
+      "decoding": {
+        "strategy": "greedy",
+        "do_sample": false,
+        "chat_template": false
+      }
+    },
+    "results": {
+      "jsonl_path": "/mnt/Projects/rotorized-transformers/reports/prompt-evaluations/qwen35-08b-base-fullcompare-20261010.jsonl",
+      "jsonl_rows": 256,
+      "telemetry_jsonl_path": "/mnt/Projects/rotorized-transformers/reports/prompt-evaluations/qwen35-08b-base-fullcompare-20261010.telemetry.jsonl",
+      "runtime_telemetry": {
+        "schema_version": 1,
+        "measured": true,
+        "samples_path": "/mnt/Projects/rotorized-transformers/reports/prompt-evaluations/qwen35-08b-base-fullcompare-20261010.telemetry.jsonl",
+        "sampling_interval_seconds": 1.0,
+        "sample_count": 318,
+        "duration_seconds": 345.36136453200015,
+        "cpu_logical_count": 12,
+        "process_cpu_time_seconds": 320.246529462,
+        "process_cpu_utilization_percent": 92.72795464425116,
+        "current_process_rss_bytes": 3001233408,
+        "peak_sampled_process_rss_bytes": 3904376832,
+        "peak_sampled_cpu_utilization_percent": 154.85910644026197,
+        "devices": [
+          {
+            "backend": "amd_sysfs",
+            "card": "card1",
+            "pci_address": "0000:03:00.0",
+            "name": null,
+            "driver": "amdgpu",
+            "gpu_busy_percent": 95,
+            "vram_used_bytes": 12178415616,
+            "vram_total_bytes": 25753026560,
+            "gtt_used_bytes": 334643200,
+            "gtt_total_bytes": 33266819072,
+            "temperature_c": {
+              "edge": 59.0,
+              "junction": 70.0,
+              "mem": 68.0
+            },
+            "power_w": 190.0
+          },
+          {
+            "backend": "amd_sysfs",
+            "card": "card2",
+            "pci_address": "0000:0e:00.0",
+            "name": null,
+            "driver": "amdgpu",
+            "gpu_busy_percent": 0,
+            "vram_used_bytes": 26624000,
+            "vram_total_bytes": 536870912,
+            "gtt_used_bytes": 16273408,
+            "gtt_total_bytes": 33266819072,
+            "temperature_c": {
+              "edge": 44.0
+            },
+            "power_w": 54.23
+          }
+        ],
+        "peak_sampled_device_memory": [
+          {
+            "backend": "amd_sysfs",
+            "device_id": "0000:03:00.0",
+            "name": null,
+            "vram_used_bytes": 14343200768,
+            "gtt_used_bytes": 1045954560
+          },
+          {
+            "backend": "amd_sysfs",
+            "device_id": "0000:0e:00.0",
+            "name": null,
+            "vram_used_bytes": 26624000,
+            "gtt_used_bytes": 16273408
+          }
+        ],
+        "host_available_ram_bytes": 46543327232,
+        "host_available_swap_bytes": 5266481152,
+        "host_total_swap_bytes": 8589930496,
+        "process_read_bytes": 510156800,
+        "process_write_bytes": 322166784,
+        "phase": "generation",
+        "request_id": "reasoning-016",
+        "sampling_error": null
+      },
+      "generation_total_seconds": 303.63013540310203,
+      "timing_note": "No generation warm-up: first measured prompt is cold; later prompts use a resident model.",
+      "comparison": {
+        "baseline_jsonl": null,
+        "exact_matches": 0,
+        "prompts": 0
+      }
+    }
+  },
+  "estimates": {},
+  "failure": null
+}

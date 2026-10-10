@@ -1,0 +1,12 @@
+2026-10-09T04:37:29+00:00 [scales] step 0/200 loss 2.00109
+2026-10-09T04:38:02+00:00 [angles+scales] step 0/1800 loss 0.996361
+2026-10-09T04:38:58+00:00 [angles+scales] step 200/1800 loss 0.855511
+2026-10-09T04:39:57+00:00 [angles+scales] step 400/1800 loss 0.716069
+2026-10-09T04:40:56+00:00 [angles+scales] step 600/1800 loss 0.648021
+2026-10-09T04:41:53+00:00 [angles+scales] step 800/1800 loss 0.608685
+2026-10-09T04:42:51+00:00 [angles+scales] step 1000/1800 loss 0.584542
+2026-10-09T04:43:49+00:00 [angles+scales] step 1200/1800 loss 0.569606
+2026-10-09T04:44:51+00:00 [angles+scales] step 1400/1800 loss 0.560898
+2026-10-09T04:46:05+00:00 [angles+scales] step 1600/1800 loss 0.556219
+2026-10-09T04:47:05+00:00 [1/1] model.layers.0.mlp.up_proj (ffn.up) rotors=37 rel_fro=0.7441 final_loss=0.5536 fit=578.32s
+2026-10-09T04:48:12+00:00 wrote /mnt/NAS/MediaHome/Local-Models/temp/l0-up-full2000-probe: {'num_layers': 1, 'dense_bytes': 7340032, 'structured_bytes': 1801728, 'byte_ratio': 0.24546595982142858, 'learned_scalar_count': {'angles': 767232, 'scales': 133632, 'residual': 0, 'bias': 0, 'total': 900864}, 'index_bytes': 0, 'index_bytes_note': '0: topologies are deterministic functions of (kind, seed, width); no index is stored', 'quantization_metadata_bytes': 0, 'quantization_metadata_note': '0: float storage dtypes only; no scales/zero-points/codebooks are stored', 'file_bytes': 1802184, 'header_bytes': 448, 'manifest_bytes': 7932, 'padding_bytes': 0}

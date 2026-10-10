@@ -1,0 +1,3 @@
+checkpoint: /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3
+seed: 0
+device: cpu

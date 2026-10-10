@@ -1,0 +1,46 @@
+name: l0-up-full2000-probe
+model: qwen3.5-0.8b
+families:
+- ffn.up
+layers:
+- 0
+budget:
+  storage_dtype: bfloat16
+  byte_ratio: 0.25
+cascade:
+  topology:
+    kind: butterfly
+    seed: 0
+  stages_per_rotor: auto
+  residual_rank: 0
+  adapter: pad_truncate
+fit:
+  objective: weight
+  seed: 0
+  device: cuda
+  init_angle_std: 0.01
+  schedule:
+    phases:
+    - train:
+      - scales
+      steps: 200
+    - train:
+      - angles
+      - scales
+      - residual
+      steps: 1800
+    lrs:
+      angles: 0.01
+      scales: 0.01
+      residual: 0.001
+    cosine_decay: true
+    log_every: 200
+calibration:
+  source: random
+  path: null
+  seq_len: 256
+  num_windows: 8
+  seed: 0
+  max_rows: 4096
+base_dir: /mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base
+output_dir: /mnt/NAS/MediaHome/Local-Models/temp/l0-up-full2000-probe

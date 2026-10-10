@@ -1,0 +1,39 @@
+{
+  "run_id": "qwen3.5-0.8b__stored-rotor-parity__b025__20261010T230828Z",
+  "kind": "diagnosis",
+  "status": "completed",
+  "created_utc": "2026-10-10T23:08:28.655752+00:00",
+  "finished_utc": "2026-10-10T23:08:45.543880+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "stored-rotor-parity",
+  "target": "b025",
+  "metrics": {
+    "nonfinite_tensors": {},
+    "loaded_parameter_mismatches": [],
+    "operator_checks": [
+      {
+        "module": "model.layers.0.mlp.up_proj",
+        "output_abs_max": 1.3824540376663208,
+        "finite": true,
+        "dense_action_max_abs_error": 8.195638656616211e-07,
+        "output_rms": 0.19259463250637054
+      },
+      {
+        "module": "model.layers.0.mlp.down_proj",
+        "output_abs_max": 3.918875217437744,
+        "finite": true,
+        "dense_action_max_abs_error": 9.5367431640625e-07,
+        "output_rms": 0.3697752356529236
+      },
+      {
+        "module": "model.layers.23.mlp.up_proj",
+        "output_abs_max": 1.898498296737671,
+        "finite": true,
+        "dense_action_max_abs_error": 1.7136335372924805e-07,
+        "output_rms": 0.24491643905639648
+      }
+    ]
+  },
+  "estimates": {},
+  "failure": null
+}

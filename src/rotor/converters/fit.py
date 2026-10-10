@@ -42,8 +42,18 @@ def _run(
     loss_fn: Callable[[RotorCascade], torch.Tensor],
     schedule: FitSchedule,
     log: Callable[[str], None] | None,
+    *,
+    resume_state: dict | None = None,
+    progress_callback: Callable[[dict], None] | None = None,
 ) -> tuple[list[float], float]:
-    history = optimize_cascade(cascade, loss_fn, schedule, log)
+    history = optimize_cascade(
+        cascade,
+        loss_fn,
+        schedule,
+        log,
+        resume_state=resume_state,
+        progress_callback=progress_callback,
+    )
     if history:
         final = history[-1]
     else:
@@ -60,6 +70,9 @@ def fit_weight(
     init_angle_std: float = 0.01,
     device="cpu",
     log: Callable[[str], None] | None = None,
+    *,
+    resume_state: dict | None = None,
+    progress_callback: Callable[[dict], None] | None = None,
 ) -> tuple[RotorCascade, dict]:
     """Minimize ``||W - W_hat||_F^2 / ||W||_F^2`` over float32 master parameters."""
     cascade, Wd = _prepare(W, spec, seed, init_angle_std, None, device)
@@ -68,7 +81,9 @@ def fit_weight(
     def loss_fn(c: RotorCascade) -> torch.Tensor:
         return (Wd - c.dense_weight()).pow(2).sum() / denom
 
-    history, final = _run(cascade, loss_fn, schedule, log)
+    history, final = _run(
+        cascade, loss_fn, schedule, log, resume_state=resume_state, progress_callback=progress_callback
+    )
     with torch.no_grad():
         metrics = {
             "objective": "weight",
@@ -90,6 +105,9 @@ def fit_activation(
     init: RotorCascade | None = None,
     device="cpu",
     log: Callable[[str], None] | None = None,
+    *,
+    resume_state: dict | None = None,
+    progress_callback: Callable[[dict], None] | None = None,
 ) -> tuple[RotorCascade, dict]:
     """Minimize ``||X W^T - X W_hat^T||_F^2 / ||X W^T||_F^2`` (``X``: calibration rows x in)."""
     cascade, Wd = _prepare(W, spec, seed, init_angle_std, init, device)
@@ -102,7 +120,9 @@ def fit_activation(
     def loss_fn(c: RotorCascade) -> torch.Tensor:
         return (c(Xd) - Y).pow(2).sum() / denom
 
-    history, final = _run(cascade, loss_fn, schedule, log)
+    history, final = _run(
+        cascade, loss_fn, schedule, log, resume_state=resume_state, progress_callback=progress_callback
+    )
     with torch.no_grad():
         W_hat = cascade.dense_weight()
         metrics = {

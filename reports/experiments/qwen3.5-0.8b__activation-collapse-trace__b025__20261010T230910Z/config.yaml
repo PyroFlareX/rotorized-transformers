@@ -1,0 +1,6 @@
+prompt: 'A community science teacher begins a lesson by asking why a metal spoon feels
+  colder than a wooden spoon in the same room. The explanation starts with heat moving
+  between materials:'
+device: cuda:0
+dtype: float16
+note: Concurrent evaluation; not a speed measurement

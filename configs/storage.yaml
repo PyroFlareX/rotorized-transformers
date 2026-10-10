@@ -6,14 +6,13 @@
 version: 1
 nas_root: /mnt/NAS/MediaHome/Local-Models/
 base_root: /mnt/NAS/MediaHome/Local-Models/base/
-derived_root: /mnt/NAS/MediaHome/Local-Models/derived/
-rotor_derived_root: /mnt/NAS/MediaHome/Local-Models/derived/rotor-scaler/
+derived_root: /mnt/NAS/MediaHome/Local-Models/temp/
+rotor_derived_root: /mnt/NAS/MediaHome/Local-Models/temp/
 
-# Pre-existing NAS content (observed 2026-10-08). Read-only to this project:
-# never move, overwrite, delete, or duplicate without explicit permission.
+# Unrelated pre-existing NAS content remains read-only. The user authorized new
+# conversion run directories under temp/ on 2026-10-08; existing files are never overwritten.
 preexisting_read_only:
   - "/mnt/NAS/MediaHome/Local-Models/Qwen-Image 2.1 Uncensored Q8/"
   - /mnt/NAS/MediaHome/Local-Models/Qwen3.8-Flash-Next/
   - /mnt/NAS/MediaHome/Local-Models/gemma-4-e4b-v2-sol-fable/
   - /mnt/NAS/MediaHome/Local-Models/ternary-bonsai-27b/
-  - /mnt/NAS/MediaHome/Local-Models/temp/

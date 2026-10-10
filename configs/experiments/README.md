@@ -64,3 +64,26 @@ Full run (publishes atomically under the derived root; refuses to overwrite):
 ```
 
 The base checkpoint must already exist at the path given in `configs/models.yaml`; the converter refuses to run otherwise and reports the HF id and revision to download. It never downloads weights.
+
+### Periodic snapshots and resume
+
+Conversion saves a resumable snapshot every 1,800 seconds (30 minutes), keeping the newest three.
+Snapshots live beside the final output, in `<output-name>.snapshots/`, under the configured writable NAS root.
+Publication is atomic; older snapshots are removed only after a new snapshot is published successfully.
+The final inference checkpoint remains a separate, atomic output and is never overwritten.
+
+Snapshots retain completed projections plus the active fit's FP32 parameters, Adam moments, schedule phase,
+next step, and loss history. Resume continues the original cosine schedule and skips completed projections.
+A snapshot is taken at an optimizer-step boundary; a long step can delay the interval.
+Only use snapshots from trusted runs. Configuration and base-checkpoint identity must match.
+
+```bash
+.venv-rocm/bin/python scripts/convert_model.py \
+  --config configs/experiments/qwen3.5-0.8b-ffn-weight.yaml --device cuda \
+  --name <original-output-name> --resume <snapshot-directory> \
+  --snapshot-interval-seconds 1800 --snapshot-keep 3 \
+  --telemetry <new-telemetry-jsonl-path>
+```
+
+`--device` overrides `fit.device`; ROCm PyTorch uses the `cuda` device spelling.
+Use a fresh telemetry path on every launch. Snapshots are recovery artifacts, not loadable inference checkpoints.

@@ -1,0 +1,112 @@
+{
+  "run_id": "qwen3.5-0.8b__rotor-butterfly-weight__b025__20261009T043252Z",
+  "kind": "convert",
+  "status": "completed",
+  "created_utc": "2026-10-09T04:32:52.628389+00:00",
+  "finished_utc": "2026-10-09T04:36:38.317254+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "rotor-butterfly-weight",
+  "target": "b025",
+  "metrics": {
+    "storage": {
+      "original_checkpoint_bytes": 1746942600,
+      "converted_dense_bytes": 22020096,
+      "structured_tensor_bytes": 5405184,
+      "layer_byte_ratio": 0.24546595982142858,
+      "derived_weights_file_bytes": 5406472,
+      "derived_manifest_bytes": 10923,
+      "derived_checkpoint_bytes": 5417395,
+      "file_compression_ratio": 0.24552445184616817,
+      "safetensors_header_bytes": 1280,
+      "padding_bytes": 0,
+      "learned_scalar_count": {
+        "angles": 2301696,
+        "scales": 400896,
+        "residual": 0,
+        "bias": 0,
+        "total": 2702592
+      },
+      "index_bytes": 0,
+      "quantization_metadata_bytes": 0
+    },
+    "resources": {
+      "wall_seconds": 215.72554748400216,
+      "cpu_seconds": 292.15161107399996,
+      "peak_rss_bytes": 1550254080,
+      "peak_device_bytes": 5269740032,
+      "measured": true,
+      "scope": "base-shard hashing, calibration capture and all layer fits; excludes the final write",
+      "peak_rss_note": "process high-water mark (getrusage), an upper bound for this region"
+    },
+    "write_wall_seconds": 9.30194205600128,
+    "layers": [
+      {
+        "module": "model.layers.0.mlp.down_proj",
+        "family": "ffn.down",
+        "in": 3584,
+        "out": 1024,
+        "dense_dtype": "BF16",
+        "dense_params": 3670016,
+        "dense_bytes": 7340032,
+        "num_rotors": 37,
+        "structured_bytes": 1801728,
+        "byte_ratio": 0.24546595982142858,
+        "angles": 767232,
+        "scales": 133632,
+        "residual": 0,
+        "bias": 0,
+        "rel_fro": 0.8898122233946845,
+        "fit_wall_seconds": 107.32134542700078
+      },
+      {
+        "module": "model.layers.0.mlp.gate_proj",
+        "family": "ffn.gate",
+        "in": 1024,
+        "out": 3584,
+        "dense_dtype": "BF16",
+        "dense_params": 3670016,
+        "dense_bytes": 7340032,
+        "num_rotors": 37,
+        "structured_bytes": 1801728,
+        "byte_ratio": 0.24546595982142858,
+        "angles": 767232,
+        "scales": 133632,
+        "residual": 0,
+        "bias": 0,
+        "rel_fro": 0.8799080233774852,
+        "fit_wall_seconds": 26.158133308999822
+      },
+      {
+        "module": "model.layers.0.mlp.up_proj",
+        "family": "ffn.up",
+        "in": 1024,
+        "out": 3584,
+        "dense_dtype": "BF16",
+        "dense_params": 3670016,
+        "dense_bytes": 7340032,
+        "num_rotors": 37,
+        "structured_bytes": 1801728,
+        "byte_ratio": 0.24546595982142858,
+        "angles": 767232,
+        "scales": 133632,
+        "residual": 0,
+        "bias": 0,
+        "rel_fro": 0.8916971367889569,
+        "fit_wall_seconds": 27.49669205400278
+      }
+    ],
+    "quality": {
+      "mean_weight_rel_fro": 0.8871391278537089,
+      "max_weight_rel_fro": 0.8916971367889569,
+      "min_weight_rel_fro": 0.8799080233774852
+    }
+  },
+  "estimates": {
+    "whole_model_bytes_if_unconverted_tensors_kept": 1730339899,
+    "whole_model_ratio_if_unconverted_tensors_kept": 0.9904961382245759,
+    "note": "arithmetic on measured byte counts: original checkpoint with the converted tensors replaced by the derived file; not a measured file",
+    "flops_per_token_total": 14211072,
+    "flops_per_token_dense_total": 22020096
+  },
+  "failure": null
+}

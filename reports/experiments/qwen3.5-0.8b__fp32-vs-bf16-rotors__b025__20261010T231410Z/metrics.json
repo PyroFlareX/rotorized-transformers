@@ -1,0 +1,44 @@
+{
+  "run_id": "qwen3.5-0.8b__fp32-vs-bf16-rotors__b025__20261010T231410Z",
+  "kind": "diagnosis",
+  "status": "completed",
+  "created_utc": "2026-10-10T23:14:10.049555+00:00",
+  "finished_utc": "2026-10-10T23:14:11.167789+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "fp32-vs-bf16-rotors",
+  "target": "b025",
+  "metrics": {
+    "projections": [
+      {
+        "module": "model.layers.0.mlp.up_proj",
+        "serialization_output_relative_error": 0.024189544841647148,
+        "max_abs_error": 0.03938949108123779,
+        "master_rms": 0.18510207533836365,
+        "stored_rms": 0.1851869374513626
+      },
+      {
+        "module": "model.layers.0.mlp.down_proj",
+        "serialization_output_relative_error": 0.025139568373560905,
+        "max_abs_error": 0.08172118663787842,
+        "master_rms": 0.3532646596431732,
+        "stored_rms": 0.3535565733909607
+      },
+      {
+        "module": "model.layers.12.mlp.up_proj",
+        "serialization_output_relative_error": 0.02937217243015766,
+        "max_abs_error": 0.09107768535614014,
+        "master_rms": 0.18624769151210785,
+        "stored_rms": 0.18624676764011383
+      },
+      {
+        "module": "model.layers.22.mlp.up_proj",
+        "serialization_output_relative_error": 0.02630573697388172,
+        "max_abs_error": 0.05212794989347458,
+        "master_rms": 0.2256893515586853,
+        "stored_rms": 0.2255914956331253
+      }
+    ]
+  },
+  "estimates": {},
+  "failure": null
+}

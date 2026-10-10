@@ -272,3 +272,23 @@ ADR-style log. All entries dated 2026-10-08.
 - The full configured conversion is launched without reducing projection scope, target budget, or fit steps. A process memory cap and no additional swap allocation protect the interactive host.
 
 **Status:** Accepted.
+
+---
+
+## D17 — Resumable conversion snapshots
+
+**Date:** 2026-10-08
+
+**Context:** Full-model fitting takes hours; interruption must not discard completed projections or restart Adam.
+
+**Decision:** Publish recovery snapshots atomically under the configured NAS output root every 30 minutes,
+retaining the newest three per run. Store completed projections and the active FP32 fit, Adam state, phase,
+next optimizer step, and loss history. Resume validates conversion and base identity before continuing.
+Recovery snapshots are separate from the inference checkpoint format; no format-version change is required.
+
+**Consequences:**
+- Publication occurs at consistent optimizer-step boundaries, so intervals may be delayed by a long step.
+- Retention removes only owned recovery snapshots after successful publication; experiment reports remain intact.
+- The final checkpoint remains exclusive and atomically published; base checkpoints remain read-only.
+
+**Status:** Accepted.
