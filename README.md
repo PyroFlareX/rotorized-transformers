@@ -2,6 +2,41 @@
 
 Research code testing whether pretrained Transformer linear weights admit smaller structured Givens-rotor / diagonal-scaling representations without large language-model quality loss.
 
+## Results so far
+
+Model: Qwen3.5-0.8B-Base. Host: Ryzen 5 7600X, RX 7900 XTX (ROCm). Every number below comes from a run directory under
+`reports/experiments/`; links point to the source report. Errors are relative L2 (Frobenius for weights) against the
+original dense tensor or model.
+
+| Attempt | Training | Stored size vs dense | Accuracy | Speed | Verdict |
+|---|---|---|---|---|---|
+| 1. Learned butterfly rotor cascade, all 24 FFNs | Yes (gradient fit per projection) | 25% of BF16 bytes | Layer-0 weight error 0.73–0.74; 0/256 prompts matched base, 186/256 outputs blank or end-of-text | Decode 5.8 tok/s fused Triton, 0.28 tok/s reference, vs 37.8–38.2 dense | Failed: generation collapsed |
+| 2. Algebraic SVD → GA rotor angles, one full projection | No | 3,672,064 scalars vs 3,670,016 (+0.06%) | Weight error 8.2e-15, output error 8.3e-15 (FP64) | Not measured | Exact, but not compression |
+| 3. Clifford block projection, q=4 / q=8 | No | 917,504 / 458,752 coefficients (25% / 12.5%) | Weight error 0.866 / 0.936; retains 24.96% / 12.48% of weight energy | Not measured | Failed: matches random-weight control |
+
+**1. Learned rotor cascade.** Each FFN projection became `D_0 R_1 D_1 … R_k D_k` (37 butterfly rotor blocks), fitted
+to the dense weight by gradient descent. Diagnostics isolated the cause to the fitted functions: one replaced layer-0
+FFN had output cosine 0.34 and 27% of reference RMS, FP32 masters reproduced it, and BF16 storage rounding added only
+1.9–2.4%. Truncated SVD at the same 25% budget was worse (weight error 0.76–0.80).
+[decision report](reports/experiments/qwen3.5-0.8b__output-collapse-experiment-decision__b025__20261011T005909Z/report.md) ·
+[fused speed](reports/experiments/qwen3.5-0.8b__rotor-triton__b025__20261011T002857Z/report.md) ·
+[reference speed](reports/experiments/qwen3.5-0.8b__rotor-reference__b025__20261011T003148Z/report.md) ·
+[prompt outputs](reports/prompt-evaluations/fullcompare-fused-20261010-table.md)
+
+**2. Algebraic GA rotors.** Full-rank SVD, with each orthonormal factor reduced to plane-rotor angles. It reconstructs
+the 3584×1024 layer-0 up projection to machine precision without training. At full rank the angles plus singular values
+sum to exactly `m·n`, so this is a change of coordinates; only the sign vectors push it above dense.
+[derivation](docs/ALGEBRAIC_GA_CONVERSION.md) ·
+[run](reports/experiments/qwen3.5-0.8b__algebraic-ga-rotors__unrestricted__20261011T040143Z/report.md)
+
+**3. Clifford block projection.** q×q weight blocks are projected in closed form onto left multiplication by a
+Cl(2,0) or Cl(3,0) multivector, storing q coefficients per block instead of q². Projecting a random matrix keeps 1/q
+of its energy; the pretrained weight kept the same fraction (norm-matched Gaussian controls: 24.95–25.05% and
+12.48–12.53%), and feature regrouping did not help. Same-budget SVD retained more (36.66% / 20.29%).
+[run](reports/experiments/qwen3.5-0.8b__clifford-block-projection__model.language_model.layers.0.mlp.up_proj.weight.probes-64__20261011T184547Z/report.md)
+
+Next candidate: sums of left and right geometric products, gated on beating the random-weight control.
+
 ## Model storage
 
 All base and derived checkpoints live under `/mnt/NAS/MediaHome/Local-Models/` (base: `base/`, new derived outputs: `temp/`) and never in this repository. Paths resolve through `configs/storage.yaml` and `rotor.storage.load_storage()`. Model downloads are never automatic.
