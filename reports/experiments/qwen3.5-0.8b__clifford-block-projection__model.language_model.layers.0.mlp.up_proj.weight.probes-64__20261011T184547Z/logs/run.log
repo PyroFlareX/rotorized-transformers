@@ -1,0 +1,1 @@
+2026-10-11T18:46:01+00:00 Loading local tensor 'model.language_model.layers.0.mlp.up_proj.weight' from model 'qwen3.5-0.8b'; no download or fallback

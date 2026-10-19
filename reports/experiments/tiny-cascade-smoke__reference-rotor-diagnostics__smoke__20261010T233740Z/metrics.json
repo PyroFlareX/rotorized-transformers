@@ -1,0 +1,13 @@
+{
+  "run_id": "tiny-cascade-smoke__reference-rotor-diagnostics__smoke__20261010T233740Z",
+  "kind": "collapse-diagnosis",
+  "status": "failed",
+  "created_utc": "2026-10-10T23:37:40.073132+00:00",
+  "finished_utc": "2026-10-10T23:37:41.235374+00:00",
+  "model": "tiny-cascade-smoke",
+  "method": "reference-rotor-diagnostics",
+  "target": "smoke",
+  "metrics": {},
+  "estimates": {},
+  "failure": "Traceback (most recent call last):\n  File \"/mnt/Projects/rotorized-transformers/src/rotor/evaluation/collapse.py\", line 359, in run_collapse_diagnostics\n    _run_smoke(run, args)\n  File \"/mnt/Projects/rotorized-transformers/src/rotor/evaluation/collapse.py\", line 329, in _run_smoke\n    spec_layer.residual.U.normal_(0.0, 0.1, generator=generator)\n    ^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'NoneType' object has no attribute 'U'\n"
+}

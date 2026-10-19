@@ -1,0 +1,4 @@
+plan: plans/OUTPUT_COLLAPSE_EXPERIMENT_PLAN.md
+seed: 0
+reference_backend: reference
+corpus: null

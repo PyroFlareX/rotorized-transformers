@@ -1,0 +1,18 @@
+2026-10-11T00:00:16+00:00 loaded 72 stored projections, reference backend, device=cpu
+2026-10-11T00:00:16+00:00 diagnostic prompt SHA-256 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641; 1 prompt(s)
+2026-10-11T00:00:16+00:00 no approved corpus configured; fixed diagnostic prompts are not used as held-out NLL
+2026-10-11T00:02:40+00:00 parity 1/72 model.layers.0.mlp.down_proj: max abs 4.352e-06
+2026-10-11T00:18:22+00:00 parity 8/72 model.layers.10.mlp.gate_proj: max abs 1.683e-05
+2026-10-11T00:31:20+00:00 parity 16/72 model.layers.13.mlp.down_proj: max abs 4.456e-06
+2026-10-11T00:46:16+00:00 parity 24/72 model.layers.15.mlp.up_proj: max abs 8.399e-06
+2026-10-11T00:50:13+00:00 parity 32/72 model.layers.18.mlp.gate_proj: max abs 3.025e-05
+2026-10-11T00:53:04+00:00 parity 40/72 model.layers.20.mlp.down_proj: max abs 5.915e-06
+2026-10-11T00:54:03+00:00 parity 48/72 model.layers.22.mlp.up_proj: max abs 8.469e-06
+2026-10-11T00:55:04+00:00 parity 56/72 model.layers.4.mlp.gate_proj: max abs 2.168e-05
+2026-10-11T00:55:53+00:00 parity 64/72 model.layers.7.mlp.down_proj: max abs 4.671e-06
+2026-10-11T00:56:46+00:00 parity 72/72 model.layers.9.mlp.up_proj: max abs 5.105e-06
+2026-10-11T00:56:51+00:00 ablation science-001 layer-0-ffn.gate: KL 0.33292; top agreement 0.879
+2026-10-11T00:56:54+00:00 ablation science-001 layer-0-ffn.up: KL 0.067544; top agreement 0.879
+2026-10-11T00:56:57+00:00 ablation science-001 layer-0-ffn.down: KL 0.065152; top agreement 0.879
+2026-10-11T00:57:01+00:00 ablation science-001 layer-0-complete-ffn: KL 0.2876; top agreement 0.848
+2026-10-11T00:57:05+00:00 ablation science-001 layer-0-complete-ffn-fp32-master: KL 0.28542; top agreement 0.848

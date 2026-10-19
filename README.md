@@ -7,6 +7,15 @@ Research code testing whether pretrained Transformer linear weights admit smalle
 All base and derived checkpoints live under `/mnt/NAS/MediaHome/Local-Models/` (base: `base/`, new derived outputs: `temp/`) and never in this repository. Paths resolve through `configs/storage.yaml` and `rotor.storage.load_storage()`. Model downloads are never automatic.
 Derived model storage uses the configured `temp/` output root, e.g. `/mnt/NAS/MediaHome/Local-Models/temp/<name>/`. Model checkpoints are never written into this repository.
 
+## Algebraic GA conversion (no training)
+
+`scripts/convert_ga_rotors.py` converts explicitly selected local 2D tensors into ordered GA plane-rotation
+angles (one scalar per rotation), signs, and singular-value scalings. Full rank is the default;
+there is no optimizer or byte-budget constraint.
+The direct operator does not retain dense factors. Whole-tensor reconstruction, direct action, and serialized
+reload are checked before atomic publication. See [derivation and usage](docs/ALGEBRAIC_GA_CONVERSION.md).
+This separate `ga-rotor-svd` format is not accepted by the existing learned `rotor-scaler` model loader.
+
 ## Evaluation: curated prompt continuation
 
 `configs/evaluation/prompts-256.jsonl` is a curated corpus of exactly 256 distinct, manually authored natural-language prompts across 16 domains. Each is a raw continuation prefix: no chat template or assistant-turn wrapper is added. The `scripts/evaluate_prompts.py` runner uses the tokenizer in the local base checkpoint, records exact prompt IDs/text/counts and SHA-256 fingerprints, and generates with deterministic greedy decoding (`do_sample=false`) using seed 0 and default `max_new_tokens=64`.
@@ -40,6 +49,12 @@ Before inference, `--compare-to` validates dataset hash, selected prompts, base 
 ## Other scripts
 
 - `scripts/evaluate_model.py`: loss, generation, multiple-choice, and passkey evaluation.
-- `scripts/convert_model.py`: local checkpoint conversion from experiment YAML.
+- `scripts/convert_model.py`: projection-local checkpoint conversion from experiment YAML.
+- `scripts/fit_joint_ffn.py`: joint gate/up/down FFN output fitting and export (`configs/experiments/qwen3.5-0.8b-joint-ffn.yaml`).
+- `scripts/convert_ga_rotors.py`: algebraic GA tensor conversion with measured numerical gates, no training.
+- `scripts/explore_clifford.py`: no-training q=4/q=8 geometric-product block projection pilot, with measured
+  compactness, weight/action error, grouping controls, and numerical operator parity.
+- `scripts/diagnose_collapse.py`: bounded rotor parity, serialization, activation-trace, and fixed-prompt ablation diagnostics.
+- `scripts/benchmark_inference.py`: resident base versus rotor generation benchmark on identical prompt tokens.
 - `scripts/benchmark.py`: linear-layer microbenchmark.
-- `.venv/bin/python -m pytest`: CPU test suite (after integration by the main agent).
+- `.venv/bin/python -m pytest`: CPU test suite.

@@ -1,0 +1,92 @@
+{
+  "run_id": "qwen3.5-0.8b__algebraic-ga-rotors__unrestricted__20261011T034657Z",
+  "kind": "conversion",
+  "status": "completed",
+  "created_utc": "2026-10-11T03:46:57.673235+00:00",
+  "finished_utc": "2026-10-11T03:49:35.346062+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "algebraic-ga-rotors",
+  "target": "unrestricted",
+  "metrics": {
+    "tensors": {
+      "model.language_model.layers.0.mlp.up_proj.weight": {
+        "weight": {
+          "relative_l2": 9.59474399886381e-15,
+          "max_absolute": 5.585809592645319e-16,
+          "reference_norm": 16.428697639323474,
+          "residual_norm": 1.5762914808404694e-13
+        },
+        "direct_action": {
+          "relative_l2": 9.717941465181748e-15,
+          "max_absolute": 1.2045919817182948e-14,
+          "reference_norm": 66.43134322962115,
+          "residual_norm": 6.455759049588561e-13
+        },
+        "passed": true,
+        "exact_full_rank": true,
+        "max_relative_error": 1e-10,
+        "elementwise_gate": {
+          "atol": 1e-10,
+          "rtol": 1e-10
+        },
+        "seed": 0,
+        "probe_rows": 16,
+        "basis_chunk": 256,
+        "probes_sha256": "05aafd6fcb8c12253ece60016da827acf5858b73ed738b6bd0ab0b34dcc2d3ab",
+        "conversion_and_verification_seconds": 80.65182142099366,
+        "source_dtype": "torch.bfloat16",
+        "source_tensor_sha256": "1c576515da6b8e11e78da098ed7425d7f5cb798d9e526189b5b757993ce3a427"
+      }
+    },
+    "export_load": {
+      "model.language_model.layers.0.mlp.up_proj.weight": {
+        "weight": {
+          "relative_l2": 9.59474399886381e-15,
+          "max_absolute": 5.585809592645319e-16,
+          "reference_norm": 16.428697639323474,
+          "residual_norm": 1.5762914808404694e-13
+        },
+        "direct_action": {
+          "relative_l2": 9.717941465181748e-15,
+          "max_absolute": 1.2045919817182948e-14,
+          "reference_norm": 66.43134322962115,
+          "residual_norm": 6.455759049588561e-13
+        },
+        "passed": true,
+        "exact_full_rank": true,
+        "max_relative_error": 1e-10,
+        "elementwise_gate": {
+          "atol": 1e-10,
+          "rtol": 1e-10
+        },
+        "seed": 0,
+        "probe_rows": 16,
+        "basis_chunk": 256,
+        "probes_sha256": "05aafd6fcb8c12253ece60016da827acf5858b73ed738b6bd0ab0b34dcc2d3ab"
+      }
+    },
+    "checkpoint": "/mnt/NAS/MediaHome/Local-Models/temp/qwen35-l0-up-algebraic-ga-f64-20261011-proof",
+    "serialized": {
+      "checkpoint_bytes": 58733712,
+      "manifest_bytes": 4432,
+      "manifest_overhead_bytes": 4432,
+      "num_tensors": 5,
+      "padding_bytes": 0,
+      "safetensors_header_bytes": 824,
+      "tensor_payload_bytes": 58728448,
+      "weights_file_bytes": 58729280,
+      "weights_sha256": "56bf64ce802ea2ea7ff229b7d93b72c7845a258c778f0be60418bc9d0824fac6"
+    },
+    "provenance": {
+      "path": "/mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base",
+      "hf_id": "Qwen/Qwen3.5-0.8B-Base",
+      "revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+      "file_sha256": {
+        "model.safetensors-00001-of-00001.safetensors": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+        "config.json": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204"
+      }
+    }
+  },
+  "estimates": {},
+  "failure": null
+}

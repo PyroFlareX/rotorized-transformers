@@ -1,0 +1,916 @@
+{
+  "run_id": "qwen3.5-0.8b__clifford-block-projection__model.language_model.layers.0.mlp.up_proj.weight.probes-64__20261011T184547Z",
+  "kind": "exploration",
+  "status": "completed",
+  "created_utc": "2026-10-11T18:45:47.980492+00:00",
+  "finished_utc": "2026-10-11T18:48:01.878932+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "clifford-block-projection",
+  "target": "model.language_model.layers.0.mlp.up_proj.weight.probes-64",
+  "metrics": {
+    "scope": {
+      "experiment": "no-training blockwise Clifford left-geometric-product projection pilot",
+      "checkpoint_export": false,
+      "weights_downloaded": false,
+      "full_model_quality_or_performance_claim": false,
+      "other_trained_baseline_comparison": "broad tournament not run; only the separately identified four-step q-by-q small-block subset is included",
+      "winner_claim": "none",
+      "note": "No model-quality or performance claim is made. The bounded small-block equal-budget subset is reported separately for context only; no broad trained-baseline tournament was run."
+    },
+    "source": {
+      "model_key": "qwen3.5-0.8b",
+      "hf_id": "Qwen/Qwen3.5-0.8B-Base",
+      "revision": "dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68",
+      "base_path": "/mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base",
+      "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+      "shape": [
+        3584,
+        1024
+      ],
+      "checkpoint_dtype": "BF16",
+      "shard": "model.safetensors-00001-of-00001.safetensors",
+      "shard_sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c",
+      "tensor_values_fp64_sha256": "b2d819d404f02442565871dace21687b2752e1181e84806e27ff71387bd4f95a"
+    },
+    "probes": {
+      "rows": 64,
+      "input_features": 1024,
+      "dtype": "float64",
+      "distribution": "iid standard Gaussian",
+      "seed": 42,
+      "sha256": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+      "shared_by_all_projection_arms_svd_rows_and_controls": true
+    },
+    "gaussian_control": {
+      "seed": 43,
+      "distribution": "iid standard Gaussian scaled to the source tensor's Frobenius norm",
+      "shape": [
+        3584,
+        1024
+      ],
+      "dtype": "float64",
+      "sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+      "frobenius_norm": 16.428697639323946,
+      "probe_action_fingerprint": "c6be0a64e52ef2b55d2a9600469efd533e79b438215f93a09dceee0ecda6d254"
+    },
+    "clifford_arms": {
+      "d2/contiguous": {
+        "dimensions": 2,
+        "q": 4,
+        "grouping": "contiguous",
+        "seed": null,
+        "shape": [
+          3584,
+          1024
+        ],
+        "coefficient_shape": [
+          896,
+          256,
+          4
+        ],
+        "coefficient_scalar_count": 917504,
+        "coefficient_dtype": "torch.float64",
+        "coefficient_bytes_fp64": 7340032,
+        "permutation_index_bytes": 36864,
+        "coefficients_plus_permutation_bytes": 7376896,
+        "source_tensor_bytes_checkpoint_dtype": 7340032,
+        "source_tensor_bytes_bf16": 7340032,
+        "equal_fp64_dense_bytes": 29360128,
+        "coefficient_bytes_over_source_bf16": 1.0,
+        "coefficient_bytes_over_equal_fp64_dense": 0.25,
+        "weight_approximation": {
+          "absolute_frobenius_error": 14.231352924325556,
+          "relative_frobenius_error": 0.866249610088484
+        },
+        "retained_energy_fraction": 0.24961161302146273,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_original": {
+          "absolute_frobenius_error": 114.25591920757778,
+          "relative_frobenius_error": 0.8654622988636429
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.5543122344752192e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d2/seeded_permutation-0": {
+        "dimensions": 2,
+        "q": 4,
+        "grouping": "seeded_permutation",
+        "seed": 0,
+        "shape": [
+          3584,
+          1024
+        ],
+        "coefficient_shape": [
+          896,
+          256,
+          4
+        ],
+        "coefficient_scalar_count": 917504,
+        "coefficient_dtype": "torch.float64",
+        "coefficient_bytes_fp64": 7340032,
+        "permutation_index_bytes": 36864,
+        "coefficients_plus_permutation_bytes": 7376896,
+        "source_tensor_bytes_checkpoint_dtype": 7340032,
+        "source_tensor_bytes_bf16": 7340032,
+        "equal_fp64_dense_bytes": 29360128,
+        "coefficient_bytes_over_source_bf16": 1.0,
+        "coefficient_bytes_over_equal_fp64_dense": 0.25,
+        "weight_approximation": {
+          "absolute_frobenius_error": 14.23137894372965,
+          "relative_frobenius_error": 0.8662511938661311
+        },
+        "retained_energy_fraction": 0.24960886912541816,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_original": {
+          "absolute_frobenius_error": 114.18590168290687,
+          "relative_frobenius_error": 0.8649319322245865
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.609823385706477e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d2/seeded_permutation-1": {
+        "dimensions": 2,
+        "q": 4,
+        "grouping": "seeded_permutation",
+        "seed": 1,
+        "shape": [
+          3584,
+          1024
+        ],
+        "coefficient_shape": [
+          896,
+          256,
+          4
+        ],
+        "coefficient_scalar_count": 917504,
+        "coefficient_dtype": "torch.float64",
+        "coefficient_bytes_fp64": 7340032,
+        "permutation_index_bytes": 36864,
+        "coefficients_plus_permutation_bytes": 7376896,
+        "source_tensor_bytes_checkpoint_dtype": 7340032,
+        "source_tensor_bytes_bf16": 7340032,
+        "equal_fp64_dense_bytes": 29360128,
+        "coefficient_bytes_over_source_bf16": 1.0,
+        "coefficient_bytes_over_equal_fp64_dense": 0.25,
+        "weight_approximation": {
+          "absolute_frobenius_error": 14.232001415480896,
+          "relative_frobenius_error": 0.8662890831599092
+        },
+        "retained_energy_fraction": 0.2495432243978795,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_original": {
+          "absolute_frobenius_error": 114.57640918270896,
+          "relative_frobenius_error": 0.8678899366837532
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.609823385706477e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d2/seeded_permutation-2": {
+        "dimensions": 2,
+        "q": 4,
+        "grouping": "seeded_permutation",
+        "seed": 2,
+        "shape": [
+          3584,
+          1024
+        ],
+        "coefficient_shape": [
+          896,
+          256,
+          4
+        ],
+        "coefficient_scalar_count": 917504,
+        "coefficient_dtype": "torch.float64",
+        "coefficient_bytes_fp64": 7340032,
+        "permutation_index_bytes": 36864,
+        "coefficients_plus_permutation_bytes": 7376896,
+        "source_tensor_bytes_checkpoint_dtype": 7340032,
+        "source_tensor_bytes_bf16": 7340032,
+        "equal_fp64_dense_bytes": 29360128,
+        "coefficient_bytes_over_source_bf16": 1.0,
+        "coefficient_bytes_over_equal_fp64_dense": 0.25,
+        "weight_approximation": {
+          "absolute_frobenius_error": 14.231728701541316,
+          "relative_frobenius_error": 0.8662724833085048
+        },
+        "retained_energy_fraction": 0.24957198466242939,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_original": {
+          "absolute_frobenius_error": 114.32808022665216,
+          "relative_frobenius_error": 0.8660089019796092
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.5543122344752192e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d3/contiguous": {
+        "dimensions": 3,
+        "q": 8,
+        "grouping": "contiguous",
+        "seed": null,
+        "shape": [
+          3584,
+          1024
+        ],
+        "coefficient_shape": [
+          448,
+          128,
+          8
+        ],
+        "coefficient_scalar_count": 458752,
+        "coefficient_dtype": "torch.float64",
+        "coefficient_bytes_fp64": 3670016,
+        "permutation_index_bytes": 36864,
+        "coefficients_plus_permutation_bytes": 3706880,
+        "source_tensor_bytes_checkpoint_dtype": 7340032,
+        "source_tensor_bytes_bf16": 7340032,
+        "equal_fp64_dense_bytes": 29360128,
+        "coefficient_bytes_over_source_bf16": 0.5,
+        "coefficient_bytes_over_equal_fp64_dense": 0.125,
+        "weight_approximation": {
+          "absolute_frobenius_error": 15.369759293850493,
+          "relative_frobenius_error": 0.9355433785001726
+        },
+        "retained_energy_fraction": 0.12475858694408966,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_original": {
+          "absolute_frobenius_error": 123.58274705564246,
+          "relative_frobenius_error": 0.9361108738037861
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.27675647831893e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d3/seeded_permutation-0": {
+        "dimensions": 3,
+        "q": 8,
+        "grouping": "seeded_permutation",
+        "seed": 0,
+        "shape": [
+          3584,
+          1024
+        ],
+        "coefficient_shape": [
+          448,
+          128,
+          8
+        ],
+        "coefficient_scalar_count": 458752,
+        "coefficient_dtype": "torch.float64",
+        "coefficient_bytes_fp64": 3670016,
+        "permutation_index_bytes": 36864,
+        "coefficients_plus_permutation_bytes": 3706880,
+        "source_tensor_bytes_checkpoint_dtype": 7340032,
+        "source_tensor_bytes_bf16": 7340032,
+        "equal_fp64_dense_bytes": 29360128,
+        "coefficient_bytes_over_source_bf16": 0.5,
+        "coefficient_bytes_over_equal_fp64_dense": 0.125,
+        "weight_approximation": {
+          "absolute_frobenius_error": 15.370243214942144,
+          "relative_frobenius_error": 0.9355728343403296
+        },
+        "retained_energy_fraction": 0.12470347164401097,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_original": {
+          "absolute_frobenius_error": 123.52136515470615,
+          "relative_frobenius_error": 0.9356459200275494
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.2212453270876722e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d3/seeded_permutation-1": {
+        "dimensions": 3,
+        "q": 8,
+        "grouping": "seeded_permutation",
+        "seed": 1,
+        "shape": [
+          3584,
+          1024
+        ],
+        "coefficient_shape": [
+          448,
+          128,
+          8
+        ],
+        "coefficient_scalar_count": 458752,
+        "coefficient_dtype": "torch.float64",
+        "coefficient_bytes_fp64": 3670016,
+        "permutation_index_bytes": 36864,
+        "coefficients_plus_permutation_bytes": 3706880,
+        "source_tensor_bytes_checkpoint_dtype": 7340032,
+        "source_tensor_bytes_bf16": 7340032,
+        "equal_fp64_dense_bytes": 29360128,
+        "coefficient_bytes_over_source_bf16": 0.5,
+        "coefficient_bytes_over_equal_fp64_dense": 0.125,
+        "weight_approximation": {
+          "absolute_frobenius_error": 15.371090876510562,
+          "relative_frobenius_error": 0.9356244307350668
+        },
+        "retained_energy_fraction": 0.1246069246112842,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_original": {
+          "absolute_frobenius_error": 123.48354787650408,
+          "relative_frobenius_error": 0.9353594628465427
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.1102230246251565e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d3/seeded_permutation-2": {
+        "dimensions": 3,
+        "q": 8,
+        "grouping": "seeded_permutation",
+        "seed": 2,
+        "shape": [
+          3584,
+          1024
+        ],
+        "coefficient_shape": [
+          448,
+          128,
+          8
+        ],
+        "coefficient_scalar_count": 458752,
+        "coefficient_dtype": "torch.float64",
+        "coefficient_bytes_fp64": 3670016,
+        "permutation_index_bytes": 36864,
+        "coefficients_plus_permutation_bytes": 3706880,
+        "source_tensor_bytes_checkpoint_dtype": 7340032,
+        "source_tensor_bytes_bf16": 7340032,
+        "equal_fp64_dense_bytes": 29360128,
+        "coefficient_bytes_over_source_bf16": 0.5,
+        "coefficient_bytes_over_equal_fp64_dense": 0.125,
+        "weight_approximation": {
+          "absolute_frobenius_error": 15.368223114419472,
+          "relative_frobenius_error": 0.9354498726444592
+        },
+        "retained_energy_fraction": 0.12493353576907161,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_original": {
+          "absolute_frobenius_error": 123.39110442247376,
+          "relative_frobenius_error": 0.9346592249525687
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.2212453270876722e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      }
+    },
+    "gaussian_control_arms": {
+      "d2/contiguous": {
+        "dimensions": 2,
+        "q": 4,
+        "grouping": "contiguous",
+        "seed": null,
+        "control_seed": 43,
+        "control_matrix_frobenius_norm": 16.428697639323946,
+        "control_matrix_sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+        "weight_approximation_vs_control": {
+          "absolute_frobenius_error": 14.232257897384306,
+          "relative_frobenius_error": 0.8663046949818948
+        },
+        "retained_energy_fraction": 0.24951617545231256,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_control_original": {
+          "absolute_frobenius_error": 114.40826182255341,
+          "relative_frobenius_error": 0.8669680703164655
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.609823385706477e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d2/seeded_permutation-0": {
+        "dimensions": 2,
+        "q": 4,
+        "grouping": "seeded_permutation",
+        "seed": 0,
+        "control_seed": 43,
+        "control_matrix_frobenius_norm": 16.428697639323946,
+        "control_matrix_sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+        "weight_approximation_vs_control": {
+          "absolute_frobenius_error": 14.22499871270549,
+          "relative_frobenius_error": 0.8658628349612051
+        },
+        "retained_energy_fraction": 0.2502815510329198,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_control_original": {
+          "absolute_frobenius_error": 114.17197673716161,
+          "relative_frobenius_error": 0.8651775385728365
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.4432899320127035e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d2/seeded_permutation-1": {
+        "dimensions": 2,
+        "q": 4,
+        "grouping": "seeded_permutation",
+        "seed": 1,
+        "control_seed": 43,
+        "control_matrix_frobenius_norm": 16.428697639323946,
+        "control_matrix_sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+        "weight_approximation_vs_control": {
+          "absolute_frobenius_error": 14.222947241102839,
+          "relative_frobenius_error": 0.8657379637360058
+        },
+        "retained_energy_fraction": 0.25049777814620017,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_control_original": {
+          "absolute_frobenius_error": 114.2827380701407,
+          "relative_frobenius_error": 0.8660168707817945
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.609823385706477e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d2/seeded_permutation-2": {
+        "dimensions": 2,
+        "q": 4,
+        "grouping": "seeded_permutation",
+        "seed": 2,
+        "control_seed": 43,
+        "control_matrix_frobenius_norm": 16.428697639323946,
+        "control_matrix_sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+        "weight_approximation_vs_control": {
+          "absolute_frobenius_error": 14.229305014509528,
+          "relative_frobenius_error": 0.8661249556659973
+        },
+        "retained_energy_fraction": 0.24982756117255572,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_control_original": {
+          "absolute_frobenius_error": 114.23851046974474,
+          "relative_frobenius_error": 0.8656817208830093
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.609823385706477e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d3/contiguous": {
+        "dimensions": 3,
+        "q": 8,
+        "grouping": "contiguous",
+        "seed": null,
+        "control_seed": 43,
+        "control_matrix_frobenius_norm": 16.428697639323946,
+        "control_matrix_sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+        "weight_approximation_vs_control": {
+          "absolute_frobenius_error": 15.369420550493077,
+          "relative_frobenius_error": 0.9355227594976628
+        },
+        "retained_energy_fraction": 0.12479716646186274,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_control_original": {
+          "absolute_frobenius_error": 123.4533249605215,
+          "relative_frobenius_error": 0.935510156435887
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.0547118733938987e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d3/seeded_permutation-0": {
+        "dimensions": 3,
+        "q": 8,
+        "grouping": "seeded_permutation",
+        "seed": 0,
+        "control_seed": 43,
+        "control_matrix_frobenius_norm": 16.428697639323946,
+        "control_matrix_sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+        "weight_approximation_vs_control": {
+          "absolute_frobenius_error": 15.368397508952908,
+          "relative_frobenius_error": 0.9354604878823085
+        },
+        "retained_energy_fraction": 0.12491367561096375,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_control_original": {
+          "absolute_frobenius_error": 123.49316326737053,
+          "relative_frobenius_error": 0.9358120449486865
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.0547118733938987e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d3/seeded_permutation-1": {
+        "dimensions": 3,
+        "q": 8,
+        "grouping": "seeded_permutation",
+        "seed": 1,
+        "control_seed": 43,
+        "control_matrix_frobenius_norm": 16.428697639323946,
+        "control_matrix_sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+        "weight_approximation_vs_control": {
+          "absolute_frobenius_error": 15.365433222031037,
+          "relative_frobenius_error": 0.9352800544123555
+        },
+        "retained_energy_fraction": 0.1252512198184169,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_control_original": {
+          "absolute_frobenius_error": 123.38021190255373,
+          "relative_frobenius_error": 0.9349561170180033
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.1657341758564144e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      },
+      "d3/seeded_permutation-2": {
+        "dimensions": 3,
+        "q": 8,
+        "grouping": "seeded_permutation",
+        "seed": 2,
+        "control_seed": 43,
+        "control_matrix_frobenius_norm": 16.428697639323946,
+        "control_matrix_sha256": "d7b6aa87bb62794a1ec9110d2aed2f7941cf84aab79a659a2f3c8423d88278e1",
+        "weight_approximation_vs_control": {
+          "absolute_frobenius_error": 15.365751459050053,
+          "relative_frobenius_error": 0.935299425212525
+        },
+        "retained_energy_fraction": 0.1252149851970859,
+        "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719",
+        "probe_action_vs_control_original": {
+          "absolute_frobenius_error": 123.24341596695439,
+          "relative_frobenius_error": 0.9339194986267753
+        },
+        "operator_vs_reconstructed_probe_action_max_abs_error": 1.3877787807814457e-15,
+        "operator_vs_reconstructed_probe_action_tolerance": 1e-10,
+        "operator_reconstruction_assertion_passed": true
+      }
+    },
+    "equal_coefficient_budget_svd": {
+      "per_q": {
+        "4": {
+          "q": 4,
+          "rank": 199,
+          "stored_scalar_count": 917191,
+          "stored_bytes_fp64": 7337528,
+          "coefficient_scalar_budget": 917504,
+          "coefficient_bytes_fp64": 7340032,
+          "unused_scalar_budget": 313,
+          "unused_coefficient_budget_fp64_bytes": 2504,
+          "relative_frobenius_error": 0.7958477823769143,
+          "retained_energy_fraction": 0.36662630728574763,
+          "probe_action_vs_original": {
+            "absolute_frobenius_error": 105.02779190522428,
+            "relative_frobenius_error": 0.7955613578472627
+          },
+          "interpretation": "truncated SVD at the Clifford coefficient-count budget; one full SVD is reused across q values"
+        },
+        "8": {
+          "q": 8,
+          "rank": 99,
+          "stored_scalar_count": 456291,
+          "stored_bytes_fp64": 3650328,
+          "coefficient_scalar_budget": 458752,
+          "coefficient_bytes_fp64": 3670016,
+          "unused_scalar_budget": 2461,
+          "unused_coefficient_budget_fp64_bytes": 19688,
+          "relative_frobenius_error": 0.8928039768776187,
+          "retained_energy_fraction": 0.20290105887150875,
+          "probe_action_vs_original": {
+            "absolute_frobenius_error": 117.79713162163604,
+            "relative_frobenius_error": 0.8922861681029013
+          },
+          "interpretation": "truncated SVD at the Clifford coefficient-count budget; one full SVD is reused across q values"
+        }
+      },
+      "coefficient_count_formula": "(out / q) * (in / q) * q",
+      "svd_scalar_count_formula": "rank * (out + in + 1)",
+      "rank_formula": "floor(coefficient_count / (out + in + 1)), capped at min(out, in)",
+      "full_svd_computations": 1,
+      "probe_fingerprint": "46c4585bae4215cee185fa94ab11e211627b9b7a40c8bdc570edbfbf15edd719"
+    },
+    "small_block_equal_budget_baselines": {
+      "4": {
+        "budget": {
+          "byte_budget": 16,
+          "storage_dtype": "float32",
+          "bytes_per_param": 4,
+          "param_budget": 4,
+          "in_features": 4,
+          "out_features": 4,
+          "dense_params": 16,
+          "dense_bytes": 64
+        },
+        "methods": {
+          "dense": {
+            "reference": true,
+            "params": 16,
+            "stored_bytes": 64,
+            "index_bytes": 0,
+            "weight_errors": {
+              "rel_fro": 0.0,
+              "rel_spectral": 0.0,
+              "max_abs": 0.0
+            },
+            "estimated_flops_per_token": 32
+          },
+          "svd": {
+            "skipped": "budget of 4 params is below one rank-1 component (8 params)"
+          },
+          "svd_givens": {
+            "skipped": "budget of 16 bytes is below one Givens-stored rank-1 component"
+          },
+          "magnitude_sparse": {
+            "nnz": 2,
+            "density": 0.125,
+            "encoding": "coo_flat",
+            "params": 2,
+            "stored_bytes": 16,
+            "index_bytes": 8,
+            "weight_errors": {
+              "rel_fro": 0.6253016476595392,
+              "rel_spectral": 0.5653909747853905,
+              "max_abs": 0.00982666015625
+            },
+            "estimated_flops_per_token": 4
+          },
+          "butterfly": {
+            "skipped": "budget of 4 params is below one butterfly product (16 params = log2(4) factors x 2*4)"
+          },
+          "rotor_weight": {
+            "skipped": "no rotor spec fits 4 params: a single rotor needs 12 params but the budget is 4 params (4x4, stages_per_rotor=2, residual_rank=0)"
+          },
+          "rotor_residual": {
+            "skipped": "25% of 4 params is below one rank-1 residual (8 params)"
+          }
+        },
+        "controls": {
+          "spectrum_matched_random": {
+            "svd": {
+              "skipped": "budget of 4 params is below one rank-1 component (8 params)"
+            },
+            "magnitude_sparse": {
+              "nnz": 2,
+              "density": 0.125,
+              "encoding": "coo_flat",
+              "params": 2,
+              "stored_bytes": 16,
+              "index_bytes": 8,
+              "weight_errors": {
+                "rel_fro": 0.7073172255899989,
+                "rel_spectral": 0.7519741621069473,
+                "max_abs": 0.011735539883375168
+              },
+              "estimated_flops_per_token": 4
+            },
+            "butterfly": {
+              "skipped": "budget of 4 params is below one butterfly product (16 params = log2(4) factors x 2*4)"
+            },
+            "rotor_weight": {
+              "skipped": "no rotor spec fits 4 params: a single rotor needs 12 params but the budget is 4 params (4x4, stages_per_rotor=2, residual_rank=0)"
+            }
+          },
+          "gaussian_random": {
+            "svd": {
+              "skipped": "budget of 4 params is below one rank-1 component (8 params)"
+            },
+            "magnitude_sparse": {
+              "nnz": 2,
+              "density": 0.125,
+              "encoding": "coo_flat",
+              "params": 2,
+              "stored_bytes": 16,
+              "index_bytes": 8,
+              "weight_errors": {
+                "rel_fro": 0.7595535438894747,
+                "rel_spectral": 0.7522814754653838,
+                "max_abs": 0.010475614108145237
+              },
+              "estimated_flops_per_token": 4
+            },
+            "butterfly": {
+              "skipped": "budget of 4 params is below one butterfly product (16 params = log2(4) factors x 2*4)"
+            },
+            "rotor_weight": {
+              "skipped": "no rotor spec fits 4 params: a single rotor needs 12 params but the budget is 4 params (4x4, stages_per_rotor=2, residual_rank=0)"
+            }
+          }
+        },
+        "notes": [
+          "Equal STORED-BYTE budget is enforced: param_budget = byte_budget // bytes_per_param(storage_dtype) and every non-reference method's stored_bytes <= byte_budget. The `dense` row is the uncompressed REFERENCE (reference: true, stored at storage_dtype, error 0) and is exempt from the budget. Compute differs per method and is reported separately as estimated_flops_per_token; it is not equalized.",
+          "estimated_flops_per_token are formula ESTIMATES (multiply+add per input vector), not measurements: dense 2*in*out; svd 2*r*(in+out); svd_givens 6*angles + r; magnitude_sparse 2*nnz; butterfly 6 per 2x2 block (n/2 blocks per factor); rotor CascadeSpec.flops_per_token() (6 per Givens pair, 1 per diagonal entry, 2*r*(in+out) residual).",
+          "weight_errors/activation_errors are measured on the float32/float64 master values; rounding the stored parameters to storage_dtype is NOT simulated (storage_dtype only sets bytes per parameter).",
+          "svd is ordinary truncated-SVD compression: any gain over dense it shows is a rank-truncation effect, not a rotor gain. A structural (rotor) gain requires the rotor rows to beat svd and svd_givens at equal bytes.",
+          "svd_givens stored_bytes include ceil(2*rank/8) bytes of 1-bit Givens signs on top of params*bytes_per_param.",
+          "magnitude_sparse keeps the largest-|w| entries (largest nnz that fits); stored_bytes = nnz*bytes_per_param + index_bytes where the index encoding is the smaller of int32 flat COO indices (nnz*4) and int32 CSR (nnz*4 + (rows+1)*4). It is not fit by gradient descent.",
+          "butterfly is the classic factorization with FREE 2x2 blocks (4 params each, not rotations) on a width padded to the next power of two of max(in,out) (pad/truncate), as a product of m butterfly matrices of log2(n) factors; m is the largest that fits. Fit by Adam with the same FitSchedule (the block tensor is trained in every phase whose trainable kinds include 'scales', at the 'scales' learning rate). Skipped if one product exceeds the budget.",
+          "rotor_weight is the full-rank rotor/scaler cascade with NO residual (residual_rank is forced to 0). rotor_residual adds a low-rank residual: spec_kwargs['residual_rank'] if > 0, otherwise the rank whose residual parameters r*(in+out) take at most ~25% of the parameter budget.",
+          "index_bytes: 0 for svd, svd_givens, butterfly and rotor rows (deterministic topology; no stored indices).",
+          "controls: spectrum_matched_random keeps W's singular values with Haar-random singular vectors; gaussian_random is iid Gaussian with W's Frobenius norm. svd, magnitude_sparse, butterfly and rotor_weight are re-run on each control at the same budget; control errors are measured against the control matrix itself (and X for activation_errors).",
+          "rotor_activation is fit from scratch with the same schedule and structure as rotor_weight (no warm start from the weight fit)."
+        ],
+        "scope": {
+          "matrix": "top-left contiguous q-by-q block of the original tensor",
+          "shape": [
+            4,
+            4
+          ],
+          "storage_dtype": "float32",
+          "byte_budget": 16,
+          "budget_equivalence": "same scalar-count budget as q FP64 Clifford coefficients; bounded small-block comparator subset, not an equal-FP64-byte comparison",
+          "fit_schedule": {
+            "phases": [
+              [
+                [
+                  "scales"
+                ],
+                2
+              ],
+              [
+                [
+                  "angles",
+                  "scales",
+                  "residual"
+                ],
+                2
+              ]
+            ],
+            "total_steps": 4
+          },
+          "seed": 0,
+          "included_method_rows": [
+            "dense",
+            "svd",
+            "svd_givens",
+            "magnitude_sparse",
+            "butterfly",
+            "rotor_weight",
+            "rotor_residual"
+          ],
+          "included_random_control_rows": [
+            "spectrum_matched_random",
+            "gaussian_random"
+          ],
+          "notes": "All skipped/infeasible method and random-control rows from equal_budget_baselines are retained."
+        }
+      },
+      "8": {
+        "budget": {
+          "byte_budget": 32,
+          "storage_dtype": "float32",
+          "bytes_per_param": 4,
+          "param_budget": 8,
+          "in_features": 8,
+          "out_features": 8,
+          "dense_params": 64,
+          "dense_bytes": 256
+        },
+        "methods": {
+          "dense": {
+            "reference": true,
+            "params": 64,
+            "stored_bytes": 256,
+            "index_bytes": 0,
+            "weight_errors": {
+              "rel_fro": 0.0,
+              "rel_spectral": 0.0,
+              "max_abs": 0.0
+            },
+            "estimated_flops_per_token": 128
+          },
+          "svd": {
+            "skipped": "budget of 8 params is below one rank-1 component (16 params)"
+          },
+          "svd_givens": {
+            "skipped": "budget of 32 bytes is below one Givens-stored rank-1 component"
+          },
+          "magnitude_sparse": {
+            "nnz": 4,
+            "density": 0.0625,
+            "encoding": "coo_flat",
+            "params": 4,
+            "stored_bytes": 32,
+            "index_bytes": 16,
+            "weight_errors": {
+              "rel_fro": 0.6718552621551009,
+              "rel_spectral": 0.5861073635411026,
+              "max_abs": 0.02734375
+            },
+            "estimated_flops_per_token": 8
+          },
+          "butterfly": {
+            "skipped": "budget of 8 params is below one butterfly product (48 params = log2(8) factors x 2*8)"
+          },
+          "rotor_weight": {
+            "skipped": "no rotor spec fits 8 params: a single rotor needs 28 params but the budget is 8 params (8x8, stages_per_rotor=3, residual_rank=0)"
+          },
+          "rotor_residual": {
+            "skipped": "25% of 8 params is below one rank-1 residual (16 params)"
+          }
+        },
+        "controls": {
+          "spectrum_matched_random": {
+            "svd": {
+              "skipped": "budget of 8 params is below one rank-1 component (16 params)"
+            },
+            "magnitude_sparse": {
+              "nnz": 4,
+              "density": 0.0625,
+              "encoding": "coo_flat",
+              "params": 4,
+              "stored_bytes": 32,
+              "index_bytes": 16,
+              "weight_errors": {
+                "rel_fro": 0.8353800732700741,
+                "rel_spectral": 0.7330054310425651,
+                "max_abs": 0.028493953868746758
+              },
+              "estimated_flops_per_token": 8
+            },
+            "butterfly": {
+              "skipped": "budget of 8 params is below one butterfly product (48 params = log2(8) factors x 2*8)"
+            },
+            "rotor_weight": {
+              "skipped": "no rotor spec fits 8 params: a single rotor needs 28 params but the budget is 8 params (8x8, stages_per_rotor=3, residual_rank=0)"
+            }
+          },
+          "gaussian_random": {
+            "svd": {
+              "skipped": "budget of 8 params is below one rank-1 component (16 params)"
+            },
+            "magnitude_sparse": {
+              "nnz": 4,
+              "density": 0.0625,
+              "encoding": "coo_flat",
+              "params": 4,
+              "stored_bytes": 32,
+              "index_bytes": 16,
+              "weight_errors": {
+                "rel_fro": 0.8110511511271828,
+                "rel_spectral": 0.8252352411615388,
+                "max_abs": 0.026883650571107864
+              },
+              "estimated_flops_per_token": 8
+            },
+            "butterfly": {
+              "skipped": "budget of 8 params is below one butterfly product (48 params = log2(8) factors x 2*8)"
+            },
+            "rotor_weight": {
+              "skipped": "no rotor spec fits 8 params: a single rotor needs 28 params but the budget is 8 params (8x8, stages_per_rotor=3, residual_rank=0)"
+            }
+          }
+        },
+        "notes": [
+          "Equal STORED-BYTE budget is enforced: param_budget = byte_budget // bytes_per_param(storage_dtype) and every non-reference method's stored_bytes <= byte_budget. The `dense` row is the uncompressed REFERENCE (reference: true, stored at storage_dtype, error 0) and is exempt from the budget. Compute differs per method and is reported separately as estimated_flops_per_token; it is not equalized.",
+          "estimated_flops_per_token are formula ESTIMATES (multiply+add per input vector), not measurements: dense 2*in*out; svd 2*r*(in+out); svd_givens 6*angles + r; magnitude_sparse 2*nnz; butterfly 6 per 2x2 block (n/2 blocks per factor); rotor CascadeSpec.flops_per_token() (6 per Givens pair, 1 per diagonal entry, 2*r*(in+out) residual).",
+          "weight_errors/activation_errors are measured on the float32/float64 master values; rounding the stored parameters to storage_dtype is NOT simulated (storage_dtype only sets bytes per parameter).",
+          "svd is ordinary truncated-SVD compression: any gain over dense it shows is a rank-truncation effect, not a rotor gain. A structural (rotor) gain requires the rotor rows to beat svd and svd_givens at equal bytes.",
+          "svd_givens stored_bytes include ceil(2*rank/8) bytes of 1-bit Givens signs on top of params*bytes_per_param.",
+          "magnitude_sparse keeps the largest-|w| entries (largest nnz that fits); stored_bytes = nnz*bytes_per_param + index_bytes where the index encoding is the smaller of int32 flat COO indices (nnz*4) and int32 CSR (nnz*4 + (rows+1)*4). It is not fit by gradient descent.",
+          "butterfly is the classic factorization with FREE 2x2 blocks (4 params each, not rotations) on a width padded to the next power of two of max(in,out) (pad/truncate), as a product of m butterfly matrices of log2(n) factors; m is the largest that fits. Fit by Adam with the same FitSchedule (the block tensor is trained in every phase whose trainable kinds include 'scales', at the 'scales' learning rate). Skipped if one product exceeds the budget.",
+          "rotor_weight is the full-rank rotor/scaler cascade with NO residual (residual_rank is forced to 0). rotor_residual adds a low-rank residual: spec_kwargs['residual_rank'] if > 0, otherwise the rank whose residual parameters r*(in+out) take at most ~25% of the parameter budget.",
+          "index_bytes: 0 for svd, svd_givens, butterfly and rotor rows (deterministic topology; no stored indices).",
+          "controls: spectrum_matched_random keeps W's singular values with Haar-random singular vectors; gaussian_random is iid Gaussian with W's Frobenius norm. svd, magnitude_sparse, butterfly and rotor_weight are re-run on each control at the same budget; control errors are measured against the control matrix itself (and X for activation_errors).",
+          "rotor_activation is fit from scratch with the same schedule and structure as rotor_weight (no warm start from the weight fit)."
+        ],
+        "scope": {
+          "matrix": "top-left contiguous q-by-q block of the original tensor",
+          "shape": [
+            8,
+            8
+          ],
+          "storage_dtype": "float32",
+          "byte_budget": 32,
+          "budget_equivalence": "same scalar-count budget as q FP64 Clifford coefficients; bounded small-block comparator subset, not an equal-FP64-byte comparison",
+          "fit_schedule": {
+            "phases": [
+              [
+                [
+                  "scales"
+                ],
+                2
+              ],
+              [
+                [
+                  "angles",
+                  "scales",
+                  "residual"
+                ],
+                2
+              ]
+            ],
+            "total_steps": 4
+          },
+          "seed": 0,
+          "included_method_rows": [
+            "dense",
+            "svd",
+            "svd_givens",
+            "magnitude_sparse",
+            "butterfly",
+            "rotor_weight",
+            "rotor_residual"
+          ],
+          "included_random_control_rows": [
+            "spectrum_matched_random",
+            "gaussian_random"
+          ],
+          "notes": "All skipped/infeasible method and random-control rows from equal_budget_baselines are retained."
+        }
+      }
+    }
+  },
+  "estimates": {},
+  "failure": null
+}

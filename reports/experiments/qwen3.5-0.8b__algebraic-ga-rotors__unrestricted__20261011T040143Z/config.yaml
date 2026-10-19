@@ -1,0 +1,15 @@
+model: qwen3.5-0.8b
+base_dir: /mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base
+tensor_names:
+- model.language_model.layers.0.mlp.up_proj.weight
+name: qwen35-l0-up-algebraic-ga-angles-f64-proof
+device: cpu
+storage_dtype: float64
+rank: null
+max_relative_error: 1.0e-10
+seed: 0
+probe_rows: 16
+chunk_size: 256
+algorithm: full-rank SVD and algebraic ordered GA plane-rotor elimination
+rotation_storage: one elimination angle in radians per plane rotation (GA format v2)
+training: false

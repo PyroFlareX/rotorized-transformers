@@ -1,0 +1,208 @@
+{
+  "run_id": "qwen3.5-0.8b__selected-depth-ffn-interventions__b025__20261011T005803Z",
+  "kind": "diagnosis",
+  "status": "completed",
+  "created_utc": "2026-10-11T00:58:03.523314+00:00",
+  "finished_utc": "2026-10-11T00:58:05.688633+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "selected-depth-ffn-interventions",
+  "target": "b025",
+  "metrics": {
+    "12": {
+      "logits": {
+        "teacher_to_student_kl_last_token": 0.04089416563510895,
+        "teacher_to_student_kl_all_positions_mean": 0.06382809579372406,
+        "top_token_agreement": 0.8181818127632141,
+        "teacher_top_token": 279,
+        "student_top_token": 279,
+        "finite_teacher_logits": 8194560,
+        "finite_student_logits": 8194560
+      },
+      "ffn": {
+        "elements": 33792,
+        "finite_reference": 33792,
+        "finite_actual": 33792,
+        "finite_pairs": 33792,
+        "max_abs_error": 0.1584924577618949,
+        "mean_abs_error": 0.019097083540988612,
+        "max_relative_error_nonzero_reference": 14722.839725414116,
+        "relative_l2_error": 0.9503219563274294,
+        "cosine_similarity": 0.33310986016645394,
+        "reference_rms": 0.02599978996835416,
+        "actual_rms": 0.01174524259771858,
+        "row_rms_reference": {
+          "min": 0.02037987396678596,
+          "p50": 0.02597458564766447,
+          "p90": 0.029801147644882692,
+          "p99": 0.031365655012131274,
+          "max": 0.03137607434850537
+        },
+        "row_rms_actual": {
+          "min": 0.009300092302685258,
+          "p50": 0.011794745067530527,
+          "p90": 0.012959624482542188,
+          "p99": 0.014078272182139107,
+          "max": 0.01425089956572337
+        },
+        "channel_rms_reference": {
+          "min": 0.005960383223398282,
+          "p50": 0.025601914535504866,
+          "p90": 0.03304006922208005,
+          "p99": 0.03945885030888744,
+          "max": 0.08571118396494046
+        },
+        "channel_rms_actual": {
+          "min": 6.522698133608617e-06,
+          "p50": 0.011391868711692215,
+          "p90": 0.015923852183181653,
+          "p99": 0.020696466360784697,
+          "max": 0.043180778261805094
+        },
+        "nonfinite_reference": 0,
+        "nonfinite_actual": 0
+      },
+      "block": {
+        "elements": 33792,
+        "finite_reference": 33792,
+        "finite_actual": 33792,
+        "finite_pairs": 33792,
+        "max_abs_error": 0.15849246084690094,
+        "mean_abs_error": 0.019097083526310704,
+        "max_relative_error_nonzero_reference": 19056.472140762464,
+        "relative_l2_error": 0.3105203825181072,
+        "cosine_similarity": 0.9506790690531454,
+        "reference_rms": 0.07957020743037178,
+        "actual_rms": 0.07680865494073097,
+        "row_rms_reference": {
+          "min": 0.06739494871363805,
+          "p50": 0.07890341891139427,
+          "p90": 0.08729963271898157,
+          "p99": 0.09441161384636307,
+          "max": 0.09674552048788575
+        },
+        "row_rms_actual": {
+          "min": 0.06461924298930957,
+          "p50": 0.07591912557686921,
+          "p90": 0.08475683522479086,
+          "p99": 0.10096748581336945,
+          "max": 0.10720286592676088
+        },
+        "channel_rms_reference": {
+          "min": 0.023104944675969935,
+          "p50": 0.05461401268822336,
+          "p90": 0.09833833017723767,
+          "p99": 0.24010748240276303,
+          "max": 0.5428341856886271
+        },
+        "channel_rms_actual": {
+          "min": 0.022786591868014457,
+          "p50": 0.05125316820229796,
+          "p90": 0.09837616889469139,
+          "p99": 0.22998320540738074,
+          "max": 0.5623049759019161
+        },
+        "nonfinite_reference": 0,
+        "nonfinite_actual": 0
+      }
+    },
+    "23": {
+      "logits": {
+        "teacher_to_student_kl_last_token": 0.4568582773208618,
+        "teacher_to_student_kl_all_positions_mean": 0.5398524403572083,
+        "top_token_agreement": 0.6666666865348816,
+        "teacher_top_token": 279,
+        "student_top_token": 279,
+        "finite_teacher_logits": 8194560,
+        "finite_student_logits": 8194560
+      },
+      "ffn": {
+        "elements": 33792,
+        "finite_reference": 33792,
+        "finite_actual": 33792,
+        "finite_pairs": 33792,
+        "max_abs_error": 6.391396999359131,
+        "mean_abs_error": 0.11544147969030685,
+        "max_relative_error_nonzero_reference": 15039.028001037075,
+        "relative_l2_error": 0.9155896601296398,
+        "cosine_similarity": 0.4032188283562242,
+        "reference_rms": 0.2138274402126934,
+        "actual_rms": 0.09259779548832235,
+        "row_rms_reference": {
+          "min": 0.14647730304859616,
+          "p50": 0.19648018168701348,
+          "p90": 0.27290754863738453,
+          "p99": 0.329289988720941,
+          "max": 0.3338101124473756
+        },
+        "row_rms_actual": {
+          "min": 0.07421086285911672,
+          "p50": 0.09011749447379946,
+          "p90": 0.10580233696208073,
+          "p99": 0.12780899029976325,
+          "max": 0.1350169135768981
+        },
+        "channel_rms_reference": {
+          "min": 0.05618795780187831,
+          "p50": 0.12109102098658539,
+          "p90": 0.2514329196826535,
+          "p99": 0.6579009333636787,
+          "max": 2.6325642388033472
+        },
+        "channel_rms_actual": {
+          "min": 0.007535157492287447,
+          "p50": 0.047798831089842814,
+          "p90": 0.1035368974496887,
+          "p99": 0.28580452348109053,
+          "max": 1.2431708182794827
+        },
+        "nonfinite_reference": 0,
+        "nonfinite_actual": 0
+      },
+      "block": {
+        "elements": 33792,
+        "finite_reference": 33792,
+        "finite_actual": 33792,
+        "finite_pairs": 33792,
+        "max_abs_error": 6.391396999359131,
+        "mean_abs_error": 0.1154414796802462,
+        "max_relative_error_nonzero_reference": 25337.237068965518,
+        "relative_l2_error": 0.5548621979832149,
+        "cosine_similarity": 0.8401793625369371,
+        "reference_rms": 0.3528411094535852,
+        "actual_rms": 0.33785932676194697,
+        "row_rms_reference": {
+          "min": 0.3000361716640971,
+          "p50": 0.3391185266117987,
+          "p90": 0.4046042441630592,
+          "p99": 0.43686563299880815,
+          "max": 0.45002162501094234
+        },
+        "row_rms_actual": {
+          "min": 0.3033367982568364,
+          "p50": 0.33272049194848774,
+          "p90": 0.3694171491636364,
+          "p99": 0.384837853660191,
+          "max": 0.38888510417703687
+        },
+        "channel_rms_reference": {
+          "min": 0.1226586300346442,
+          "p50": 0.2791975202826613,
+          "p90": 0.4306525797702082,
+          "p99": 1.0309712630504433,
+          "max": 2.036305958701676
+        },
+        "channel_rms_actual": {
+          "min": 0.1166153233676083,
+          "p50": 0.2484215844385433,
+          "p90": 0.391258902832043,
+          "p99": 0.7980417929863188,
+          "max": 4.444208505921595
+        },
+        "nonfinite_reference": 0,
+        "nonfinite_actual": 0
+      }
+    }
+  },
+  "estimates": {},
+  "failure": null
+}

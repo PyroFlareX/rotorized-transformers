@@ -1,0 +1,17 @@
+ckpt: /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3
+backend: triton
+device: cuda:0
+repeats: 3
+max_new_tokens: 64
+telemetry: reports/telemetry/rotor-fused-warm-benchmark-20261010.jsonl
+dtype: float16
+structured_dtype: float32
+warmup_tokens: 4
+prompt_ids:
+- science-001
+- science-002
+- science-003
+input_fingerprints:
+- c0cc4688dec7f7f7fef2c1cfe11afab749f582310d5ab0048e4e062b7c42ecc9
+- 03a8daa9151e724fb53246c4561531423298ab344e0425ac26ba9260ba8b941e
+- 0d164ed56f16af3d9e3359544e388fafe625a1df6e74f904754246510860cc9b

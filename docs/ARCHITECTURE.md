@@ -11,18 +11,22 @@ src/rotor/
   math/            topology, Givens stages, RotorCascade/RotorLinear, low-rank residual, SVD→Givens decomposition
     butterfly.py   classic learned butterfly factorization
     sparse.py      magnitude-pruned sparse baseline
-  formats/         rotor-scaler derived checkpoint format: spec constants, Manifest, write/read
+    ga.py          Euclidean GA plane rotors and batched SVD→rotor elimination (see ALGEBRAIC_GA_CONVERSION.md)
+    clifford.py    Cl(2,0)/Cl(3,0) blade multiplication matrices and block projection
+  formats/         rotor-scaler derived checkpoint format: spec constants, Manifest, write/read; ga.py: ga-rotor-svd format
   models/          checkpoint discovery (header-only), Qwen3.5 adapter, module replacement, loading, tiny test checkpoints
-  converters/      budget allocation, weight/activation fitting, calibration, conversion pipeline
-  evaluation/      reconstruction, LM, long-context, performance, baselines, generation, tasks, retrieval
+  converters/      budget allocation, projection-local and joint FFN fitting, calibration capture, conversion pipeline,
+                   algebraic GA conversion, Clifford pilot runner
+  evaluation/      reconstruction, LM, long-context, performance, baselines, generation, tasks, retrieval, collapse diagnostics
   training/        optimizer groups, layerwise fit schedules, recovery distillation
+  runtime/         optional fused Triton inference backend for rotor-scaler cascades
 scripts/           CLI entry points (table below)
 runtime/           native runtime (interfaces/ header mirrors of the format and topology, kernels/, fork/); independent of Python
 tests/             pytest suite (CPU-only; markers: slow, network, nas, cxx)
 configs/           storage.yaml, models.yaml, experiments/*.yaml, evaluation/
-reports/            templates/ (experiment report), experiments/ (published run directories), papers/
+reports/           templates/, experiments/ (published run directories), prompt-evaluations/, papers/
+docs/              architecture, research plan, decisions, roadmap, algebraic GA conversion
 ```
-docs/              architecture, research plan, decisions and roadmap
 
 ### Dependency rules
 
@@ -41,8 +45,8 @@ docs/              architecture, research plan, decisions and roadmap
 flowchart LR
   B[Base checkpoint on NAS<br/>base_root, read-only] --> D[Discovery<br/>models.discovery / qwen3_5]
   D --> A[Allocation<br/>converters.budget]
-  A --> F[Fit<br/>converters.fit<br/>weight or activation]
-  C[Calibration inputs<br/>converters.calibration] -.-> F
+  A --> F[Fit<br/>converters.fit<br/>weight, activation, joint FFN output]
+  C[Calibration and held-out teacher FFN rows<br/>disjoint fixed inputs] -.-> F
   F --> M[Manifest + safetensors<br/>formats.write_structured]
   M -->|atomic_dir| X[Derived checkpoint under NAS temp/ (rotor_derived_root)]
   X --> L[load_converted<br/>models.loading]
@@ -56,6 +60,18 @@ flowchart LR
 Each run directory is published by `rotor.reporting.ExperimentRun`; `ROTOR_REPORTS_DIR` overrides the reports root.
 Failed runs are published with status `failed` before exceptions propagate. Formula-derived values are estimates and remain
 separate from measured metrics.
+
+The standalone Phase 4B runner is `scripts/fit_joint_ffn.py`, documented with its distinct joint-fit YAML schema and
+CLI in `configs/experiments/README.md`; the checked-in template is
+`configs/experiments/qwen3.5-0.8b-joint-ffn.yaml` (its calibration and held-out paths are intentionally null until
+approved text is configured). The runner captures teacher MLP inputs from disjoint real-text windows, fits gate/up/down
+together with a normalized squared composed FFN output objective, and writes the three modules in the existing
+`rotor-scaler` format. It accounts for one combined payload budget, including biases; its rotor allocator spreads
+remaining budget by least-filled structured-weight/dense-weight ratio. Joint snapshots are atomically stored beside the
+checkpoint in `<name>.snapshots/`, bind the config/base/projection/data identity, and retain all three FP32 modules plus
+the shared optimizer state. Inference checkpoints use guarded atomic publication; every run publishes config, provenance,
+input fingerprints, metrics, and environment through `ExperimentRun`. The runner does not change format semantics or
+the per-projection converter schema.
 
 ## Runtime telemetry and performance measurement
 
@@ -126,3 +142,11 @@ Example around full conversion (use a new, non-existing JSONL path for each run)
 ```sh
 .venv/bin/python scripts/convert_model.py --config configs/experiments/qwen3.5-0.8b-ffn-weight.yaml --name <unique> --telemetry <new-jsonl-path>
 ```
+
+The joint FFN output fitter is run separately from the projection-local converter:
+
+```sh
+.venv/bin/python scripts/fit_joint_ffn.py --config <joint-ffn-config.yaml>
+```
+
+See `configs/experiments/README.md` for its schema, input split requirements, exact resume flags, and output accounting.

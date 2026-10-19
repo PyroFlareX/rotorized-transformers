@@ -1,0 +1,13 @@
+2026-10-10T23:52:08+00:00 loaded 72 stored projections, reference backend, device=cpu
+2026-10-10T23:52:08+00:00 diagnostic prompt SHA-256 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641; 1 prompt(s)
+2026-10-10T23:52:08+00:00 no approved corpus configured; fixed diagnostic prompts are not used as held-out NLL
+2026-10-10T23:52:27+00:00 parity 1/72 model.layers.0.mlp.down_proj: max abs 7.314e-06
+2026-10-10T23:53:38+00:00 parity 8/72 model.layers.10.mlp.gate_proj: max abs 1.683e-05
+2026-10-10T23:55:06+00:00 parity 16/72 model.layers.13.mlp.down_proj: max abs 4.549e-06
+2026-10-10T23:56:22+00:00 parity 24/72 model.layers.15.mlp.up_proj: max abs 8.399e-06
+2026-10-10T23:57:50+00:00 parity 32/72 model.layers.18.mlp.gate_proj: max abs 3.025e-05
+2026-10-10T23:59:18+00:00 parity 40/72 model.layers.20.mlp.down_proj: max abs 6.584e-06
+2026-10-11T00:04:33+00:00 parity 48/72 model.layers.22.mlp.up_proj: max abs 8.469e-06
+2026-10-11T00:33:49+00:00 parity 56/72 model.layers.4.mlp.gate_proj: max abs 2.168e-05
+2026-10-11T00:49:59+00:00 parity 64/72 model.layers.7.mlp.down_proj: max abs 7.253e-06
+2026-10-11T00:53:28+00:00 parity 72/72 model.layers.9.mlp.up_proj: max abs 5.128e-06

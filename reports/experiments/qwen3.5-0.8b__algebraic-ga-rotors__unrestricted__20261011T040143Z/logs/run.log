@@ -1,0 +1,2 @@
+2026-10-11T04:01:44+00:00 algebraically converting model.language_model.layers.0.mlp.up_proj.weight, shape=(3584, 1024), device=cpu; no training
+2026-10-11T04:02:55+00:00 verified model.language_model.layers.0.mlp.up_proj.weight: weight={'relative_l2': 8.156160177118954e-15, 'max_absolute': 5.100087019371813e-16, 'reference_norm': 16.428697639323474, 'residual_norm': 1.3399508944777828e-13}, direct_action={'relative_l2': 8.275711892616569e-15, 'max_absolute': 9.92088355911136e-15, 'reference_norm': 66.43134322962115, 'residual_norm': 5.49766657207869e-13}

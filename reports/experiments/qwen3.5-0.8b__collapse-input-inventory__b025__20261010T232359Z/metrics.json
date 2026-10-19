@@ -1,0 +1,140 @@
+{
+  "run_id": "qwen3.5-0.8b__collapse-input-inventory__b025__20261010T232359Z",
+  "kind": "diagnosis",
+  "status": "completed",
+  "created_utc": "2026-10-10T23:23:59.901373+00:00",
+  "finished_utc": "2026-10-10T23:24:01.371799+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "collapse-input-inventory",
+  "target": "b025",
+  "metrics": {
+    "qualitative_snapshot": {
+      "base_rows": 256,
+      "converted_rows_at_read": 29,
+      "all_whitespace_rows": 7,
+      "empty_rows": 0,
+      "matched_input_fingerprints": true,
+      "output_token_frequency": [
+        [
+          248044,
+          725
+        ],
+        [
+          220,
+          582
+        ],
+        [
+          271,
+          455
+        ],
+        [
+          198,
+          56
+        ],
+        [
+          11,
+          33
+        ],
+        [
+          13,
+          5
+        ]
+      ]
+    },
+    "snapshot": {
+      "path": "/mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791623497413929547-49eb563c4c464f4699da11f2e945cf3e",
+      "completed": 69,
+      "completed_modules": [
+        "model.layers.0.mlp.down_proj",
+        "model.layers.0.mlp.gate_proj",
+        "model.layers.0.mlp.up_proj",
+        "model.layers.1.mlp.down_proj",
+        "model.layers.1.mlp.gate_proj",
+        "model.layers.1.mlp.up_proj",
+        "model.layers.2.mlp.down_proj",
+        "model.layers.2.mlp.gate_proj",
+        "model.layers.2.mlp.up_proj",
+        "model.layers.3.mlp.down_proj",
+        "model.layers.3.mlp.gate_proj",
+        "model.layers.3.mlp.up_proj",
+        "model.layers.4.mlp.down_proj",
+        "model.layers.4.mlp.gate_proj",
+        "model.layers.4.mlp.up_proj",
+        "model.layers.5.mlp.down_proj",
+        "model.layers.5.mlp.gate_proj",
+        "model.layers.5.mlp.up_proj",
+        "model.layers.6.mlp.down_proj",
+        "model.layers.6.mlp.gate_proj",
+        "model.layers.6.mlp.up_proj",
+        "model.layers.7.mlp.down_proj",
+        "model.layers.7.mlp.gate_proj",
+        "model.layers.7.mlp.up_proj",
+        "model.layers.8.mlp.down_proj",
+        "model.layers.8.mlp.gate_proj",
+        "model.layers.8.mlp.up_proj",
+        "model.layers.9.mlp.down_proj",
+        "model.layers.9.mlp.gate_proj",
+        "model.layers.9.mlp.up_proj",
+        "model.layers.10.mlp.down_proj",
+        "model.layers.10.mlp.gate_proj",
+        "model.layers.10.mlp.up_proj",
+        "model.layers.11.mlp.down_proj",
+        "model.layers.11.mlp.gate_proj",
+        "model.layers.11.mlp.up_proj",
+        "model.layers.12.mlp.down_proj",
+        "model.layers.12.mlp.gate_proj",
+        "model.layers.12.mlp.up_proj",
+        "model.layers.13.mlp.down_proj",
+        "model.layers.13.mlp.gate_proj",
+        "model.layers.13.mlp.up_proj",
+        "model.layers.14.mlp.down_proj",
+        "model.layers.14.mlp.gate_proj",
+        "model.layers.14.mlp.up_proj",
+        "model.layers.15.mlp.down_proj",
+        "model.layers.15.mlp.gate_proj",
+        "model.layers.15.mlp.up_proj",
+        "model.layers.16.mlp.down_proj",
+        "model.layers.16.mlp.gate_proj",
+        "model.layers.16.mlp.up_proj",
+        "model.layers.17.mlp.down_proj",
+        "model.layers.17.mlp.gate_proj",
+        "model.layers.17.mlp.up_proj",
+        "model.layers.18.mlp.down_proj",
+        "model.layers.18.mlp.gate_proj",
+        "model.layers.18.mlp.up_proj",
+        "model.layers.19.mlp.down_proj",
+        "model.layers.19.mlp.gate_proj",
+        "model.layers.19.mlp.up_proj",
+        "model.layers.20.mlp.down_proj",
+        "model.layers.20.mlp.gate_proj",
+        "model.layers.20.mlp.up_proj",
+        "model.layers.21.mlp.down_proj",
+        "model.layers.21.mlp.gate_proj",
+        "model.layers.21.mlp.up_proj",
+        "model.layers.22.mlp.down_proj",
+        "model.layers.22.mlp.gate_proj",
+        "model.layers.22.mlp.up_proj"
+      ],
+      "active": "model.layers.23.mlp.down_proj"
+    },
+    "checkpoint_integrity": {
+      "projections": 72,
+      "loaded_scalar_count": 64862208,
+      "nonfinite_values": 0
+    },
+    "runtime": {
+      "cpu_torch": "2.14.1+cpu",
+      "rocm_torch": "2.10.0+rocm7.0",
+      "hip": "7.0.51831",
+      "gpu_available": true,
+      "protected_gpu_evaluation_pid": 2015520
+    },
+    "blocked_prerequisites": [
+      "No approved real-text corpus configured or recorded; calibration/training/held-out splits and held-out quality gates unavailable.",
+      "Existing matched GPU evaluation owns GPU; preserve without competing."
+    ],
+    "whole_model_fp32_intervention_allowed": false
+  },
+  "estimates": {},
+  "failure": null
+}

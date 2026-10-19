@@ -59,7 +59,7 @@
 - Detect the actual CPU, RAM, GPU, CUDA, Vulkan, available storage, and compiler capabilities with `scripts/audit_environment.py` / `rotor.environment.detect_environment()`. Do not assume all listed GPUs are available to every host.
 - Record the actual hardware for each benchmark: `ExperimentRun` writes `environment.json` automatically.
 - Avoid swap-heavy or accidental CPU-fallback measurements when reporting GPU kernel performance: `scripts/benchmark.py --device cuda` refuses CPU fallback, and `--refuse-swap` fails the run if swap usage grows.
-- Current dev host (measured 2026-10-08 by `detect_environment()`): AMD Ryzen 5 7600X (6C/12T; AVX2, AVX-512F, AVX-512 BF16, VNNI), 62 GiB RAM, 8 GiB swap. No NVIDIA GPU on the PCI bus (`nvidia-smi` fails); AMD Radeon RX 7900 XT/XTX (amdgpu, 24 GiB) plus Raphael iGPU; no ROCm; Vulkan loader + radeon ICD only. torch is CPU-only (2.14.1+cpu). `nvcc` 12.0 can compile but not run CUDA here. Compilers: g++ 13.3, clang++ 18.1, cmake 3.28 (no ninja). LaTeX: pdflatex, lualatex, bibtex (no latexmk, biber, xelatex; use natbib/bibtex, not biblatex). Repo on `/mnt/Projects`; NAS via CIFS.
+- Current dev host (measured 2026-10-08 by `detect_environment()`, ROCm rechecked 2026-10-18): AMD Ryzen 5 7600X (6C/12T; AVX2, AVX-512F, AVX-512 BF16, VNNI), 62 GiB RAM, 8 GiB swap. No NVIDIA GPU on the PCI bus (`nvidia-smi` fails); AMD Radeon RX 7900 XT/XTX (gfx1100, amdgpu, 24 GiB) plus Raphael iGPU. Two Python environments: `.venv` (torch 2.14.1+cpu, default for tests) and `.venv-rocm` (torch 2.10.0+rocm7.0, triton-rocm 3.6.0; PyTorch spells the AMD GPU `cuda:0`). `nvcc` 12.0 can compile but not run CUDA here. Compilers: g++ 13.3, clang++ 18.1, cmake 3.28 (no ninja). LaTeX: pdflatex, lualatex, bibtex (no latexmk, biber, xelatex; use natbib/bibtex, not biblatex). Repo on `/mnt/Projects`; NAS via CIFS.
 
 ---
 
@@ -69,9 +69,9 @@ Research code testing whether pretrained Transformer linear weights `W (out x in
 
 `W ≈ D_0 R_1 D_1 R_2 D_2 … R_k D_k`
 
-(`R_i` = products of disjoint 2D Givens rotation stages on a deterministic topology `brick | butterfly | seeded`; `D_i` = learned diagonals; rectangular layers via pad/truncate; optional low-rank residual `U V`) than dense coefficients, without large language-model quality loss. This is a hypothesis, not a result: no benchmark results exist in this repo yet.
+(`R_i` = products of disjoint 2D Givens rotation stages on a deterministic topology `brick | butterfly | seeded`; `D_i` = learned diagonals; rectangular layers via pad/truncate; optional low-rank residual `U V`) than dense coefficients, without large language-model quality loss. This is a hypothesis under test, not an established result.
 
-**Stage:** milestone M0 done (scaffold, storage, math, format v1, converter/eval/training code, C++ reference headers, tiny-model tests). M1–M6 (mathematical prototype, 0.8B conversion, 2B experiments, CUDA kernel prototype, engine integration, scaling/publication) are open; see `docs/ROADMAP.md`. **Scope:** text-only, FFN projections only (`ffn.gate`, `ffn.up`, `ffn.down`); attention, DeltaNet, norms, embeddings, RoPE, MTP, and vision are untouched (`docs/DECISIONS.md` D6).
+**Stage:** M0 done. M2 recorded a negative result: the learned b025 butterfly conversion of all 24 Qwen3.5-0.8B FFNs collapsed generation (`reports/experiments/qwen3.5-0.8b__output-collapse-experiment-decision__b025__20261011T005909Z/`). Follow-up no-training work added the algebraic `ga-rotor-svd` conversion (exact, not compressive; D18) and a Clifford block-projection pilot (compressive, no better than random-weight controls; D19). See `docs/ALGEBRAIC_GA_CONVERSION.md`, `docs/ROADMAP.md`. **Scope:** text-only, FFN projections only (`ffn.gate`, `ffn.up`, `ffn.down`); attention, DeltaNet, norms, embeddings, RoPE, MTP, and vision are untouched (`docs/DECISIONS.md` D6).
 
 ## Architecture & data flow
 
@@ -95,10 +95,11 @@ Derived checkpoints (`rotor-scaler` format: `rotor_manifest.json`, `rotor_weight
 
 | Path | Contents |
 |---|---|
-| `src/rotor/math/` | Topologies, Givens stages, `CascadeSpec`/`RotorCascade`/`RotorLinear`, low-rank residual, SVD→Givens decomposition |
-| `src/rotor/formats/` | `rotor-scaler` spec constants, `Manifest`, checkpoint write/read |
+| `src/rotor/math/` | Topologies, Givens stages, `CascadeSpec`/`RotorCascade`/`RotorLinear`, low-rank residual, SVD→Givens decomposition, GA rotors (`ga.py`), Clifford block projection (`clifford.py`) |
+| `src/rotor/formats/` | `rotor-scaler` spec constants, `Manifest`, checkpoint write/read; separate `ga-rotor-svd` format (`ga.py`) |
 | `src/rotor/models/` | Header-only discovery, Qwen3.5 adapter, module replacement, loading, tiny test checkpoints |
-| `src/rotor/converters/` | Byte-budget allocation, weight/activation fitting, calibration capture, conversion pipeline |
+| `src/rotor/converters/` | Byte-budget allocation, weight/activation/joint-FFN fitting, calibration capture, conversion pipeline, algebraic GA conversion, Clifford pilot runner |
+| `src/rotor/runtime/` | Optional fused Triton inference backend for `rotor-scaler` cascades (`--rotor-backend triton`) |
 | `src/rotor/evaluation/` | Reconstruction errors, LM NLL/perplexity, long-context buckets, timing, equal-budget baselines |
 | `src/rotor/training/` | Optimizer groups, layer-wise fit schedules, recovery distillation |
 | `src/rotor/storage.py`, `data.py` | Path resolution and write guards; deterministic token windows and fingerprints |
@@ -112,7 +113,7 @@ Derived checkpoints (`rotor-scaler` format: `rotor_manifest.json`, `rotor_weight
 
 ## Development commands
 
-Run everything with `.venv/bin/python`. The current dev host has no NVIDIA GPU; everything runs on CPU (see **Hardware**).
+Run everything with `.venv/bin/python` (CPU). Use `.venv-rocm/bin/python` with `--device cuda:0` only for explicit GPU runs (see **Hardware**); check GPU ownership first.
 
 | Task | Command |
 |---|---|
@@ -147,7 +148,7 @@ Run everything with `.venv/bin/python`. The current dev host has no NVIDIA GPU; 
 
 - `.gitignore` anchors `/models/`, `/checkpoints/`, `/outputs/`, `/runs/`, `/hf_cache/` to the repo root so `src/rotor/models/` stays tracked; keep those entries anchored. It also ignores `*.safetensors`, `*.bin`, `*.pt`, etc. (tiny generated test fixtures are written to tmp dirs, not committed).
 - Tiny checkpoints (`rotor.models.tiny.make_tiny_checkpoint`) have no `mtp.*` tensors: `save_pretrained` does not emit them.
-- The development host has no NVIDIA GPU and no ROCm (`nvidia-smi` fails); `device` arguments default to CPU. Do not assume CUDA.
+- `.venv` torch is CPU-only and `device` arguments default to CPU. GPU work goes through `.venv-rocm` (ROCm, device `cuda:0`); requesting an unavailable device fails rather than falling back. Do not assume NVIDIA CUDA.
 - Random-token calibration/evaluation (`calibration.source: random`, `--random-tokens`) is a smoke test only; it says nothing about language-model quality.
 - Without `flash-linear-attention` / `causal-conv1d`, `transformers` falls back to slow torch Gated DeltaNet kernels; this affects speed of full-model runs, not correctness. Do not report those timings as performance results.
 - `rotor.converters.pipeline.convert` refuses when the base checkpoint is missing and reports the HF id/revision/target path; nothing in the repo fetches weights. Do not "fix" this by adding a downloader.

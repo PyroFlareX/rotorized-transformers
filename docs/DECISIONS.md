@@ -153,7 +153,7 @@ ADR-style log. All entries dated 2026-10-08.
 - `nvcc` compilation alone does not satisfy the M4 runtime correctness/performance gate.
 - Vulkan loader/ICD presence does not establish application-level Vulkan availability; `vulkaninfo` is not installed.
 
-**Status:** Accepted for the current host; revisit when GPU runtime capability changes.
+**Status:** Superseded on 2026-10-18 for AMD GPU work. A separate `.venv-rocm` environment (torch 2.10.0+rocm7.0, triton-rocm 3.6.0) executes on the RX 7900 XT/XTX (gfx1100) as PyTorch device `cuda:0`; the ROCm conversion, fused Triton backend, and inference benchmark runs under `reports/experiments/` used it. `.venv` remains CPU-only and the default for tests. The NVIDIA CUDA conclusions above still hold: no NVIDIA GPU is present.
 
 ---
 
@@ -292,3 +292,49 @@ Recovery snapshots are separate from the inference checkpoint format; no format-
 - The final checkpoint remains exclusive and atomically published; base checkpoints remain read-only.
 
 **Status:** Accepted.
+
+---
+
+## D18 — Algebraic GA tensor conversion is a distinct correctness-first representation
+
+**Context:** The user requires algebraic conversion or deterministic approximation, without training or a
+compression target. The learned b025 fixed-butterfly conversion damaged FFN behavior before serialization.
+
+**Decision:** Introduce a separate versioned `ga-rotor-svd` checkpoint and direct tensor operator. Full thin-SVD
+factors are algebraically decomposed into ordered Euclidean GA plane rotors, explicit signs, and singular-value
+scalings. Full rank is the default; rank truncation is explicit. Version 2 stores one algebraically derived
+elimination angle per rotor, not paired scalar/bivector coefficients or dense factors. Derive the sandwich
+convention and elimination order in `ALGEBRAIC_GA_CONVERSION.md`.
+
+**Consequences:**
+- Existing `rotor-scaler` format/topology contracts are unchanged; no compatibility alias or reinterpretation.
+- No optimizer, distillation, data-dependent fitting, or byte-budget gate in this conversion path.
+- Reconstruction, direct action, and serialized reload must pass recorded numerical gates before publication.
+- Correct tensor conversion is not evidence of compression, speed, or whole-model quality.
+- Artifacts remain storage-configured, protected, and atomically published without overwriting.
+- Version 2 halves rotation scalar storage versus version 1. Full-rank total remains dense count plus twice
+  the thin rank; this is a redundancy reduction, not full-rank compression. Historical v1 artifacts remain
+  untouched; current loading rejects v1 rather than silently reinterpreting its coefficients.
+
+**Status:** Accepted.
+
+---
+
+## D19 — Test restricted Clifford multiplication blocks before model integration
+
+**Context:** Full-rank rotor parameterization preserves arbitrary weights but does not reduce their continuous
+coefficient count. The intended compression hypothesis requires a restricted geometric transformation family.
+
+**Decision:** Test q-component multivector left multiplication on q x q weight blocks for Euclidean Cl(2,0)
+and Cl(3,0), q=4 and q=8. Compute the orthogonal Frobenius projection onto signed blade-multiplication
+matrices algebraically. Compare fixed contiguous and seeded feature groupings, numerical action on identical
+probes, Gaussian structure controls, and coefficient-budget SVD. Keep weight approximation damage separate
+from implementation parity. Use existing baseline conventions for bounded per-block comparisons.
+
+**Consequences:**
+- Actual coefficient count is mn/q, without exhaustive rotations or gradient fitting.
+- Reshaping alone is not compression; the restricted multiplication operator supplies coefficient sharing.
+- Compression need not preserve matrix rank, and no low-error guarantee follows from the parameter count.
+- Pilot outputs are experiment reports, not new inference checkpoints or whole-model quality evidence.
+
+**Status:** Accepted for numerical pilot.

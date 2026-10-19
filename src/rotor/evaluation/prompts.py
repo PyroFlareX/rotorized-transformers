@@ -166,6 +166,14 @@ def run_prompt_evaluation(args) -> Path:
         prompts = prompts[: args.limit]
     dataset_sha256 = sha256_file(prompts_path)
     base_dir, ckpt, manifest, model_key, config_path, hf_id, revision = _resolve_model_paths(args)
+    selected_rotor_backend = getattr(args, "rotor_backend", "reference")
+    if selected_rotor_backend not in {"reference", "triton"}:
+        raise ValueError(
+            f"unsupported rotor_backend={selected_rotor_backend!r}; expected 'reference' or 'triton'"
+        )
+    if ckpt is None and selected_rotor_backend != "reference":
+        raise ValueError("rotor_backend='triton' requires a converted checkpoint")
+    effective_runtime_backend = selected_rotor_backend if ckpt is not None else "base"
     config_path = Path(config_path)
     model_config = json.loads(config_path.read_text(encoding="utf-8"))
     model_config_sha256 = sha256_file(config_path)
@@ -206,7 +214,14 @@ def run_prompt_evaluation(args) -> Path:
         target = str(budget.get("target") or (f"b{round(float(ratio) * 100):03d}" if ratio else "na"))
     config = {key: (str(value) if isinstance(value, Path) else value) for key, value in vars(args).items()}
     config.update({"base_dir_resolved": str(base_dir), "checkpoint_resolved": str(ckpt) if ckpt else None})
-    config.update({"settings": settings, "prompt_dataset_sha256": dataset_sha256})
+    config.update(
+        {
+            "rotor_backend": selected_rotor_backend,
+            "effective_runtime_backend": effective_runtime_backend,
+            "settings": settings,
+            "prompt_dataset_sha256": dataset_sha256,
+        }
+    )
     with ExperimentRun(
         "prompt-generation",
         model=model_label,
@@ -241,6 +256,8 @@ def run_prompt_evaluation(args) -> Path:
             "base_model_revision": revision,
             "base_model_path": str(base_dir),
             "checkpoint_path": str(ckpt) if ckpt else None,
+            "rotor_backend": selected_rotor_backend,
+            "effective_runtime_backend": effective_runtime_backend,
             "seed": seed,
             "device": args.device,
             "dtype": args.dtype,
@@ -276,7 +293,13 @@ def run_prompt_evaluation(args) -> Path:
                     baseline = None
                 telemetry.set_phase("model_loading")
                 model = (
-                    load_converted(ckpt, dtype=dtype, device=args.device, base_dir=base_dir)[0]
+                    load_converted(
+                        ckpt,
+                        dtype=dtype,
+                        device=args.device,
+                        base_dir=base_dir,
+                        rotor_backend=selected_rotor_backend,
+                    )[0]
                     if ckpt
                     else load_base(base_dir, dtype=dtype, device=args.device)
                 )
@@ -290,6 +313,8 @@ def run_prompt_evaluation(args) -> Path:
                     comparison = compare_generations(baseline[index]["output_ids"], output_ids) if baseline else None
                     record = {
                         "prompt_id": item["prompt_id"],
+                        "rotor_backend": selected_rotor_backend,
+                        "effective_runtime_backend": effective_runtime_backend,
                         "domain": item["domain"],
                         "settings": settings,
                         "input_text": item["input_text"],
@@ -318,6 +343,8 @@ def run_prompt_evaluation(args) -> Path:
                     )
             telemetry_summary = telemetry.as_dict()
         run.metrics["results"] = {
+            "rotor_backend": selected_rotor_backend,
+            "effective_runtime_backend": effective_runtime_backend,
             "jsonl_path": str(output_path),
             "jsonl_rows": len(prepared),
             "telemetry_jsonl_path": str(telemetry_path),

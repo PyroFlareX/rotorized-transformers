@@ -1,0 +1,20 @@
+seed: 0
+base:
+  role: development
+  hf_id: Qwen/Qwen3.5-0.8B-Base
+  revision: dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68
+  local_path: Qwen/Qwen3.5-0.8B-Base
+  adapter: qwen3_5
+  published_total_bytes: 1746882752
+  text:
+    hidden_size: 1024
+    intermediate_size: 3584
+    num_hidden_layers: 24
+    full_attention_interval: 4
+  target_families:
+  - ffn.gate
+  - ffn.up
+  - ffn.down
+device: cpu
+storage_dtype: bfloat16
+scope: singular-spectrum lower bound only; no functional quality claim

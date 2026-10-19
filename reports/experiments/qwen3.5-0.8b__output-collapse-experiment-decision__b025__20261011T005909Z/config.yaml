@@ -1,0 +1,13 @@
+plan: plans/OUTPUT_COLLAPSE_EXPERIMENT_PLAN.md
+seed: 0
+sources:
+  inventory: /mnt/Projects/rotorized-transformers/reports/experiments/qwen3.5-0.8b__collapse-input-inventory__b025__20261010T232359Z
+  operator: reports/experiments/qwen3.5-0.8b__reference-rotor-diagnostics__stored-checkpoint__20261010T235114Z
+  layer0: reports/experiments/qwen3.5-0.8b__reference-rotor-diagnostics__stored-checkpoint__20261010T235955Z
+  storage_only: reports/experiments/qwen3.5-0.8b__storage-rounding-fp32-runtime__b025__20261011T005418Z
+  depth: reports/experiments/qwen3.5-0.8b__selected-depth-ffn-interventions__b025__20261011T005803Z
+  svd: reports/experiments/qwen3.5-0.8b__collapse-svd-capacity-screen__b025-b075__20261010T232447Z
+  joint_smoke: reports/experiments/tiny-joint-ffn__joint-output-fit-smoke__synthetic__20261011T003019Z
+  baseline_smoke: reports/experiments/collapse-harness-smoke__equal-budget-baselines__b050__20261010T232130Z
+heldout_corpus: null
+reference_backend: true

@@ -25,6 +25,12 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--seed", type=int, default=0, help="recorded RNG seed (default: 0)")
     parser.add_argument("--device", default="cpu", help="torch device, e.g. cpu or cuda:0 (default: cpu)")
     parser.add_argument("--dtype", choices=("float32", "bfloat16", "float16"), default="float32")
+    parser.add_argument(
+        "--rotor-backend",
+        choices=("reference", "triton"),
+        default="reference",
+        help="converted rotor-layer inference backend (default: reference)",
+    )
     parser.add_argument("--compare-to", type=Path, help="base-model result JSONL to validate and compare per prompt")
     parser.add_argument("--output", type=Path, help="progressive results JSONL path; must not already exist")
     parser.add_argument("--telemetry-path", type=Path, help="RuntimeTelemetry JSONL path; must not already exist")
@@ -51,6 +57,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         parser.error(f"base model directory does not exist: {args.base_dir}")
     if args.compare_to and not args.ckpt:
         parser.error("--compare-to is for a converted run; run the base first without this option")
+    if not args.ckpt and args.rotor_backend != "reference":
+        parser.error("--rotor-backend triton requires --ckpt")
     return args
 
 

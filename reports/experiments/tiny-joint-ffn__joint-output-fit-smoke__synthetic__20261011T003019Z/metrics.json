@@ -1,0 +1,70 @@
+{
+  "run_id": "tiny-joint-ffn__joint-output-fit-smoke__synthetic__20261011T003019Z",
+  "kind": "diagnosis",
+  "status": "completed",
+  "created_utc": "2026-10-11T00:30:19.302057+00:00",
+  "finished_utc": "2026-10-11T00:30:22.827041+00:00",
+  "model": "tiny-joint-ffn",
+  "method": "joint-output-fit-smoke",
+  "target": "synthetic",
+  "metrics": {
+    "initial_heldout_relative_l2": 3.5673601627349854,
+    "final_heldout_relative_l2": 0.9483122825622559,
+    "fit": {
+      "objective": "joint_ffn_output",
+      "final_loss": 0.4973198473453522,
+      "train_output_relative_error": 0.4973198473453522,
+      "heldout_output_relative_error": 0.8992961049079895,
+      "loss_history_tail": [
+        0.5172035694122314,
+        0.513817548751831,
+        0.5108255743980408,
+        0.5082060098648071,
+        0.5059311389923096,
+        0.5039677619934082,
+        0.5022773742675781,
+        0.5008170008659363,
+        0.49953898787498474,
+        0.49839168787002563
+      ],
+      "steps": 40,
+      "per_projection_params": {
+        "gate": {
+          "angles": 14,
+          "diagonals": 16,
+          "residual": 0,
+          "bias": 0
+        },
+        "up": {
+          "angles": 14,
+          "diagonals": 16,
+          "residual": 0,
+          "bias": 0
+        },
+        "down": {
+          "angles": 14,
+          "diagonals": 16,
+          "residual": 0,
+          "bias": 0
+        }
+      },
+      "per_projection_bytes": {
+        "gate": 60,
+        "up": 60,
+        "down": 60
+      },
+      "per_projection_dense_bytes": {
+        "gate": 96,
+        "up": 96,
+        "down": 96
+      },
+      "combined_bytes": 180,
+      "combined_dense_bytes": 288,
+      "combined_byte_budget": null,
+      "combined_byte_ratio": 0.625,
+      "storage_dtype": "bfloat16"
+    }
+  },
+  "estimates": {},
+  "failure": null
+}

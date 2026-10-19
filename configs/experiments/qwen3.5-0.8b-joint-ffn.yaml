@@ -1,0 +1,17 @@
+name: qwen3.5-0.8b-joint-ffn-layer0-b025
+model: qwen3.5-0.8b
+layer: 0
+budget: {target: b025, storage_dtype: bfloat16}
+cascade: {topology: {kind: butterfly, seed: 0}, stages_per_rotor: auto, residual_rank: 0, adapter: pad_truncate}
+fit:
+  seed: 0
+  device: cpu
+  init_angle_std: 0.01
+  schedule:
+    phases: [{train: [scales], steps: 200}, {train: [angles, scales, residual], steps: 1800}]
+    lrs: {angles: 0.01, scales: 0.01, residual: 0.001}
+    cosine_decay: true
+    log_every: 200
+# Set these to existing, user-approved, disjoint local text files before running.
+calibration: {path: null, seq_len: 256, num_windows: 8, seed: 0, max_rows: 4096}
+heldout: {path: null, seq_len: 256, num_windows: 8, seed: 1, max_rows: 4096}

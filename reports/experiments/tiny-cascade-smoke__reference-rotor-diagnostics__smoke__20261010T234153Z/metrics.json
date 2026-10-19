@@ -1,0 +1,65 @@
+{
+  "run_id": "tiny-cascade-smoke__reference-rotor-diagnostics__smoke__20261010T234153Z",
+  "kind": "collapse-diagnosis",
+  "status": "completed",
+  "created_utc": "2026-10-10T23:41:53.029666+00:00",
+  "finished_utc": "2026-10-10T23:41:54.665802+00:00",
+  "model": "tiny-cascade-smoke",
+  "method": "reference-rotor-diagnostics",
+  "target": "smoke",
+  "metrics": {
+    "smoke": {
+      "elements": 45,
+      "finite_reference": 45,
+      "finite_actual": 45,
+      "finite_pairs": 45,
+      "max_abs_error": 1.0269562977782698e-15,
+      "mean_abs_error": 3.0438614591806375e-16,
+      "max_relative_error_nonzero_reference": 6.8465560153950155e-15,
+      "relative_l2_error": 3.3794600640375365e-16,
+      "cosine_similarity": 0.9999999999999999,
+      "reference_rms": 1.224523782510618,
+      "actual_rms": 1.224523782510618,
+      "row_rms_reference": {
+        "min": 0.5018963120207743,
+        "p50": 1.0738206464490145,
+        "p90": 1.7502732783545976,
+        "p99": 1.879255108120369,
+        "max": 1.8935864225387882
+      },
+      "row_rms_actual": {
+        "min": 0.5018963120207741,
+        "p50": 1.0738206464490148,
+        "p90": 1.7502732783545971,
+        "p99": 1.8792551081203686,
+        "max": 1.8935864225387877
+      },
+      "channel_rms_reference": {
+        "min": 0.7402489964216815,
+        "p50": 1.184758250221777,
+        "p90": 1.5351727400855195,
+        "p99": 1.6064079325906695,
+        "max": 1.6143229539801307
+      },
+      "channel_rms_actual": {
+        "min": 0.7402489964216816,
+        "p50": 1.184758250221777,
+        "p90": 1.5351727400855193,
+        "p99": 1.6064079325906695,
+        "max": 1.6143229539801307
+      },
+      "nonfinite_reference": 0,
+      "nonfinite_actual": 0,
+      "dense_basis_chunk": 3,
+      "dense_max_temporary_basis_elements": 21,
+      "harness": "known-correct-rectangular-cascade-residual-bias",
+      "tolerance": {
+        "rtol": 1e-10,
+        "atol": 1e-10,
+        "source": "tests/test_math.py forward-vs-dense cascade contract"
+      }
+    }
+  },
+  "estimates": {},
+  "failure": null
+}

@@ -63,6 +63,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--num-windows", type=int, default=4)
     p.add_argument("--max-rows", type=int, default=2048)
     p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--device", default="cpu", help="rotor fitting device; analytic and butterfly baselines remain CPU")
     p.add_argument("--name", default=None)
     return p
 
@@ -165,7 +166,7 @@ def main(argv: list[str] | None = None) -> int:
         from rotor.models.loading import load_base
         from rotor.models.qwen3_5 import load_tokenizer
 
-        model = load_base(base, dtype=torch.float32, device="cpu")
+        model = load_base(base, dtype=torch.float32, device=args.device)
         if args.text_file:
             ids = tokenize_text_file(load_tokenizer(base), args.text_file)
             windows = windows_from_ids(ids, args.seq_len, args.num_windows, args.seed)
@@ -219,7 +220,9 @@ def main(argv: list[str] | None = None) -> int:
             # equal-byte budget: fraction of the dense matrix stored in BF16
             budget = int(ratio * W.numel() * dense_bpp)
             run.log(f"{name} shape={tuple(W.shape)} byte_ratio={ratio} budget={budget} bytes")
-            res = equal_budget_baselines(W, budget, args.storage_dtype, spec_kwargs, schedule, X=X, seed=args.seed)
+            res = equal_budget_baselines(
+                W, budget, args.storage_dtype, spec_kwargs, schedule, X=X, seed=args.seed, device=args.device
+            )
             results[name] = res
             print_table(f"{name} shape={tuple(W.shape)} byte_ratio={ratio}", res)
             table_rows += result_rows(res, name)

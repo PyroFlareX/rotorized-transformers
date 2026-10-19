@@ -1,0 +1,66 @@
+model: qwen3.5-0.8b
+tensor: model.language_model.layers.0.mlp.up_proj.weight
+probe_rows: 64
+dimensions:
+- 2
+- 3
+grouping_seeds:
+- null
+- 0
+- 1
+- 2
+probe_seed: 42
+gaussian_control_seed: 43
+projection: blockwise Clifford left-geometric-product orthogonal projection
+coefficient_dtype: float64
+svd:
+  rank: floor(coefficient_scalar_count / (out + in + 1))
+  full_svd_computations: 1
+small_block_equal_budget_baselines:
+  blocks: top-left contiguous q-by-q original tensor block for q=4 and q=8
+  methods:
+  - dense
+  - svd
+  - svd_givens
+  - magnitude_sparse
+  - butterfly
+  - rotor_weight
+  - rotor_residual
+  random_controls:
+  - spectrum_matched_random
+  - gaussian_random
+  storage_dtype: float32
+  byte_budget_formula: q * 4
+  fit_schedule:
+    phases:
+    - - - scales
+      - 2
+    - - - angles
+        - scales
+        - residual
+      - 2
+    total_steps: 4
+  fit_seed: 0
+  scope_note: bounded small-block comparator subset only; not the broad trained-baseline
+    tournament
+checkpoint_export: false
+no_download_or_fallback: true
+resolved_source:
+  model_key: qwen3.5-0.8b
+  hf_id: Qwen/Qwen3.5-0.8B-Base
+  revision: dc7cdfe2ee4154fa7e30f5b51ca41bfa40174e68
+  base_path: /mnt/NAS/MediaHome/Local-Models/base/Qwen/Qwen3.5-0.8B-Base
+  tensor: model.language_model.layers.0.mlp.up_proj.weight
+  shape:
+  - 3584
+  - 1024
+  checkpoint_dtype: BF16
+  shard: model.safetensors-00001-of-00001.safetensors
+  shard_sha256: c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c
+  tensor_values_fp64_sha256: b2d819d404f02442565871dace21687b2752e1181e84806e27ff71387bd4f95a
+matrix_shape:
+- 3584
+- 1024
+source_coefficient_dtype: float64
+probe_distribution: iid standard Gaussian, float64
+operator_reconstruction_action_tolerance: 1.0e-10

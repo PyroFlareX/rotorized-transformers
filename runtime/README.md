@@ -43,6 +43,17 @@ runtime/
 
 ## Status
 
+**Optional Python inference backend:** The evaluator offers an explicit, opt-in fused rotor backend for
+converted checkpoints, implemented separately from this native-runtime directory. Select it with
+`python scripts/evaluate_prompts.py --ckpt <checkpoint> --rotor-backend triton --device cuda:0`.
+The CLI defaults to `--rotor-backend reference`; base-model runs use the base backend and cannot select
+`triton`. This optional backend requires Triton and a supported CUDA or ROCm GPU. Selecting it on an
+unsupported device or without its dependencies fails explicitly; there is no automatic fallback. It is
+inference-only. Compare its outputs with a compatible base/reference results JSONL using `--compare-to`.
+The selected rotor backend is recorded as runtime provenance, not a generation setting, so otherwise-matched
+reference and fused runs can be compared. No speedup or hardware qualification is claimed here.
+
+
 - **Present:** the reference CPU headers in `interfaces/` only. They are correctness oracles (one vector at a
   time, no SIMD, no CUDA), not performance code.
 - **Empty:** `kernels/` and `fork/`. No engine has been selected; selection is gated on verifying that a candidate

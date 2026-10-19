@@ -34,13 +34,21 @@ def load_converted(
     device=None,
     base_dir: Path | None = None,
     structured_dtype: torch.dtype = torch.float32,
+    rotor_backend: str = "reference",
 ) -> tuple[torch.nn.Module, Manifest]:
     """Base model from ``manifest.base.path`` (or ``base_dir``) with every manifest layer replaced.
 
-    Structured layers run in ``structured_dtype`` internally; ``RotorCascade.forward`` casts back to
-    the activation dtype.
+    Structured layers run in ``structured_dtype`` internally and cast back to the activation dtype.
+    ``rotor_backend="triton"`` explicitly replaces cascades with the optional fused inference backend.
     """
+    if rotor_backend not in {"reference", "triton"}:
+        raise ValueError(f"unsupported rotor_backend={rotor_backend!r}; expected 'reference' or 'triton'")
+
     manifest, layers = load_structured_layers(ckpt_dir, dtype=structured_dtype)
     model = load_base(Path(base_dir or manifest.base.path), dtype=dtype, device=device)
     apply_replacements(model, layers, device=device)
+    if rotor_backend == "triton":
+        from rotor.runtime import enable_fused_rotors
+
+        enable_fused_rotors(model)
     return model, manifest

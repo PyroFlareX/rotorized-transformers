@@ -1,0 +1,200 @@
+{
+  "run_id": "qwen3.5-0.8b__output-collapse-experiment-decision__b025__20261011T005909Z",
+  "kind": "comparison",
+  "status": "completed",
+  "created_utc": "2026-10-11T00:59:09.699191+00:00",
+  "finished_utc": "2026-10-11T00:59:11.202070+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "output-collapse-experiment-decision",
+  "target": "b025",
+  "metrics": {
+    "decision": "NO-GO full-model scaling: no held-out gate measured, single-FFN severe functional distortion already present in FP32 masters",
+    "causal_classification": "[INFERENCE] approximation/fitting damage dominates sampled layer0 intervention; serialization contributes but is not necessary for severe attenuation. Optimization vs capacity vs projection-local objective unresolved. Execution not fully tolerance/GPU-qualified.",
+    "arm_table": [
+      {
+        "arm": "layer-0-ffn.gate",
+        "last_token_KL": 0.3329188823699951,
+        "FFN_relative_L2": 0.6741900479687418,
+        "FFN_RMS_ratio": 0.6931918525057084,
+        "teacher_top_token": 279,
+        "student_top_token": 1001
+      },
+      {
+        "arm": "layer-0-ffn.up",
+        "last_token_KL": 0.06754357367753983,
+        "FFN_relative_L2": 0.7486874170607497,
+        "FFN_RMS_ratio": 0.5206721911152515,
+        "teacher_top_token": 279,
+        "student_top_token": 279
+      },
+      {
+        "arm": "layer-0-ffn.down",
+        "last_token_KL": 0.06515242159366608,
+        "FFN_relative_L2": 0.7059509810649601,
+        "FFN_RMS_ratio": 0.6982395318326374,
+        "teacher_top_token": 279,
+        "student_top_token": 279
+      },
+      {
+        "arm": "layer-0-complete-ffn",
+        "last_token_KL": 0.28759562969207764,
+        "FFN_relative_L2": 0.9427028216379422,
+        "FFN_RMS_ratio": 0.2736253363620708,
+        "teacher_top_token": 279,
+        "student_top_token": 1001
+      },
+      {
+        "arm": "layer-0-complete-ffn-fp32-master",
+        "last_token_KL": 0.28542235493659973,
+        "FFN_relative_L2": 0.942611416759937,
+        "FFN_RMS_ratio": 0.2734154057594301,
+        "teacher_top_token": 279,
+        "student_top_token": 1001
+      },
+      {
+        "arm": "layer-12-complete-ffn",
+        "last_token_KL": 0.04089416563510895,
+        "FFN_relative_L2": 0.9503219563274294,
+        "FFN_RMS_ratio": 0.4517437491616044,
+        "teacher_top_token": 279,
+        "student_top_token": 279
+      },
+      {
+        "arm": "layer-23-complete-ffn",
+        "last_token_KL": 0.4568582773208618,
+        "FFN_relative_L2": 0.9155896601296398,
+        "FFN_RMS_ratio": 0.43304916991110054,
+        "teacher_top_token": 279,
+        "student_top_token": 279
+      }
+    ],
+    "storage_only_layer0": {
+      "model.layers.0.mlp.gate_proj": {
+        "float16": 0.002462956063714411,
+        "bfloat16": 0.019247088253956428,
+        "original_serialized": 0.019247088253956428
+      },
+      "model.layers.0.mlp.up_proj": {
+        "float16": 0.003050014932147906,
+        "bfloat16": 0.024319609084739242,
+        "original_serialized": 0.024319609084739242
+      },
+      "model.layers.0.mlp.down_proj": {
+        "float16": 0.0027418128120163155,
+        "bfloat16": 0.022271022380324267,
+        "original_serialized": 0.022271022380324267
+      }
+    },
+    "operator": {
+      "projections": 72,
+      "all_outputs_finite": true,
+      "max_dense_action_abs_error": 7.883723671131548e-05,
+      "max_serialized_base_weight_relative_frobenius_error": 0.7442439479843702,
+      "FP64_reference_tolerance": {
+        "rtol": 1e-10,
+        "atol": 1e-10,
+        "source": "tests/test_math.py RotorCascade forward/dense contract"
+      },
+      "model_precision_note": "FP32 action discrepancies are reported, not judged with a newly invented tolerance."
+    },
+    "svd_spectrum_screen_text_only": [
+      {
+        "tensor": "model.language_model.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.7918614745140076
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.613659679889679
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.4423418641090393
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.7595556974411011
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.5829534530639648
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.42104533314704895
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.7958477139472961
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.6167481541633606
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.44754666090011597
+      }
+    ],
+    "paths": {
+      "inventory": "/mnt/Projects/rotorized-transformers/reports/experiments/qwen3.5-0.8b__collapse-input-inventory__b025__20261010T232359Z",
+      "operator": "reports/experiments/qwen3.5-0.8b__reference-rotor-diagnostics__stored-checkpoint__20261010T235114Z",
+      "layer0": "reports/experiments/qwen3.5-0.8b__reference-rotor-diagnostics__stored-checkpoint__20261010T235955Z",
+      "storage_only": "reports/experiments/qwen3.5-0.8b__storage-rounding-fp32-runtime__b025__20261011T005418Z",
+      "depth": "reports/experiments/qwen3.5-0.8b__selected-depth-ffn-interventions__b025__20261011T005803Z",
+      "svd": "reports/experiments/qwen3.5-0.8b__collapse-svd-capacity-screen__b025-b075__20261010T232447Z",
+      "joint_smoke": "reports/experiments/tiny-joint-ffn__joint-output-fit-smoke__synthetic__20261011T003019Z",
+      "baseline_smoke": "reports/experiments/collapse-harness-smoke__equal-budget-baselines__b050__20261010T232130Z"
+    },
+    "provisional_gate": {
+      "NLL_delta_nats": 0.05,
+      "measured": false
+    },
+    "scope_limits": [
+      "One fixed diagnostic prompt, FP32 CPU arithmetic, eight generated tokens per arm; not held-out quality.",
+      "Old all72 runs FP16/BF16 casts changed runtime arithmetic; do not interpret those cast rows as pure serialization. Dedicated storage-only report supersedes layer0 cast interpretation.",
+      "SVD spectrum report also contains MTP rows from broad selection; final comparison excludes MTP.",
+      "No matched full baseline/seed/topology optimization screen or real-text activation/joint comparison completed.",
+      "69 completed FP32 masters; whole-model FP32 intervention disallowed.",
+      "No recovery/expansion or long-context evaluation: quality gate not passed."
+    ],
+    "verification": {
+      "pytest_passed": 339,
+      "pytest_skipped": 6,
+      "pytest_deselected": 1,
+      "ruff": "passed",
+      "joint_runner_integration": "passed",
+      "independent_tiny_oracle_max_abs": 1.0269562977782698e-15,
+      "joint_tiny_smoke_initial_relL2": 3.5673601627349854,
+      "joint_tiny_smoke_final_relL2": 0.9483122825622559
+    }
+  },
+  "estimates": {},
+  "failure": null
+}

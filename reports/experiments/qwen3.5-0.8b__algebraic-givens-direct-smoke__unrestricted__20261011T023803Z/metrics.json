@@ -1,0 +1,18 @@
+{
+  "run_id": "qwen3.5-0.8b__algebraic-givens-direct-smoke__unrestricted__20261011T023803Z",
+  "kind": "diagnosis",
+  "status": "completed",
+  "created_utc": "2026-10-11T02:38:03.586911+00:00",
+  "finished_utc": "2026-10-11T02:38:06.013260+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "algebraic-givens-direct-smoke",
+  "target": "unrestricted",
+  "metrics": {
+    "max_absolute_output_error": 5.273559366969494e-16,
+    "relative_l2_output_error": 1.576784655295311e-15,
+    "rank": 32,
+    "rotation_angles": 1504
+  },
+  "estimates": {},
+  "failure": null
+}

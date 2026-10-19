@@ -1,0 +1,39 @@
+args:
+  base_dir: null
+  model: null
+  synthetic: 12,16
+  tensors: layers\.0\.mlp\.(gate|up|down)_proj\.weight$
+  max_tensors: 3
+  byte_ratio: null
+  target: b050
+  storage_dtype: bfloat16
+  topology: butterfly
+  topology_seed: 0
+  stages_per_rotor: auto
+  residual_rank: 0
+  steps: 4
+  lr_angles: 0.01
+  lr_scales: 0.01
+  lr_residual: 0.001
+  with_activations: false
+  text_file: null
+  seq_len: 128
+  num_windows: 4
+  max_rows: 2048
+  seed: 0
+  device: cpu
+  name: collapse-harness-smoke
+byte_ratio: 0.5
+target: b050
+schedule:
+  phases:
+  - - - scales
+    - 1
+  - - - angles
+      - scales
+      - residual
+    - 4
+  lrs:
+    angles: 0.01
+    scales: 0.01
+    residual: 0.001

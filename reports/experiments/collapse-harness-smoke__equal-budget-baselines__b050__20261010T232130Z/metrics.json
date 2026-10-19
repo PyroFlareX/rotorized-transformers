@@ -1,0 +1,352 @@
+{
+  "run_id": "collapse-harness-smoke__equal-budget-baselines__b050__20261010T232130Z",
+  "kind": "baselines",
+  "status": "completed",
+  "created_utc": "2026-10-10T23:21:30.053445+00:00",
+  "finished_utc": "2026-10-10T23:21:31.493229+00:00",
+  "model": "collapse-harness-smoke",
+  "method": "equal-budget-baselines",
+  "target": "b050",
+  "metrics": {
+    "byte_ratio": 0.5,
+    "results": {
+      "synthetic[12,16]": {
+        "budget": {
+          "byte_budget": 192,
+          "storage_dtype": "bfloat16",
+          "bytes_per_param": 2,
+          "param_budget": 96,
+          "in_features": 12,
+          "out_features": 16,
+          "dense_params": 192,
+          "dense_bytes": 384
+        },
+        "methods": {
+          "dense": {
+            "reference": true,
+            "params": 192,
+            "stored_bytes": 384,
+            "index_bytes": 0,
+            "weight_errors": {
+              "rel_fro": 0.0,
+              "rel_spectral": 0.0,
+              "max_abs": 0.0
+            },
+            "activation_errors": {
+              "rel_fro": 0.0,
+              "mean_row_cosine": 1.0,
+              "rows": 512
+            },
+            "estimated_flops_per_token": 384
+          },
+          "svd": {
+            "rank": 3,
+            "params": 84,
+            "stored_bytes": 168,
+            "index_bytes": 0,
+            "weight_errors": {
+              "rel_fro": 0.5235083213737468,
+              "rel_spectral": 0.37892911161767345,
+              "max_abs": 0.15770996361970901
+            },
+            "activation_errors": {
+              "rel_fro": 0.5213153114346506,
+              "mean_row_cosine": 0.7804246250522721,
+              "rows": 512
+            },
+            "estimated_flops_per_token": 168
+          },
+          "svd_givens": {
+            "rank": 3,
+            "params": 75,
+            "sign_bytes": 1,
+            "stored_bytes": 151,
+            "index_bytes": 0,
+            "weight_errors": {
+              "rel_fro": 0.5235083210622888,
+              "rel_spectral": 0.3789291116700432,
+              "max_abs": 0.15770996361970901
+            },
+            "activation_errors": {
+              "rel_fro": 0.5213153117744314,
+              "mean_row_cosine": 0.7804246249072,
+              "rows": 512
+            },
+            "estimated_flops_per_token": 435
+          },
+          "magnitude_sparse": {
+            "nnz": 32,
+            "density": 0.16666666666666666,
+            "encoding": "coo_flat",
+            "params": 32,
+            "stored_bytes": 192,
+            "index_bytes": 128,
+            "weight_errors": {
+              "rel_fro": 0.6127260070888181,
+              "rel_spectral": 0.4669172844212804,
+              "max_abs": 0.13875849545001984
+            },
+            "activation_errors": {
+              "rel_fro": 0.6052226011927435,
+              "mean_row_cosine": 0.7667714777115524,
+              "rows": 512
+            },
+            "estimated_flops_per_token": 64
+          },
+          "butterfly": {
+            "skipped": "budget of 96 params is below one butterfly product (128 params = log2(16) factors x 2*16)"
+          },
+          "rotor_weight": {
+            "params": 60,
+            "stored_bytes": 120,
+            "index_bytes": 0,
+            "weight_errors": {
+              "rel_fro": 1.2314929948612927,
+              "rel_spectral": 0.9952899190854483,
+              "max_abs": 0.4739844724535942
+            },
+            "activation_errors": {
+              "rel_fro": 1.2296796625060415,
+              "mean_row_cosine": 0.14580993012661786,
+              "rows": 512
+            },
+            "estimated_flops_per_token": 220,
+            "spec": {
+              "in_features": 12,
+              "out_features": 16,
+              "num_rotors": 1,
+              "stages_per_rotor": 4,
+              "topology": {
+                "kind": "butterfly",
+                "seed": 0
+              },
+              "adapter": "pad_truncate",
+              "residual_rank": 0
+            },
+            "fit": {
+              "objective": "weight",
+              "final_loss": 1.5269299745559692,
+              "steps": 5
+            }
+          },
+          "rotor_residual": {
+            "skipped": "25% of 96 params is below one rank-1 residual (28 params)"
+          },
+          "rotor_activation": {
+            "params": 60,
+            "stored_bytes": 120,
+            "index_bytes": 0,
+            "weight_errors": {
+              "rel_fro": 1.231495952656863,
+              "rel_spectral": 0.9953076633928891,
+              "max_abs": 0.47398387640714645
+            },
+            "activation_errors": {
+              "rel_fro": 1.2296696407429208,
+              "mean_row_cosine": 0.1458364790040905,
+              "rows": 512
+            },
+            "estimated_flops_per_token": 220,
+            "spec": {
+              "in_features": 12,
+              "out_features": 16,
+              "num_rotors": 1,
+              "stages_per_rotor": 4,
+              "topology": {
+                "kind": "butterfly",
+                "seed": 0
+              },
+              "adapter": "pad_truncate",
+              "residual_rank": 0
+            },
+            "fit": {
+              "objective": "activation",
+              "final_loss": 1.5223126411437988,
+              "steps": 5
+            }
+          }
+        },
+        "controls": {
+          "spectrum_matched_random": {
+            "svd": {
+              "rank": 3,
+              "params": 84,
+              "stored_bytes": 168,
+              "index_bytes": 0,
+              "weight_errors": {
+                "rel_fro": 0.5235083196602162,
+                "rel_spectral": 0.378929105682842,
+                "max_abs": 0.18225742131471634
+              },
+              "activation_errors": {
+                "rel_fro": 0.5375562730708794,
+                "mean_row_cosine": 0.7630013428016199,
+                "rows": 512
+              },
+              "estimated_flops_per_token": 168
+            },
+            "magnitude_sparse": {
+              "nnz": 32,
+              "density": 0.16666666666666666,
+              "encoding": "coo_flat",
+              "params": 32,
+              "stored_bytes": 192,
+              "index_bytes": 128,
+              "weight_errors": {
+                "rel_fro": 0.5989865474257788,
+                "rel_spectral": 0.4193944805834656,
+                "max_abs": 0.14348624646663666
+              },
+              "activation_errors": {
+                "rel_fro": 0.5994894926498714,
+                "mean_row_cosine": 0.758903715473919,
+                "rows": 512
+              },
+              "estimated_flops_per_token": 64
+            },
+            "butterfly": {
+              "skipped": "budget of 96 params is below one butterfly product (128 params = log2(16) factors x 2*16)"
+            },
+            "rotor_weight": {
+              "params": 60,
+              "stored_bytes": 120,
+              "index_bytes": 0,
+              "weight_errors": {
+                "rel_fro": 1.270187244048787,
+                "rel_spectral": 1.0315731887016832,
+                "max_abs": 0.5583151578903198
+              },
+              "activation_errors": {
+                "rel_fro": 1.270743132300512,
+                "mean_row_cosine": 0.09360853146782772,
+                "rows": 512
+              },
+              "estimated_flops_per_token": 220,
+              "spec": {
+                "in_features": 12,
+                "out_features": 16,
+                "num_rotors": 1,
+                "stages_per_rotor": 4,
+                "topology": {
+                  "kind": "butterfly",
+                  "seed": 0
+                },
+                "adapter": "pad_truncate",
+                "residual_rank": 0
+              },
+              "fit": {
+                "objective": "weight",
+                "final_loss": 1.6235601902008057,
+                "steps": 5
+              }
+            }
+          },
+          "gaussian_random": {
+            "svd": {
+              "rank": 3,
+              "params": 84,
+              "stored_bytes": 168,
+              "index_bytes": 0,
+              "weight_errors": {
+                "rel_fro": 0.6674206297177782,
+                "rel_spectral": 0.7265283209776845,
+                "max_abs": 0.27804070338606834
+              },
+              "activation_errors": {
+                "rel_fro": 0.6530601217653361,
+                "mean_row_cosine": 0.6949081347154247,
+                "rows": 512
+              },
+              "estimated_flops_per_token": 168
+            },
+            "magnitude_sparse": {
+              "nnz": 32,
+              "density": 0.16666666666666666,
+              "encoding": "coo_flat",
+              "params": 32,
+              "stored_bytes": 192,
+              "index_bytes": 128,
+              "weight_errors": {
+                "rel_fro": 0.6355117933187936,
+                "rel_spectral": 0.6345297862840477,
+                "max_abs": 0.1450398862361908
+              },
+              "activation_errors": {
+                "rel_fro": 0.6365037211534293,
+                "mean_row_cosine": 0.7541964349424604,
+                "rows": 512
+              },
+              "estimated_flops_per_token": 64
+            },
+            "butterfly": {
+              "skipped": "budget of 96 params is below one butterfly product (128 params = log2(16) factors x 2*16)"
+            },
+            "rotor_weight": {
+              "params": 60,
+              "stored_bytes": 120,
+              "index_bytes": 0,
+              "weight_errors": {
+                "rel_fro": 1.4040788718105772,
+                "rel_spectral": 1.3260637933520631,
+                "max_abs": 0.6300347447395325
+              },
+              "activation_errors": {
+                "rel_fro": 1.4038444704989927,
+                "mean_row_cosine": -0.08876637994039233,
+                "rows": 512
+              },
+              "estimated_flops_per_token": 220,
+              "spec": {
+                "in_features": 12,
+                "out_features": 16,
+                "num_rotors": 1,
+                "stages_per_rotor": 4,
+                "topology": {
+                  "kind": "butterfly",
+                  "seed": 0
+                },
+                "adapter": "pad_truncate",
+                "residual_rank": 0
+              },
+              "fit": {
+                "objective": "weight",
+                "final_loss": 1.9847753047943115,
+                "steps": 5
+              }
+            }
+          }
+        },
+        "notes": [
+          "Equal STORED-BYTE budget is enforced: param_budget = byte_budget // bytes_per_param(storage_dtype) and every non-reference method's stored_bytes <= byte_budget. The `dense` row is the uncompressed REFERENCE (reference: true, stored at storage_dtype, error 0) and is exempt from the budget. Compute differs per method and is reported separately as estimated_flops_per_token; it is not equalized.",
+          "estimated_flops_per_token are formula ESTIMATES (multiply+add per input vector), not measurements: dense 2*in*out; svd 2*r*(in+out); svd_givens 6*angles + r; magnitude_sparse 2*nnz; butterfly 6 per 2x2 block (n/2 blocks per factor); rotor CascadeSpec.flops_per_token() (6 per Givens pair, 1 per diagonal entry, 2*r*(in+out) residual).",
+          "weight_errors/activation_errors are measured on the float32/float64 master values; rounding the stored parameters to storage_dtype is NOT simulated (storage_dtype only sets bytes per parameter).",
+          "svd is ordinary truncated-SVD compression: any gain over dense it shows is a rank-truncation effect, not a rotor gain. A structural (rotor) gain requires the rotor rows to beat svd and svd_givens at equal bytes.",
+          "svd_givens stored_bytes include ceil(2*rank/8) bytes of 1-bit Givens signs on top of params*bytes_per_param.",
+          "magnitude_sparse keeps the largest-|w| entries (largest nnz that fits); stored_bytes = nnz*bytes_per_param + index_bytes where the index encoding is the smaller of int32 flat COO indices (nnz*4) and int32 CSR (nnz*4 + (rows+1)*4). It is not fit by gradient descent.",
+          "butterfly is the classic factorization with FREE 2x2 blocks (4 params each, not rotations) on a width padded to the next power of two of max(in,out) (pad/truncate), as a product of m butterfly matrices of log2(n) factors; m is the largest that fits. Fit by Adam with the same FitSchedule (the block tensor is trained in every phase whose trainable kinds include 'scales', at the 'scales' learning rate). Skipped if one product exceeds the budget.",
+          "rotor_weight is the full-rank rotor/scaler cascade with NO residual (residual_rank is forced to 0). rotor_residual adds a low-rank residual: spec_kwargs['residual_rank'] if > 0, otherwise the rank whose residual parameters r*(in+out) take at most ~25% of the parameter budget.",
+          "index_bytes: 0 for svd, svd_givens, butterfly and rotor rows (deterministic topology; no stored indices).",
+          "controls: spectrum_matched_random keeps W's singular values with Haar-random singular vectors; gaussian_random is iid Gaussian with W's Frobenius norm. svd, magnitude_sparse, butterfly and rotor_weight are re-run on each control at the same budget; control errors are measured against the control matrix itself (and X for activation_errors).",
+          "rotor_activation is fit from scratch with the same schedule and structure as rotor_weight (no warm start from the weight fit)."
+        ]
+      }
+    }
+  },
+  "estimates": {
+    "estimated_flops_per_token": {
+      "synthetic[12,16]/method/dense": 384,
+      "synthetic[12,16]/method/svd": 168,
+      "synthetic[12,16]/method/svd_givens": 435,
+      "synthetic[12,16]/method/magnitude_sparse": 64,
+      "synthetic[12,16]/method/rotor_weight": 220,
+      "synthetic[12,16]/method/rotor_activation": 220,
+      "synthetic[12,16]/control:spectrum_matched_random/svd": 168,
+      "synthetic[12,16]/control:spectrum_matched_random/magnitude_sparse": 64,
+      "synthetic[12,16]/control:spectrum_matched_random/rotor_weight": 220,
+      "synthetic[12,16]/control:gaussian_random/svd": 168,
+      "synthetic[12,16]/control:gaussian_random/magnitude_sparse": 64,
+      "synthetic[12,16]/control:gaussian_random/rotor_weight": 220
+    }
+  },
+  "failure": null
+}

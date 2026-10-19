@@ -1,0 +1,6 @@
+2026-10-11T00:31:53+00:00 base science-001 repeat 0: TTFT=0.0516s decode=38.243 tok/s
+2026-10-11T00:31:54+00:00 base science-002 repeat 0: TTFT=0.0744s decode=38.423 tok/s
+2026-10-11T00:31:57+00:00 base science-003 repeat 0: TTFT=0.0366s decode=32.669 tok/s
+2026-10-11T00:36:07+00:00 converted science-001 repeat 0: TTFT=3.3937s decode=0.284 tok/s
+2026-10-11T00:40:14+00:00 converted science-002 repeat 0: TTFT=2.9411s decode=0.275 tok/s
+2026-10-11T00:44:29+00:00 converted science-003 repeat 0: TTFT=3.7880s decode=0.266 tok/s

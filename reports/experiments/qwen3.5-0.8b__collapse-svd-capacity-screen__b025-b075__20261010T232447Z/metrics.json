@@ -1,0 +1,142 @@
+{
+  "run_id": "qwen3.5-0.8b__collapse-svd-capacity-screen__b025-b075__20261010T232447Z",
+  "kind": "diagnosis",
+  "status": "completed",
+  "created_utc": "2026-10-10T23:24:47.433353+00:00",
+  "finished_utc": "2026-10-10T23:24:50.234048+00:00",
+  "model": "qwen3.5-0.8b",
+  "method": "collapse-svd-capacity-screen",
+  "target": "b025-b075",
+  "metrics": {
+    "rows": [
+      {
+        "tensor": "model.language_model.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.7918614745140076
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.613659679889679
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.4423418641090393
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.7595556974411011
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.5829534530639648
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.42104533314704895
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.7958477139472961
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.6167481541633606
+      },
+      {
+        "tensor": "model.language_model.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.44754666090011597
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.7134857773780823
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.5227158069610596
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.down_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.3608531951904297
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.5771095752716064
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.37395215034484863
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.gate_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.2372892051935196
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.25,
+        "rank": 199,
+        "factor_payload_bytes": 1833984,
+        "fp32_master_rel_fro": 0.6328510642051697
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.5,
+        "rank": 398,
+        "factor_payload_bytes": 3667968,
+        "fp32_master_rel_fro": 0.4150264263153076
+      },
+      {
+        "tensor": "mtp.layers.0.mlp.up_proj.weight",
+        "byte_ratio": 0.75,
+        "rank": 597,
+        "factor_payload_bytes": 5501952,
+        "fp32_master_rel_fro": 0.26749733090400696
+      }
+    ]
+  },
+  "estimates": {},
+  "failure": null
+}

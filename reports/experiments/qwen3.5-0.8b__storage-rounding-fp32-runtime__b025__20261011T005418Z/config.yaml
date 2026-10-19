@@ -1,0 +1,114 @@
+snapshot:
+  path: /mnt/NAS/MediaHome/Local-Models/temp/qwen3.5-0.8b-full-ffn-b025-gpu-r3.snapshots/snapshot-1791623497413929547-49eb563c4c464f4699da11f2e945cf3e
+  identity_sha256: ad41cb8f75cf40e461edc28ae0ec1f41b73b371861fda23c135aae4fe7a1c6aa
+  completed_matching_projections:
+  - model.layers.0.mlp.down_proj
+  - model.layers.0.mlp.gate_proj
+  - model.layers.0.mlp.up_proj
+  - model.layers.1.mlp.down_proj
+  - model.layers.1.mlp.gate_proj
+  - model.layers.1.mlp.up_proj
+  - model.layers.10.mlp.down_proj
+  - model.layers.10.mlp.gate_proj
+  - model.layers.10.mlp.up_proj
+  - model.layers.11.mlp.down_proj
+  - model.layers.11.mlp.gate_proj
+  - model.layers.11.mlp.up_proj
+  - model.layers.12.mlp.down_proj
+  - model.layers.12.mlp.gate_proj
+  - model.layers.12.mlp.up_proj
+  - model.layers.13.mlp.down_proj
+  - model.layers.13.mlp.gate_proj
+  - model.layers.13.mlp.up_proj
+  - model.layers.14.mlp.down_proj
+  - model.layers.14.mlp.gate_proj
+  - model.layers.14.mlp.up_proj
+  - model.layers.15.mlp.down_proj
+  - model.layers.15.mlp.gate_proj
+  - model.layers.15.mlp.up_proj
+  - model.layers.16.mlp.down_proj
+  - model.layers.16.mlp.gate_proj
+  - model.layers.16.mlp.up_proj
+  - model.layers.17.mlp.down_proj
+  - model.layers.17.mlp.gate_proj
+  - model.layers.17.mlp.up_proj
+  - model.layers.18.mlp.down_proj
+  - model.layers.18.mlp.gate_proj
+  - model.layers.18.mlp.up_proj
+  - model.layers.19.mlp.down_proj
+  - model.layers.19.mlp.gate_proj
+  - model.layers.19.mlp.up_proj
+  - model.layers.2.mlp.down_proj
+  - model.layers.2.mlp.gate_proj
+  - model.layers.2.mlp.up_proj
+  - model.layers.20.mlp.down_proj
+  - model.layers.20.mlp.gate_proj
+  - model.layers.20.mlp.up_proj
+  - model.layers.21.mlp.down_proj
+  - model.layers.21.mlp.gate_proj
+  - model.layers.21.mlp.up_proj
+  - model.layers.22.mlp.down_proj
+  - model.layers.22.mlp.gate_proj
+  - model.layers.22.mlp.up_proj
+  - model.layers.3.mlp.down_proj
+  - model.layers.3.mlp.gate_proj
+  - model.layers.3.mlp.up_proj
+  - model.layers.4.mlp.down_proj
+  - model.layers.4.mlp.gate_proj
+  - model.layers.4.mlp.up_proj
+  - model.layers.5.mlp.down_proj
+  - model.layers.5.mlp.gate_proj
+  - model.layers.5.mlp.up_proj
+  - model.layers.6.mlp.down_proj
+  - model.layers.6.mlp.gate_proj
+  - model.layers.6.mlp.up_proj
+  - model.layers.7.mlp.down_proj
+  - model.layers.7.mlp.gate_proj
+  - model.layers.7.mlp.up_proj
+  - model.layers.8.mlp.down_proj
+  - model.layers.8.mlp.gate_proj
+  - model.layers.8.mlp.up_proj
+  - model.layers.9.mlp.down_proj
+  - model.layers.9.mlp.gate_proj
+  - model.layers.9.mlp.up_proj
+prompt_ids:
+- - 32
+  - 3809
+  - 7785
+  - 10756
+  - 11690
+  - 264
+  - 17225
+  - 539
+  - 9859
+  - 3069
+  - 264
+  - 9041
+  - 43988
+  - 10751
+  - 72555
+  - 1056
+  - 264
+  - 21664
+  - 43988
+  - 303
+  - 279
+  - 1788
+  - 2956
+  - 13
+  - 561
+  - 15673
+  - 8211
+  - 440
+  - 8364
+  - 6992
+  - 1881
+  - 7009
+  - 25
+seed: 0
+arithmetic: float32
+storage_rounding:
+- float16
+- bfloat16
+fixed_topology: true
+equal_budget: false

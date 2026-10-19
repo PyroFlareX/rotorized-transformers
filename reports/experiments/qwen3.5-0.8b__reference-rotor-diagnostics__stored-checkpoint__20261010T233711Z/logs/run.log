@@ -1,0 +1,5 @@
+2026-10-10T23:37:45+00:00 loaded 72 stored reference projections on cpu; no fused backend
+2026-10-10T23:37:45+00:00 diagnostic prompt file SHA-256 73036763ff58b3eb3f95ffc4dc05dbc79ce3604ee2c6e284ef2ac381fe5e6641; 1 selected prompts
+2026-10-10T23:37:45+00:00 no approved held-out corpus supplied; fixed diagnostic prompts are not a held-out benchmark
+2026-10-10T23:37:53+00:00 parity 1/72: model.layers.0.mlp.down_proj max_abs=4.35e-06
+2026-10-10T23:37:53+00:00 FAILED: RuntimeError: Sizes of tensors must match except in dimension 0. Expected size 1024 but got size 3584 for tensor number 1 in the list.

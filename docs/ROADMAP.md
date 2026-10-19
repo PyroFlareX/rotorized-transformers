@@ -69,7 +69,7 @@ graph TD
 
 **Estimated engineering effort:** 8–16 person-days (estimate), excluding checkpoint download/transfer wait time and compute.
 
-**Status:** Planned; implementation and permission-gated checkpoint work remain.
+**Status:** Executed with a negative result. The b025 butterfly `rotor-scaler` conversion of all 24 FFNs completed, and 0 of 256 greedy prompt continuations matched the base model (`reports/experiments/qwen3.5-0.8b__output-collapse-experiment-decision__b025__20261011T005909Z/`). Diagnostics attribute the collapse to poorly fitted FFN functions, not serialization or runtime execution. Follow-up no-training representations are recorded in D18, D19, and `docs/ALGEBRAIC_GA_CONVERSION.md`.
 
 ---
 
@@ -97,7 +97,7 @@ graph TD
 
 **Deliverables:** Standalone microbenchmark kernels for structured rotations; CPU/reference numerical oracle and correctness tests; dense GEMV/GEMM comparisons across measured projection shapes and batch sizes; device/driver/build facts, kernel latency, throughput, memory traffic, and reproducible logs. This is a kernel research track, not an engine fork.
 
-**Dependencies:** M1 math contract and M2 projection shapes; a host with executable CUDA hardware for GPU measurements. Current host has no NVIDIA GPU on PCI bus; AMD RX 7900 XT/XTX and Raphael iGPU via amdgpu, no ROCm, CPU-only torch; nvcc 12.0 is available only for compile checks.
+**Dependencies:** M1 math contract and M2 projection shapes; a host with executable CUDA hardware for GPU measurements. Current host has no NVIDIA GPU on PCI bus; nvcc 12.0 is available only for compile checks. The AMD RX 7900 XT/XTX runs ROCm through `.venv-rocm` (D9 status), which supports Triton experiments but does not qualify CUDA kernels.
 
 **Risks:** No NVIDIA GPU on current host prevents runtime correctness/performance qualification; compiling with nvcc alone does not prove kernel execution. Floating-point ordering and bf16 rounding may differ from CPU reference. Benchmarking only one batch regime or omitting dense controls can mislead. NAS access is irrelevant to microkernel timing but can contaminate setup if model loading is mixed into timed regions.
 
